@@ -1,53 +1,101 @@
 # -*- coding: UTF-8 -*-
 
-# Pour lancer ce code dans une console MingW32, utiliser la commande :
-# winpty python aboard.py
-# Et non pas :
-# python aboard.py
-# C'est une contrainte liée à MingW32. Les scripts python interactifs, ou qui envoient de l'utf-8 sur la sortie standard,
-# doivent être lancé avec "winpty".
+from my_log import debug, answer, log
 
-import sys
-import logging
 
-# https://stackoverflow.com/questions/2302315/how-can-info-and-debug-logging-message-be-sent-to-stdout-and-higher-level-messag
+class Tile():
 
-class LessThanFilter(logging.Filter):
-    def __init__(self, exclusive_maximum, name=""):
-        super(LessThanFilter, self).__init__(name)
-        self.max_level = exclusive_maximum
+	def __init__(self, x=None, y=None):
+		self.init()
 
-    def filter(self, record):
-        #non-zero return means we log this message
-        return 1 if record.levelno < self.max_level else 0
 
-#Get the root logger
-logger = logging.getLogger()
-#Have to set the root logger level, it defaults to logging.WARNING
-logger.setLevel(logging.NOTSET)
+	def init(self):
+		pass
 
-logging_handler_out = logging.StreamHandler(sys.stdout)
-logging_handler_out.setLevel(logging.INFO)
-logger.addHandler(logging_handler_out)
 
-logging_handler_err = logging.StreamHandler(sys.stderr)
-logging_handler_err.setLevel(logging.DEBUG)
-logging_handler_err.addFilter(LessThanFilter(logging.INFO))
-logger.addHandler(logging_handler_err)
+	def render(self, w=1, h=1):
+		return '.'
 
-#demonstrate the logging levels
-#logger.debug('DEBUG')
-#logger.info('INFO')
-#logger.warning('WARNING')
-#logger.error('ERROR')
-#logger.critical('CRITICAL')
 
-# Alias de fonction
-debug = logger.debug
-answer = logger.info
-log = logger.info
+class Board():
 
-debug("debug. Avéc des àccents. Hââ ha. αβ")
-answer("answer. Avéc des àccents. Hââ ha. αβ")
+	def __init__(self, w=1, h=1, tile_generator=lambda x, y: Tile(x, y)):
 
-#class
+		self.w = w
+		self.h = h
+		self._tiles = [
+			[ tile_generator(x, y) for x in range(w) ]
+			for y in range(h)
+		]
+		self._default_renderer = BoardRenderer()
+
+
+	# TODO : faut pos, tuple et x, y
+	def get_tile(self, x, y):
+		return self._tiles[y][x]
+
+
+	def _render_tile(self, tile):
+		pass
+
+	def render(self):
+		# TODO : permettre un autre renderer que le default.
+		return self._default_renderer.render(self)
+
+
+class BoardRenderer():
+
+	def __init__(
+		self,
+		tilepadding_vertic=0, tilepadding_horiz=0,
+		tile_w=1, tile_h=1,
+		border_vertic=False, border_horiz=True
+	):
+		self.tilepadding_vertic = tilepadding_vertic
+		self.tilepadding_horiz = tilepadding_horiz
+		self.tile_w = tile_w
+		self.tile_h = tile_h
+		self.border_vertic = border_vertic
+		self.border_horiz = border_horiz
+
+
+	def render(self, board):
+		# TODO : utiliser un itérateur de Board
+		render_result = ''
+		for y in range(board.h):
+			line = ''
+			for x in range(board.w):
+				line += board.get_tile(x, y).render()
+			render_result += line + '\n'
+
+		return render_result
+
+
+# tests
+
+
+class MyTile(Tile):
+
+	def init(self, arg_1=0, arg_2=2):
+		self.arg_1 = arg_1
+		self.arg_2 = arg_2
+
+	def render(self, w=1, h=1):
+		return self.arg_1+self.arg_2
+
+
+my_tile = MyTile()
+my_tile.init(3, 4)
+log(my_tile.render())
+
+
+board = Board(7, 4)
+tile = board.get_tile(0, 0)
+log(tile.render())
+log('')
+
+log(board.render())
+
+log('')
+log("End")
+
