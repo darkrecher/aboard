@@ -6,6 +6,8 @@ from my_log import debug, answer, log
 class Tile():
 
 	def __init__(self, x=None, y=None):
+		self.x = x
+		self.y = y
 		self.init()
 
 
@@ -19,6 +21,7 @@ class Tile():
 
 class Board():
 
+	# TODO : on devrait pouvoir spécifier juste une classe héritée de Tile. Sans lambda.
 	def __init__(self, w=1, h=1, tile_generator=lambda x, y: Tile(x, y)):
 
 		self.w = w
@@ -47,28 +50,88 @@ class BoardRenderer():
 
 	def __init__(
 		self,
-		tilepadding_vertic=0, tilepadding_horiz=0,
+		tilepadding_w=0, tilepadding_h=0,
 		tile_w=1, tile_h=1,
-		border_vertic=False, border_horiz=True
+		border_vertic=False, border_horiz=True,
+		chr_fill_padding=' ',
+		chr_fill_tile=' ', word_wrap=False
 	):
-		self.tilepadding_vertic = tilepadding_vertic
-		self.tilepadding_horiz = tilepadding_horiz
+		self.tilepadding_w = tilepadding_w
+		self.tilepadding_h = tilepadding_h
 		self.tile_w = tile_w
 		self.tile_h = tile_h
 		self.border_vertic = border_vertic
 		self.border_horiz = border_horiz
+		self.chr_fill_padding = chr_fill_padding
+		self.chr_fill_tile = chr_fill_tile
+		self.word_wrap = word_wrap
+
+
+	def _str_resized(self, value):
+		w = self.tile_w
+		return str(value).ljust(w, self.chr_fill_tile)[:w]
+
+
+	def _render_tile(self, tile):
+		"""
+		Renvoie une liste de tile_h string, chacune ayant une taille tile_w.
+		"""
+		if self.word_wrap:
+			raise NotImplemented("TODO")
+
+		tile_res = tile.render(self.tile_h, self.tile_w)
+
+		if isinstance(tile_res, str):
+			process_as_string = True
+		else:
+			try:
+				_ = iter(tile_res)
+				process_as_string = False
+			except TypeError:
+				process_as_string = True
+
+		if process_as_string:
+			lines = [ self._str_resized(tile_res) ]
+		else:
+			lines = []
+			for index, line in enumerate(tile_res):
+				if index >= self.tile_h:
+					break
+				lines.append(self._str_resized(line))
+
+		last_lines = [ self.chr_fill_tile*self.tile_w ] * (self.tile_h - 1)
+		return lines + last_lines
+
+
+	def render_iter_lines(self, board):
+		# TODO : utiliser un itérateur de Board
+		render_result = ''
+		interval_tile_w = self.chr_fill_padding * self.tilepadding_w
+		interval_line_h = interval_tile_w.join((
+			[ self.chr_fill_padding*self.tile_w ] * board.w
+		))
+
+		for y in range(board.h):
+
+			rendered_tiles = [
+				self._render_tile(board.get_tile(x, y))
+				for x in range(board.w)
+			]
+
+			for index_line in range(self.tile_h):
+
+				yield interval_tile_w.join((
+					rendered_tiles[x][index_line]
+					for x in range(board.w)
+				))
+
+			if y < board.h-1:
+				for index_interval in range(self.tilepadding_h):
+					yield interval_line_h
 
 
 	def render(self, board):
-		# TODO : utiliser un itérateur de Board
-		render_result = ''
-		for y in range(board.h):
-			line = ''
-			for x in range(board.w):
-				line += board.get_tile(x, y).render()
-			render_result += line + '\n'
-
-		return render_result
+		return '\n'.join(self.render_iter_lines(board))
 
 
 # tests
@@ -89,13 +152,30 @@ my_tile.init(3, 4)
 log(my_tile.render())
 
 
-board = Board(7, 4)
+class MyTileTellCoords(Tile):
+
+	def render(self, w=1, h=1):
+		return [
+			'',
+			str(self.x) + ',' + str(self.y),
+			self.x * self.y
+		]
+
+
+board = Board(7, 4, lambda x, y: MyTileTellCoords(x, y))
 tile = board.get_tile(0, 0)
 log(tile.render())
+
+board_renderer = BoardRenderer(
+	tile_w=5, tile_h=4,
+	tilepadding_w=3, tilepadding_h=2,
+	chr_fill_tile='.', chr_fill_padding='#',
+)
+
+log(board_renderer._render_tile(tile))
+log('')
+log(board_renderer.render(board))
 log('')
 
-log(board.render())
-
-log('')
 log("End")
 
