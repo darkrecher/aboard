@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 
-class Poses:
+class Positions:
 
 	def __init__(self):
 		self.poses = [1, 2, 5, 8, 90, 91, 92]
@@ -33,14 +33,14 @@ class Poses:
 
 def main():
 
-	p = Poses()
+	p = Positions()
 
 	for elem in p:
 		print(elem)
 
 	print('-' * 20)
 
-	p2 = Poses()
+	p2 = Positions()
 
 	for elem in p2:
 		if elem in (2, 91):
