@@ -30,14 +30,46 @@ class Board():
 		return self._tiles[y][x]
 
 
-	def _render_tile(self, tile):
-		pass
-
-
 	def render(self, renderer=None):
 		if renderer is None:
 			renderer = self._default_renderer
 		return renderer.render(self)
+
+	# WIP : comment on va faire des itérateurs sur ce bazar ?
+	# https://www.ibm.com/developerworks/library/l-pycon/
+	# https://www.python.org/dev/peps/pep-0234/
+	# https://wiki.python.org/moin/Iterator
+
+	def iter(self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False, skip_lines=None, rect=None, poses=None):
+		if skip_lines is None:
+			skip_lines=lambda tile:False
+		pass
+
+
+	def iter_one_vector(self, sense='┌ └', prime_coord=None, x=None, y=None, dir='UPWARD, ...', rect=None):
+		# cas particulier de la fonction ci-dessus.
+		pass
+
+
+	def iter_vectors(self, sense='(┌ ┐),(└ ┘)', rect=None):
+		# ça va renvoyer des itérateurs, genre iter_one_vector.
+		pass
+
+
+	def iter_by_poses(self, poses):
+		pass
+
+
+	def sort_poses(self, poses, key):
+		pass
+
+	# Donc il faut un itérateur sur un rect.
+
+	# Il faut aussi des itérateur de poses avec des ellipsis.
+	# Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
+
+	# Une poses est une liste de position. C'est tout. On peut itérer dessus. Et filtrer.
+	# Avec la fonction built-in filter().
 
 
 # ----------------- tests des trucs en cours ------------------
@@ -47,6 +79,22 @@ def main():
 	from my_log import debug, answer, log
 	log('Hellow')
 
+	# http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
+
+
+	from collections import deque
+	from itertools import islice
+
+	def window(iterable, size=2):
+		iterable = iter(iterable)
+		d = deque(islice(iterable, size), size)
+		yield d
+		for x in iterable:
+			d.append(x)
+			yield d
+
+	for x in window('azertyuiop', 3):
+		log(x)
 
 	log('End')
 
