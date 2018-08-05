@@ -3,15 +3,39 @@
 
 class Positions():
 
-	def __init__(self):
-		self.posis = tuple()
-
-	def pouet(
-		self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False,
-		skip_lines=None, rect=None, poses=None,
-		sliding_window=None, continuous_sliding_window=None
+	def __init__(
+		self,
+		posis,
+		step=1,
+		tell_jumps=False,
+		tell_direction_changes=False,
+		sliding_window=None,
+		continuous_sliding_window=None,
 	):
-		pass
+
+		# jump : la coord précédente n'est pas adjacente
+		# dir_change, la direction entre :
+		#   (la coord précédente-précédente et la coord précédente)
+		#   (la coord précédente et l'actuelle)
+		# sont différentes.
+		# Du coup, pour le jump, il faut se poser la question du type d'adjacence.
+		# Diagonale ou pas diagonale ?
+
+		# posis peut contenir des ellipsis.
+		self.posis = posis
+		if self.step > 0:
+			self.index = 0
+		elif self.step < 0:
+			self.index = len(posis) - 1
+
+		self.prev_point = None
+
+	#def pouet(
+	#	self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False,
+	#	skip_lines=None, rect=None, poses=None,
+	#	sliding_window=None, continuous_sliding_window=None
+	#):
+	#	pass
 
 	def __iter__(self):
 		return self
