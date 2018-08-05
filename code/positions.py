@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
 
 
-class Positions:
+class Positions():
 
 	def __init__(self):
-		self.poses = [1, 2, 5, 8, 90, 91, 92]
+		self.posis = tuple()
 
 	def pouet(
 		self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False,
@@ -28,6 +28,9 @@ class Positions:
 		if self.poses:
 			self.poses.pop(0)
 
+
+class Rect(Positions):
+	pass
 
 # ----------------- tests des trucs en cours ------------------
 

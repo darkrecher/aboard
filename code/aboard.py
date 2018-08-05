@@ -40,6 +40,17 @@ class Board():
 	# https://www.python.org/dev/peps/pep-0234/
 	# https://wiki.python.org/moin/Iterator
 
+	# On crée une autre classe qui va itérer (Positions).
+	# Certaines fonctions de Board renvoient un itérable, mais sur le board.
+	# Pas juste sur les positions.
+	# Donc faudra encore une autre classe BoardIterator ou un truc du genre.
+	# Et donc c'est elle qui itère, avec le Board, et une classe Positions.
+	# Et qui renvoie les tiles, et etc.
+	# Et juste pour le fun, la classe Board peut être itérable, mais avec une méthode
+	# par défaut (de gauche à droite et de haut en bas). Et ça utilise un BoardIterator
+	# interne.
+
+
 	def iter(self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False, skip_lines=None, rect=None, poses=None):
 		if skip_lines is None:
 			skip_lines=lambda tile:False
