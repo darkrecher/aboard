@@ -1,5 +1,52 @@
 # -*- coding: UTF-8 -*-
 
+# TODO : dans un autre fichier
+
+from enum import Enum
+
+class Direction(Enum):
+	UP = 0
+	UP_RIGHT = 1
+	RIGHT = 2
+	DOWN_RIGHT = 3
+	DOWN = 4
+	DOWN_LEFT = 5
+	LEFT = 6
+	UP_LEFT = 7
+	# TODO etc
+	NORTH = 0
+	EAST = 2
+	SOUTH = 4
+	WEST = 6
+	# re etc
+	NE = 1
+	# Avec PAD_8, PAD_9, etc.
+
+
+def is_adjacent_cross(point_1, point_2):
+	if point_1.x == point_2.x:
+		return -1 <= point_1.y-point_2.y <= 1
+	if point_1.y == point_2.y:
+		return -1 <= point_1.x-point_2.x <= 1
+	return False
+
+
+def is_adjacent_diag(point_1, point_2):
+	return -1 <= point_1.x-point_2.x <= 1 and -1 <= point_1.y-point_2.y <= 1
+
+
+default_adjacency=is_adjacent_cross
+
+
+def set_default_adjacency(new_default_adjacency):
+	global default_adjacency
+	default_adjacency = new_default_adjacency
+
+
+def is_adjacent(point_1, point_2):
+	return default_adjacency(point_1, point_2)
+
+
 class Point():
 
 	def __init__(self, param_1=None, param_2=None, x=None, y=None):

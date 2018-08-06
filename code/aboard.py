@@ -29,6 +29,11 @@ class Board():
 	def get_tile(self, x, y):
 		return self._tiles[y][x]
 
+	def __getitem__(self, get_param):
+		# TODO
+		#print(get_param)
+		return get_param
+
 
 	def render(self, renderer=None):
 		if renderer is None:
@@ -106,6 +111,16 @@ def main():
 
 	for x in window('azertyuiop', 3):
 		log(x)
+
+	b = Board()
+	log(b[11])
+	log(b[11, 5])
+	log(b[11, ...])
+	log(b[..., 5])
+	log(b[11:18:2])
+	log(b[11:18:2, 1:33:5])
+	log(b[11:, :33])
+	log(b[:, ::5])
 
 	log('End')
 

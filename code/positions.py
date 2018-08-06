@@ -1,5 +1,10 @@
 # -*- coding: UTF-8 -*-
 
+from point import (
+	Point,
+	is_adjacent, set_default_adjacency, is_adjacent_diag,
+	Direction)
+
 
 class Positions():
 
@@ -11,6 +16,7 @@ class Positions():
 		tell_direction_changes=False,
 		sliding_window=None,
 		continuous_sliding_window=None,
+		adjacency=None,
 	):
 
 		# jump : la coord précédente n'est pas adjacente
@@ -23,12 +29,20 @@ class Positions():
 
 		# posis peut contenir des ellipsis.
 		self.posis = posis
+		self.step = step
 		if self.step > 0:
-			self.index = 0
+			self.next_index = 0
 		elif self.step < 0:
-			self.index = len(posis) - 1
+			self.next_index = len(self.posis) - 1
+		else:
+			raise ValueError("Le step doit être différent de 0.")
 
+		self.is_adjacent = adjacency or is_adjacent
+		self.current_point = None
 		self.prev_point = None
+		self.prev_prev_point = None
+		self.jumped = True
+		self.changed_direction = False
 
 	#def pouet(
 	#	self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False,
@@ -40,40 +54,53 @@ class Positions():
 	def __iter__(self):
 		return self
 
+
 	def __next__(self):
 
-		if not self.poses:
+		if self.next_index <= -1 or self.next_index >= len(self.posis):
 			raise StopIteration
 
-		return self.poses.pop(0)
+		self.prev_prev_point = self.prev_point
+		self.prev_point = self.current_point
+		self.current_point = Point(self.posis[self.next_index])
+
+		self.jumped = (
+			self.prev_point is None
+			or self.is_adjacent(self.prev_point, self.current_point))
+
+
+
+		self.next_index += self.step
+		return self.current_point
+
 
 	def skip(self):
-
-		if self.poses:
-			self.poses.pop(0)
+		pass
 
 
 class Rect(Positions):
 	pass
 
+
 # ----------------- tests des trucs en cours ------------------
 
 def main():
 
-	p = Positions()
+	p = Positions(((1, 2), (3, 4), (5, 6), (7, 8)))
 
 	for elem in p:
 		print(elem)
 
-	print('-' * 20)
+	p1 = Point(5, 5)
+	p2 = Point(6, 5)
+	p3 = Point(4, 4)
 
-	p2 = Positions()
+	set_default_adjacency(is_adjacent_diag)
 
-	for elem in p2:
-		if elem in (2, 91):
-			p2.skip()
-			p2.skip()
-		print(elem)
+	print('same : ', is_adjacent(p1, p1))
+	print('cross: ', is_adjacent(p1, p2))
+	print('diag : ', is_adjacent(p1, p3))
+	print('none : ', is_adjacent(p2, p3))
 
 
 if __name__ == '__main__':
