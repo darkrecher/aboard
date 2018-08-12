@@ -27,6 +27,9 @@ class Positions():
 		# Du coup, pour le jump, il faut se poser la question du type d'adjacence.
 		# Diagonale ou pas diagonale ?
 
+		if sliding_window is not None or continuous_sliding_window is not None:
+			raise ValueError("TODO sliding_window continuous_sliding_window")
+
 		# posis peut contenir des ellipsis.
 		self.posis = posis
 		self.step = step
@@ -90,17 +93,6 @@ def main():
 
 	for elem in p:
 		print(elem)
-
-	p1 = Point(5, 5)
-	p2 = Point(6, 5)
-	p3 = Point(4, 4)
-
-	set_default_adjacency(is_adjacent_diag)
-
-	print('same : ', is_adjacent(p1, p1))
-	print('cross: ', is_adjacent(p1, p2))
-	print('diag : ', is_adjacent(p1, p3))
-	print('none : ', is_adjacent(p2, p3))
 
 
 if __name__ == '__main__':

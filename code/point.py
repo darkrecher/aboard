@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-# TODO : dans un autre fichier
+# TODO : Les directions, dans un autre fichier
 
 from enum import Enum
 
 class Direction(Enum):
+	# Classic
 	UP = 0
 	UP_RIGHT = 1
 	RIGHT = 2
@@ -13,38 +14,71 @@ class Direction(Enum):
 	DOWN_LEFT = 5
 	LEFT = 6
 	UP_LEFT = 7
-	# TODO etc
+	# Classic abbr.
+	U = 0
+	UR = 1
+	R = 2
+	DR = 3
+	D = 4
+	DL = 5
+	L = 6
+	UL = 7
+	# Cardinal
 	NORTH = 0
+	NORTH_EAST = 1
 	EAST = 2
+	SOUTH_EAST = 3
 	SOUTH = 4
+	SOUTH_WEST = 5
 	WEST = 6
-	# re etc
+	NORTH_WEST = 7
+	# Cardinal abbr.
+	N = 0
 	NE = 1
-	# Avec PAD_8, PAD_9, etc.
+	E = 2
+	SE = 3
+	S = 4
+	SW = 5
+	W = 6
+	NW = 7
+	# Numeric pad.
+	PAD_8 = 0
+	PAD_9 = 1
+	PAD_6 = 2
+	PAD_3 = 3
+	PAD_2 = 4
+	PAD_1 = 5
+	PAD_4 = 6
+	PAD_7 = 7
 
+# Alias
+Dir = Direction
 
-def is_adjacent_cross(point_1, point_2):
-	if point_1.x == point_2.x:
-		return -1 <= point_1.y-point_2.y <= 1
-	if point_1.y == point_2.y:
-		return -1 <= point_1.x-point_2.x <= 1
-	return False
-
-
-def is_adjacent_diag(point_1, point_2):
-	return -1 <= point_1.x-point_2.x <= 1 and -1 <= point_1.y-point_2.y <= 1
-
-
-default_adjacency=is_adjacent_cross
-
-
-def set_default_adjacency(new_default_adjacency):
-	global default_adjacency
-	default_adjacency = new_default_adjacency
-
-
-def is_adjacent(point_1, point_2):
-	return default_adjacency(point_1, point_2)
+dir_from_str = {
+	# Box-drawing chars (https://en.wikipedia.org/wiki/Box-drawing_character)
+	'┬': Dir.UP,
+	'┐': Dir.UP_RIGHT,
+	'┤': Dir.RIGHT,
+	'┘': Dir.DOWN_RIGHT,
+	'┴': Dir.DOWN,
+	'└': Dir.DOWN_LEFT,
+	'├': Dir.LEFT,
+	'┌': Dir.UP_LEFT,
+	# Arrows (ne marche pas complètement bien dans Sublime Text, mais c'est pas grave)
+	'↑': Dir.UP,
+	'↗': Dir.UP_RIGHT,
+	'→': Dir.RIGHT,
+	'↘': Dir.DOWN_RIGHT,
+	'↓': Dir.DOWN,
+	'↙': Dir.DOWN_LEFT,
+	'←': Dir.LEFT,
+	'↖': Dir.UP_LEFT,
+	# Ascii arrows
+	'^': Dir.UP,
+	'>': Dir.RIGHT,
+	'v': Dir.DOWN,
+	'<': Dir.LEFT,
+}
 
 
 class Point():
@@ -118,3 +152,58 @@ class Point():
 	def as_dict(self):
 		return {'x': self.x, 'y': self.y }
 
+
+# --- Adjacency operations ---
+
+def is_adjacent_cross(point_1, point_2):
+	if point_1.x == point_2.x:
+		return point_1.y-point_2.y in (-1, 1)
+	if point_1.y == point_2.y:
+		return point_1.x-point_2.x in (-1, 1)
+	return False
+
+
+def is_adjacent_diag(point_1, point_2):
+	abs_diff_x = abs(point_1.x-point_2.x)
+	abs_diff_y = abs(point_1.y-point_2.y)
+	return (
+		(abs_diff_x, abs_diff_y) != (0, 0)
+		and abs_diff_x <= 1
+		and abs_diff_y <= 1
+	)
+
+
+default_adjacency=is_adjacent_cross
+
+
+def set_default_adjacency(new_default_adjacency):
+	global default_adjacency
+	default_adjacency = new_default_adjacency
+
+
+def is_adjacent(point_1, point_2):
+	return default_adjacency(point_1, point_2)
+
+
+
+# --- Direction operations ---
+
+def cmp(a, b):
+	return (a < b) + (a > b)
+
+def compute_direction(point_1, point_2):
+	cmp_x = cmp(point_1.x, point_1.y)
+	cmp_y = cmp(point_1.x, point_1.y)
+	cmps = (cmp_x, cmp_y)
+	DICT_DIR_FROM_CMPS = {
+		(0, 0): None,
+		(0, -1): UP,
+		(+1, -1): UP_RIGHT,
+		(+1, 0): RIGHT,
+		(+1, +1): DOWN_RIGHT,
+		(0, +1): DOWN,
+		(-1, +1): DOWN_LEFT,
+		(-1, 0): LEFT,
+		(-1, -1): UP_LEFT,
+	}
+	return DICT_DIR_FROM_CMPS[cmps]
