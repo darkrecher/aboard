@@ -54,7 +54,7 @@ class Direction(Enum):
 # Alias
 Dir = Direction
 
-dir_from_str = {
+DICT_DIR_FROM_STR = {
 	# Box-drawing chars (https://en.wikipedia.org/wiki/Box-drawing_character)
 	'┬': Dir.UP,
 	'┐': Dir.UP_RIGHT,
@@ -77,8 +77,13 @@ dir_from_str = {
 	'^': Dir.UP,
 	'>': Dir.RIGHT,
 	'v': Dir.DOWN,
+	'V': Dir.DOWN,
 	'<': Dir.LEFT,
 }
+
+def dir_from_str(char):
+	# FUTURE : raiser une exception spécifique si y'a pas le char dans dict.
+	return DICT_DIR_FROM_STR[char]
 
 
 class Point():
@@ -189,21 +194,23 @@ def is_adjacent(point_1, point_2):
 # --- Direction operations ---
 
 def cmp(a, b):
-	return (a < b) + (a > b)
+	# https://stackoverflow.com/questions/15556813/python-why-cmp-is-useful
+	return (a > b) - (a < b)
 
 def compute_direction(point_1, point_2):
-	cmp_x = cmp(point_1.x, point_1.y)
-	cmp_y = cmp(point_1.x, point_1.y)
+	cmp_x = cmp(point_2.x, point_1.x)
+	cmp_y = cmp(point_2.y, point_1.y)
 	cmps = (cmp_x, cmp_y)
 	DICT_DIR_FROM_CMPS = {
 		(0, 0): None,
-		(0, -1): UP,
-		(+1, -1): UP_RIGHT,
-		(+1, 0): RIGHT,
-		(+1, +1): DOWN_RIGHT,
-		(0, +1): DOWN,
-		(-1, +1): DOWN_LEFT,
-		(-1, 0): LEFT,
-		(-1, -1): UP_LEFT,
+		(0, -1): Dir.UP,
+		(+1, -1): Dir.UP_RIGHT,
+		(+1, 0): Dir.RIGHT,
+		(+1, +1): Dir.DOWN_RIGHT,
+		(0, +1): Dir.DOWN,
+		(-1, +1): Dir.DOWN_LEFT,
+		(-1, 0): Dir.LEFT,
+		(-1, -1): Dir.UP_LEFT,
 	}
 	return DICT_DIR_FROM_CMPS[cmps]
+
