@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
 
 from point import (
-	Point,
-	is_adjacent, set_default_adjacency, is_adjacent_diag,
-	Direction)
+	Point, Direction,
+	is_adjacent, compute_direction,
+)
 
 
-class Positions():
+class PositionsIterator():
 
 	def __init__(
 		self,
@@ -30,7 +30,7 @@ class Positions():
 		if sliding_window is not None or continuous_sliding_window is not None:
 			raise ValueError("TODO sliding_window continuous_sliding_window")
 
-		# posis peut contenir des ellipsis.
+		# FUTURE : posis peut contenir des ellipsis.
 		self.posis = posis
 		self.step = step
 		if self.step > 0:
@@ -71,7 +71,10 @@ class Positions():
 			self.prev_point is None
 			or self.is_adjacent(self.prev_point, self.current_point))
 
-
+		if self.prev_prev_point is not None and self.prev_point is not None:
+			prev_dir = compute_direction(self.prev_prev_point, self.prev_point)
+			current_dir = compute_direction(self.prev_point, self.current_point)
+			self.changed_direction = prev_dir != current_dir
 
 		self.next_index += self.step
 		return self.current_point
@@ -81,15 +84,19 @@ class Positions():
 		pass
 
 
-class Rect(Positions):
+class Rect(PositionsIterator):
 	pass
+	# Retenir la position au "début de la ligne".
+	# Une direction pour les mouvements normaux,
+	# Une pour le "cr_lf"
+	# Un moyen de savoir (en consultant le x ou le y) si on est au bout d'une ligne ou pas.
 
 
 # ----------------- tests des trucs en cours ------------------
 
 def main():
 
-	p = Positions(((1, 2), (3, 4), (5, 6), (7, 8)))
+	p = PositionsIterator(((1, 2), (3, 4), (5, 6), (7, 8)))
 
 	for elem in p:
 		print(elem)
