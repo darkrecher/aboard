@@ -31,7 +31,7 @@ class PositionsIterator():
 			raise ValueError("TODO sliding_window continuous_sliding_window")
 
 		# FUTURE : posis peut contenir des ellipsis.
-		self.posis = posis
+		self.posis = tuple(posis)
 		self.step = step
 		if self.step > 0:
 			self.next_index = 0
@@ -69,7 +69,7 @@ class PositionsIterator():
 
 		self.jumped = (
 			self.prev_point is None
-			or self.is_adjacent(self.prev_point, self.current_point))
+			or not self.is_adjacent(self.prev_point, self.current_point))
 
 		if self.prev_prev_point is not None and self.prev_point is not None:
 			prev_dir = compute_direction(self.prev_prev_point, self.prev_point)
