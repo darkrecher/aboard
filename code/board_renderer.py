@@ -58,7 +58,7 @@ class BoardRenderer():
 		"""
 		Renvoie une liste de tile_h string, chacune ayant une taille tile_w.
 		"""
-		tile_res = tile.render(self.tile_h, self.tile_w)
+		tile_res = tile.render(self.tile_w, self.tile_h)
 
 		if isinstance(tile_res, str):
 			process_as_string = True

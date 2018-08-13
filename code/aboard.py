@@ -22,10 +22,9 @@ class Board():
 			[ tile_generator(x, y) for x in range(w) ]
 			for y in range(h)
 		]
-		self._default_renderer = BoardRenderer()
 
 
-	# TODO : faut pos, tuple et x, y
+	# TODO : faut pos, tuple et x, y. Bref : un Point.
 	def get_tile(self, x, y):
 		return self._tiles[y][x]
 
@@ -56,7 +55,7 @@ class Board():
 	# interne.
 
 
-	def iter(self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False, skip_lines=None, rect=None, poses=None):
+	def iter_osef(self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False, skip_lines=None, rect=None, poses=None):
 		if skip_lines is None:
 			skip_lines=lambda tile:False
 		pass
