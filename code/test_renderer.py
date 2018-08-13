@@ -35,7 +35,7 @@ def strip_multiline(multi_string):
 	# les strings d'une manière plus lisible.
 	return '\n'.join([
 		line.strip()
-		for line in multi_string.strip().split()
+		for line in multi_string.strip().split('\n')
 	])
 
 
