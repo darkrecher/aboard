@@ -157,8 +157,10 @@ class Point():
 	def as_dict(self):
 		return {'x': self.x, 'y': self.y }
 
-	# TODO : fonction __eq__
 
+	def __eq__(self, other):
+		point_other = Point(other)
+		return self.x == point_other.x and self.y == point_other.y
 
 
 # --- Adjacency operations ---

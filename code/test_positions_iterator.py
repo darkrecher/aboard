@@ -22,17 +22,16 @@ def test_jumps_and_dir_changes():
 	pos_iterator = PositionsIterator(positions)
 
 	for point in pos_iterator:
-		# TODO : va vraiment falloir faire un __eq__
-		if point.as_tuple() == (1, 2):
+		if point == (1, 2):
 			assert pos_iterator.jumped == True
 			assert pos_iterator.changed_direction == False
-		elif point.as_tuple() == (2, 4):
+		elif point == (2, 4):
 			assert pos_iterator.jumped == False
 			assert pos_iterator.changed_direction == True
-		elif point.as_tuple() == (5, 4):
+		elif point == (5, 4):
 			assert pos_iterator.jumped == True
 			assert pos_iterator.changed_direction == False
-		elif point.as_tuple() == (9, 0):
+		elif point == (9, 0):
 			assert pos_iterator.jumped == True
 			assert pos_iterator.changed_direction == True
 		else:

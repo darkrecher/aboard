@@ -68,8 +68,8 @@ def test_iteration_jumped_changed_directions():
 			(True, True): 'X',
 		}
 		jump_dir_marker = DICT_JUMP_DIR[ (
-			board_iterator.positions_iterator.jumped,
-			board_iterator.positions_iterator.changed_direction) ]
+			board_iterator.jumped,
+			board_iterator.changed_direction) ]
 		point.data = str(index) + jump_dir_marker
 
 	render_result = """

@@ -1,7 +1,10 @@
 # -*- coding: UTF-8 -*-
 
+from point import Point
 from tile import Tile
 from board_renderer import BoardRenderer
+from positions_iterator import PositionsIterator
+from board_iterator import BoardIterator
 
 
 class Board():
@@ -24,20 +27,39 @@ class Board():
 		]
 
 
-	# TODO : faut pos, tuple et x, y. Bref : un Point.
-	def get_tile(self, x, y):
-		return self._tiles[y][x]
+	def get_tile(self, *args, **kwargs):
+		point = Point(*args, **kwargs)
+		return self._tiles[point.y][point.x]
 
-	def __getitem__(self, get_param):
+
+	def __getitem__(self, *args):
+		try:
+			point = Point(*args)
+		except ValueError:
+			point = None
+
+		if point is not None:
+			return self._tiles[point.y][point.x]
+
 		# TODO
-		#print(get_param)
-		return get_param
+		print("TODO")
+		return args
 
 
 	def render(self, renderer=None):
 		if renderer is None:
 			renderer = self._default_renderer
 		return renderer.render(self)
+
+
+	def iter_pos(
+		self, *args, **kwargs):
+
+		pos_iter = PositionsIterator(*args, **kwargs)
+			#posis, step,
+			#tell_jumps, tell_direction_changes,
+			#sliding_window, continuous_sliding_window, adjacency)
+		return BoardIterator(self, pos_iter)
 
 	# WIP : comment on va faire des itérateurs sur ce bazar ?
 	# https://www.ibm.com/developerworks/library/l-pycon/
@@ -111,7 +133,7 @@ def main():
 	for x in window('azertyuiop', 3):
 		log(x)
 
-	b = Board()
+	b = Board(15, 15)
 	log(b[11])
 	log(b[11, 5])
 	log(b[11, ...])
@@ -120,6 +142,24 @@ def main():
 	log(b[11:18:2, 1:33:5])
 	log(b[11:, :33])
 	log(b[:, ::5])
+
+	log('Not End')
+
+	positions = [
+		(1, 2), (1, 3), (1, 4),
+		(2, 4), (3, 4), (5, 4), (6, 4),
+		(8, 1) ]
+
+	board = Board(10, 6)
+
+	for index, point in enumerate(board.iter_pos(positions, step=2)):
+		point.data = index
+
+	print(board.render())
+
+	print(board.get_tile(1, 4))
+	print(board.get_tile(1, 4).data)
+	print(board.get_tile(x=0, y=0).data)
 
 	log('End')
 

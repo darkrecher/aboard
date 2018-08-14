@@ -10,6 +10,10 @@ class Tile():
 		self.data = '.'
 
 
+	def __str__(self):
+		return '<Tile (%s, %s): %s>' % (self.x, self.y, self.data)
+
+
 	def render(self, w=1, h=1):
 		return str(self.data)[:w]
 

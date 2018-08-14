@@ -30,6 +30,9 @@ class PositionsIterator():
 		if sliding_window is not None or continuous_sliding_window is not None:
 			raise ValueError("TODO sliding_window continuous_sliding_window")
 
+		if tell_jumps or tell_direction_changes:
+			raise ValueError("TODO tell_jumps tell_direction_changes")
+
 		# FUTURE : posis peut contenir des ellipsis.
 		self.posis = tuple(posis)
 		self.step = step

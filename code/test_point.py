@@ -60,3 +60,17 @@ def test_str():
 	p = Point(23.9, 45.8)
 	assert str(p) == '<Point 23, 45 >'
 
+
+def test_eq():
+
+	p_1 = Point(34, 78)
+	p_2 = Point(35, 78)
+	p_3 = Point(34, 77)
+	p_4 = Point(34, 78)
+	p_5 = Point(0, 0)
+
+	assert p_1 == p_1
+	assert p_1 != p_2
+	assert p_1 != p_3
+	assert p_1 == p_4
+	assert p_1 != p_5
