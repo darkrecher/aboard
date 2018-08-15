@@ -39,6 +39,7 @@ class Board():
 			point = None
 
 		if point is not None:
+			# TODO : raiser une exception si l'une des coords est out of bounds.
 			return self._tiles[point.y][point.x]
 
 		# TODO

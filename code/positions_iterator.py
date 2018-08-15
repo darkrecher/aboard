@@ -51,7 +51,7 @@ class PositionsIterator():
 		self.changed_direction = False
 
 	#def pouet(
-	#	self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False,
+	#	self, sense='┌ ┐ └ ┘', tell_main_coord_change=False,
 	#	skip_lines=None, rect=None, poses=None,
 	#	sliding_window=None, continuous_sliding_window=None
 	#):
@@ -83,16 +83,71 @@ class PositionsIterator():
 		return self.current_point
 
 
-	def skip(self):
-		pass
+# TODO : dans un autre fichier ?
+from enum import Enum
+
+class Coord(Enum):
+	X = 0
+	Y = 1
 
 
-class Rect(PositionsIterator):
-	pass
+class RectIterator(PositionsIterator):
 	# Retenir la position au "début de la ligne".
 	# Une direction pour les mouvements normaux,
 	# Une pour le "cr_lf"
 	# Un moyen de savoir (en consultant le x ou le y) si on est au bout d'une ligne ou pas.
+
+	def __init__(self, slice_x, slice_y, main_coord=Coord.Y):
+		"""
+		main_coord = Coord.X ou Coord.Y. La coordonnée principale sur laquelle on itère.
+		Exemple : le sens de lecture (en alphabet latin), c'est : main_coord = Coord.Y
+		Parce qu'on fait varier le X (le Y ne change pas, c'est le principal),
+		puis on fait varier un peu le Y, et on fait revarier le X. Etc.
+		"""
+		slice_x = self.slice_x
+		slice_y = self.slice_y
+		main_coord = self.main_coord
+		self.iter_x = iter(range(slice_x.start, slice_x.stop, slice_x.step))
+		self.iter_y = iter(range(slice_y.start, slice_y.stop, slice_y.step))
+		self.must_init = True
+
+		if self.main_coord == Coord.X:
+			self.iter_main = self.iter_x
+			self.iter_sub = self.iter_y
+		elif self.main_coord == Coord.Y:
+			self.iter_main = self.iter_y
+			self.iter_sub = self.iter_x
+		else:
+			raise ValueError("main_coord doit valoir Coord.X ou Coord.Y")
+
+
+	def __iter__(self):
+		return self
+
+
+	def __next__(self):
+
+		if self.must_init:
+			x = next(self.iter_x)
+			y = next(self.iter_y)
+			self.current_point = Point(x, y)
+			self.start_prime_line = Point(x, y)
+			self.must_init = False
+			return current_point
+
+		try:
+			if main_coord == Coord.X:
+				y = next(self.iter_y)
+			else:
+				x = next(self.iter_x)
+		except StopIteration:
+			pass
+			# TODO : faut repartir à la ligne suivante.
+
+		if main_coord == Coord.X:
+			pass
+			# spaghetti ?
+
 
 
 # ----------------- tests des trucs en cours ------------------
