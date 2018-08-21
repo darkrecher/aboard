@@ -9,7 +9,7 @@ def test_simple_iteration():
 
 	for point_elem in PositionsIterator(positions):
 		check_elem = positions.pop(0)
-		assert point_elem.x == check_elem[0] and point_elem.y == check_elem[1]
+		assert point_elem == check_elem
 
 
 def test_jumps_and_dir_changes():
