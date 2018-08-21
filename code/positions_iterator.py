@@ -91,11 +91,16 @@ class Coord(Enum):
 	Y = 1
 
 
+def iter_from_slice(slice_):
+	start = slice_.start or 0
+	step = slice_.step or 1
+	return iter(range(start, slice_.stop, step))
+
 class RectIterator(PositionsIterator):
-	# Retenir la position au "début de la ligne".
-	# Une direction pour les mouvements normaux,
-	# Une pour le "cr_lf"
-	# Un moyen de savoir (en consultant le x ou le y) si on est au début d'une ligne ou pas.
+	# Retenir la position au "début de la ligne". (TODO : ou pas)
+	# TODO : Un moyen de savoir (en consultant le x ou le y) si on est au début d'une ligne ou pas.
+	# jumped et changed dir ne suffit pas. Si on itère sur un rect de 2*x, avec adj=diag,
+	# on aura des true tout le temps.
 
 	def __init__(self, slice_x, slice_y, main_coord=Coord.Y, adjacency=None):
 		"""
@@ -107,8 +112,8 @@ class RectIterator(PositionsIterator):
 		self.slice_x = slice_x
 		self.slice_y = slice_y
 		self.main_coord = main_coord
-		self.iter_x = iter(range(slice_x.start, slice_x.stop, slice_x.step))
-		self.iter_y = iter(range(slice_y.start, slice_y.stop, slice_y.step))
+		self.iter_x = iter_from_slice(slice_x)
+		self.iter_y = iter_from_slice(slice_y)
 		self.must_init = True
 
 		if self.main_coord == Coord.X:
@@ -149,31 +154,32 @@ class RectIterator(PositionsIterator):
 
 		try:
 			coord_sub = next(self.iter_sub)
-			# TODO crap
-			#if main_coord == Coord.X:
-			#	y = next(self.iter_y)
-			#else:
-			#	x = next(self.iter_x)
 			must_change_main = False
 		except StopIteration:
 			# Faut repartir à la "ligne" suivante.
 			must_change_main = True
 
 		if must_change_main:
+			# Attention c'est inversé, c'est normal. On réinitialise le sub.
 			if self.main_coord == Coord.X:
-				self.iter_x = iter(range(self.slice_x.start, self.slice_x.stop, self.slice_x.step))
+				self.iter_y = iter_from_slice(self.slice_y)
+				self.iter_sub = self.iter_y
 			else:
-				self.iter_y = iter(range(self.slice_y.start, self.slice_y.stop, self.slice_y.step))
+				self.iter_x = iter_from_slice(self.slice_x)
+				self.iter_sub = self.iter_x
 			x = next(self.iter_x)
 			y = next(self.iter_y)
 			self.current_point = Point(x, y)
 
 		else:
-			# Attention c'est inversé, c'est normal. On fait varier le sub.
+			# Attention c'est inversé aussi, c'est normal. On fait varier le sub.
 			if self.main_coord == Coord.X:
-				self.current_point.y = coord_sub
+				x = self.current_point.x
+				y = coord_sub
 			else:
-				self.current_point.x = coord_sub
+				x = coord_sub
+				y = self.current_point.y
+			self.current_point = Point(x, y)
 
 		# TODO : jumped et changed dir, à factoriser.
 		self.jumped = (
