@@ -4,7 +4,7 @@
 from aboard import Board
 from board_renderer import BoardRenderer
 from positions_iterator import PositionsIterator
-from board_iterator import BoardIterator
+from board_iterator import BoardPosIterator
 
 
 def strip_multiline(multi_string):
@@ -24,11 +24,11 @@ def test_simple_iteration():
 		(8, 1) ]
 
 	board = Board(10, 6)
-	board_iterator = BoardIterator(
+	board_pos_iterator = BoardPosIterator(
 		board,
 		PositionsIterator(positions))
 
-	for index, point in enumerate(board_iterator):
+	for index, point in enumerate(board_pos_iterator):
 		point.data = index
 
 	render_result = """
@@ -56,11 +56,11 @@ def test_iteration_jumped_changed_directions():
 		tile_padding_w=1, tile_padding_h=1,
 		chr_fill_tile='.')
 	board = Board(10, 6, default_renderer=my_board_renderer)
-	board_iterator = BoardIterator(
+	board_pos_iterator = BoardPosIterator(
 		board,
 		PositionsIterator(positions))
 
-	for index, point in enumerate(board_iterator):
+	for index, point in enumerate(board_pos_iterator):
 		DICT_JUMP_DIR = {
 			(False, False): '_',
 			(True, False): 'J',
@@ -68,8 +68,8 @@ def test_iteration_jumped_changed_directions():
 			(True, True): 'X',
 		}
 		jump_dir_marker = DICT_JUMP_DIR[ (
-			board_iterator.jumped,
-			board_iterator.changed_direction) ]
+			board_pos_iterator.jumped,
+			board_pos_iterator.changed_direction) ]
 		point.data = str(index) + jump_dir_marker
 
 	render_result = """

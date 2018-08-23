@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 
-class BoardIterator():
+class BoardPosIterator():
 
 	def __init__(self, board, positions_iterator):
 		self.board = board

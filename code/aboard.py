@@ -4,7 +4,7 @@ from point import Point
 from tile import Tile
 from board_renderer import BoardRenderer
 from positions_iterator import PositionsIterator
-from board_iterator import BoardIterator
+from board_iterator import BoardPosIterator
 
 
 class Board():
@@ -60,7 +60,7 @@ class Board():
 			#posis, step,
 			#tell_jumps, tell_direction_changes,
 			#sliding_window, continuous_sliding_window, adjacency)
-		return BoardIterator(self, pos_iter)
+		return BoardPosIterator(self, pos_iter)
 
 	# WIP : comment on va faire des itérateurs sur ce bazar ?
 	# https://www.ibm.com/developerworks/library/l-pycon/
