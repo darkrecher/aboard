@@ -7,7 +7,15 @@ from positions_iterator import PositionsIterator
 from board_iterator import BoardPosIterator
 
 
+class BoardIndexError(IndexError):
+	pass
+
+
 class Board():
+
+	# TODO : une fonction qui trouve un chemin passant par toutes les positions d'un
+	# ensemble donné. (Si c'est possible).
+	# Pour résoudre des problèmes "genre 4 elements".
 
 	# TODO : on devrait pouvoir spécifier juste une classe héritée de Tile. Sans lambda.
 	def __init__(
@@ -29,6 +37,17 @@ class Board():
 
 	def get_tile(self, *args, **kwargs):
 		point = Point(*args, **kwargs)
+
+		if any((
+			point.x < 0,
+			point.x >= self.w,
+			point.y < 0,
+			point.y >= self.h
+		)):
+			msg = "Coord not in board. coord : %s. board size : %s, %s."
+			data = (str(point), self.w, self.h)
+			raise BoardIndexError(msg % data)
+
 		return self._tiles[point.y][point.x]
 
 
@@ -161,6 +180,7 @@ def main():
 	print(board.get_tile(1, 4))
 	print(board.get_tile(1, 4).data)
 	print(board.get_tile(x=0, y=0).data)
+	print(board.get_tile(1, 6))
 
 	log('End')
 

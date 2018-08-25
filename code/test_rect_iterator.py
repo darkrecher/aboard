@@ -3,7 +3,7 @@
 from positions_iterator import RectIterator, Coord
 
 
-def test_simple_iteration_main_y():
+def test_simple_iteration_main_x():
 
 	slice_x = slice(1, 13, 3)
 	slice_y = slice(15, 135, 30)
@@ -23,7 +23,7 @@ def test_simple_iteration_main_y():
 	assert positions_check == []
 
 
-def test_simple_iteration_main_x():
+def test_simple_iteration_main_y():
 
 	slice_x = slice(1, 13, 3)
 	slice_y = slice(15, 135, 30)
@@ -35,7 +35,7 @@ def test_simple_iteration_main_x():
 		(10, 15), (10, 45), (10, 75), (10, 105),
 	]
 
-	for point_elem in RectIterator(slice_x, slice_y, Coord.X):
+	for point_elem in RectIterator(slice_x, slice_y, Coord.Y):
 		print(point_elem)
 		position_check = positions_check.pop(0)
 		assert point_elem == position_check

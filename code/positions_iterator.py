@@ -101,13 +101,14 @@ class RectIterator(PositionsIterator):
 	# TODO : Un moyen de savoir (en consultant le x ou le y) si on est au début d'une ligne ou pas.
 	# jumped et changed dir ne suffit pas. Si on itère sur un rect de 2*x, avec adj=diag,
 	# on aura des true tout le temps.
+	# TODO : passer une liste de coord en param, à la place de slices.
 
-	def __init__(self, slice_x, slice_y, main_coord=Coord.Y, adjacency=None):
+	def __init__(self, slice_x, slice_y, main_coord=Coord.X, adjacency=None):
 		"""
 		main_coord = Coord.X ou Coord.Y. La coordonnée principale sur laquelle on itère.
-		Exemple : le sens de lecture (en alphabet latin), c'est : main_coord = Coord.Y
-		Parce qu'on fait varier le X (le Y ne change pas, c'est le principal),
-		puis on fait varier un peu le Y, et on fait revarier le X. Etc.
+		Exemple : le sens de lecture (en alphabet latin), c'est : main_coord = Coord.X
+		Parce qu'on itère d'abord sur le X (la coordonnée principal),
+		puis on fait itère un peu le Y, et on re-itère sur le X. Etc.
 		"""
 		self.slice_x = slice_x
 		self.slice_y = slice_y
@@ -124,6 +125,8 @@ class RectIterator(PositionsIterator):
 			self.iter_sub = self.iter_x
 		else:
 			raise ValueError("main_coord doit valoir Coord.X ou Coord.Y")
+
+		self.changed_sub_coord = "TODO"
 
 		# TODO : à factoriser, ou pas.
 		self.is_adjacent = adjacency or is_adjacent
@@ -153,32 +156,30 @@ class RectIterator(PositionsIterator):
 		self.prev_point = self.current_point
 
 		try:
-			coord_sub = next(self.iter_sub)
+			coord_main = next(self.iter_main)
 			must_change_main = False
 		except StopIteration:
 			# Faut repartir à la "ligne" suivante.
 			must_change_main = True
 
 		if must_change_main:
-			# Attention c'est inversé, c'est normal. On réinitialise le sub.
 			if self.main_coord == Coord.X:
-				self.iter_y = iter_from_slice(self.slice_y)
-				self.iter_sub = self.iter_y
-			else:
 				self.iter_x = iter_from_slice(self.slice_x)
-				self.iter_sub = self.iter_x
+				self.iter_main = self.iter_x
+			else:
+				self.iter_y = iter_from_slice(self.slice_y)
+				self.iter_main = self.iter_y
 			x = next(self.iter_x)
 			y = next(self.iter_y)
 			self.current_point = Point(x, y)
 
 		else:
-			# Attention c'est inversé aussi, c'est normal. On fait varier le sub.
 			if self.main_coord == Coord.X:
-				x = self.current_point.x
-				y = coord_sub
-			else:
-				x = coord_sub
+				x = coord_main
 				y = self.current_point.y
+			else:
+				x = self.current_point.x
+				y = coord_main
 			self.current_point = Point(x, y)
 
 		# TODO : jumped et changed dir, à factoriser.
