@@ -126,7 +126,8 @@ class RectIterator(PositionsIterator):
 		else:
 			raise ValueError("main_coord doit valoir Coord.X ou Coord.Y")
 
-		self.changed_sub_coord = "TODO"
+		self._update_col_line_modification(None)
+		self.nb_sub_coord_to_skip = 0
 
 		# TODO : à factoriser, ou pas.
 		self.is_adjacent = adjacency or is_adjacent
@@ -135,6 +136,38 @@ class RectIterator(PositionsIterator):
 		self.prev_prev_point = None
 		self.jumped = True
 		self.changed_direction = False
+
+
+	def skip_sub_coord(self):
+		self.nb_sub_coord_to_skip += 1
+
+
+	def skip_line(self):
+		self.skip_sub_coord()
+
+
+	def skip_col(self):
+		self.skip_sub_coord()
+
+
+	def _apply_skip_sub_coord(self):
+		# TODO : à factoriser avec ce qu'il y a dans __next__.
+		if self.main_coord == Coord.X:
+			self.iter_x = iter_from_slice(self.slice_x)
+			self.iter_main = self.iter_x
+		else:
+			self.iter_y = iter_from_slice(self.slice_y)
+			self.iter_main = self.iter_y
+
+		x = next(self.iter_x)
+		y = next(self.iter_y)
+		self.current_point = Point(x, y)
+
+
+	def _update_col_line_modification(self, new_val):
+		self.changed_sub_coord = new_val
+		self.changed_line = new_val
+		self.changed_col = new_val
 
 
 	def __iter__(self):
@@ -148,6 +181,7 @@ class RectIterator(PositionsIterator):
 			y = next(self.iter_y)
 			self.current_point = Point(x, y)
 			self.start_of_main = Point(x, y) # TODO : On aura peut-être jamais besoin de ça
+			self._update_col_line_modification(True)
 			self.must_init = False
 			return self.current_point
 
@@ -155,25 +189,38 @@ class RectIterator(PositionsIterator):
 		self.prev_prev_point = self.prev_point
 		self.prev_point = self.current_point
 
-		try:
-			coord_main = next(self.iter_main)
-			must_change_main = False
-		except StopIteration:
-			# Faut repartir à la "ligne" suivante.
-			must_change_main = True
+		if self.nb_sub_coord_to_skip:
+			for _ in range(self.nb_sub_coord_to_skip):
+				self._apply_skip_sub_coord()
+			self.nb_sub_coord_to_skip = 0
+			self._update_col_line_modification(True)
+			# TODO : le flow est poucrave. À améliorer.
+			return self.current_point
+		else:
+			try:
+				coord_main = next(self.iter_main)
+				must_change_sub = False
+			except StopIteration:
+				# Faut repartir à la "ligne" suivante.
+				must_change_sub = True
 
-		if must_change_main:
+		self._update_col_line_modification(must_change_sub)
+
+		if must_change_sub:
+
 			if self.main_coord == Coord.X:
 				self.iter_x = iter_from_slice(self.slice_x)
 				self.iter_main = self.iter_x
 			else:
 				self.iter_y = iter_from_slice(self.slice_y)
 				self.iter_main = self.iter_y
+
 			x = next(self.iter_x)
 			y = next(self.iter_y)
 			self.current_point = Point(x, y)
 
 		else:
+
 			if self.main_coord == Coord.X:
 				x = coord_main
 				y = self.current_point.y

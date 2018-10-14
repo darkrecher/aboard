@@ -43,7 +43,7 @@ def test_simple_iteration_main_y():
 	assert positions_check == []
 
 
-def test_jumps_and_dir_changes_1():
+def test_jumps_and_dir_changes():
 
 	slice_x = slice(5)
 	slice_y = slice(3)
@@ -54,18 +54,31 @@ def test_jumps_and_dir_changes_1():
 		if point_elem == (0, 0):
 			assert rect_iter.jumped == True
 			assert rect_iter.changed_direction == False
+			assert rect_iter.changed_line == True
 		elif point_elem == (1, 0):
 			assert rect_iter.jumped == False
 			assert rect_iter.changed_direction == False
+			assert rect_iter.changed_line == False
 		elif point_elem.x == 0:
 			assert rect_iter.jumped == True
 			assert rect_iter.changed_direction == True
+			assert rect_iter.changed_line == True
 		elif point_elem.x == 1:
 			assert rect_iter.jumped == False
 			assert rect_iter.changed_direction == True
+			assert rect_iter.changed_line == False
 		else:
 			assert rect_iter.jumped == False
 			assert rect_iter.changed_direction == False
+			assert rect_iter.changed_line == False
 
 
+def test_skip_lines():
 
+	slice_x = slice(5)
+	slice_y = slice(3)
+	rect_iter = RectIterator(slice_x, slice_y)
+	# TODO : si on fait skip_line ici ça va foirer, car il manque un bout de code.
+
+	for point_elem in rect_iter:
+		pass

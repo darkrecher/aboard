@@ -47,6 +47,8 @@ class BoardRectIterator():
 		self.jumped = self.rect_iterator.jumped
 		self.changed_direction = self.rect_iterator.changed_direction
 		self.changed_sub_coord = self.rect_iterator.changed_sub_coord
+		self.changed_line = self.rect_iterator.changed_line
+		self.changed_col = self.rect_iterator.changed_col
 
 		return self.board.get_tile(current_point.x, current_point.y)
 
