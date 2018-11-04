@@ -3,8 +3,7 @@
 
 from aboard import Board
 from board_renderer import BoardRenderer
-from positions_iterator import RectIterator, Coord
-from board_iterator import BoardRectIterator
+from positions_iterator import BoardIteratorRect, Coord
 
 
 def strip_multiline(multi_string):
@@ -19,12 +18,10 @@ def strip_multiline(multi_string):
 def test_simple_iteration():
 
 	board = Board(12, 6)
-	board_rect_iterator = BoardRectIterator(
-		board,
-		RectIterator(slice(3, 7), slice(1, 7, 2)))
+	board_iter_rect = BoardIteratorRect(board, slice(3, 7), slice(1, 7, 2))
 
-	for index, point in enumerate(board_rect_iterator):
-		point.data = index
+	for index, tile in enumerate(board_iter_rect):
+		tile.data = index
 
 	render_result = """
 
@@ -42,12 +39,14 @@ def test_simple_iteration():
 def test_iteration_rotated_and_reversed():
 
 	board = Board(12, 6)
-	board_rect_iterator = BoardRectIterator(
+	board_iter_rect = BoardIteratorRect(
 		board,
-		RectIterator(slice(5, 1, -1), slice(None, 2, None), Coord.Y))
+		slice(5, 1, -1),
+		slice(None, 2, None),
+		Coord.Y)
 
-	for index, point in enumerate(board_rect_iterator):
-		point.data = index
+	for index, tile in enumerate(board_iter_rect):
+		tile.data = index
 
 	render_result = """
 

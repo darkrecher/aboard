@@ -3,10 +3,9 @@
 import point
 from tile import Tile
 from board_renderer import BoardRenderer
-from positions_iterator import PositionsIterator
-from board_iterator import BoardPosIterator
 
 Point = point.Point
+
 
 class BoardIndexError(IndexError):
 	pass
@@ -24,14 +23,14 @@ class Board():
 		w=1, h=1,
 		tile_generator=lambda x, y: Tile(x, y),
 		default_renderer=BoardRenderer(),
-		adjacency=None,
+		is_adjacent=None,
 	):
 		self.w = w
 		self.h = h
 		self._default_renderer = default_renderer
-		self.adjacency = adjacency
-		if self.adjacency is None:
-			self.adjacency = point.default_adjacency
+		self.is_adjacent = is_adjacent
+		if self.is_adjacent is None:
+			self.is_adjacent = point.is_adjacent
 
 		self._tiles = [
 			[ tile_generator(x, y) for x in range(w) ]
@@ -76,14 +75,15 @@ class Board():
 		return renderer.render(self)
 
 
-	def iter_pos(
-		self, *args, **kwargs):
-
-		pos_iter = PositionsIterator(*args, **kwargs)
-			#posis, step,
-			#tell_jumps, tell_direction_changes,
-			#sliding_window, continuous_sliding_window, adjacency)
-		return BoardPosIterator(self, pos_iter)
+	# TODO : useless ???
+	#def iter_pos(
+	#	self, *args, **kwargs):
+	#
+	#	pos_iter = PositionsIterator(*args, **kwargs)
+	#		#posis, step,
+	#		#tell_jumps, tell_direction_changes,
+	#		#sliding_window, continuous_sliding_window, adjacency)
+	#	return BoardPosIterator(self, pos_iter)
 
 	# WIP : comment on va faire des itérateurs sur ce bazar ?
 	# https://www.ibm.com/developerworks/library/l-pycon/
