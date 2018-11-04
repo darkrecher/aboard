@@ -107,7 +107,7 @@ class RectIterator(PositionsIterator):
 		"""
 		main_coord = Coord.X ou Coord.Y. La coordonnée principale sur laquelle on itère.
 		Exemple : le sens de lecture (en alphabet latin), c'est : main_coord = Coord.X
-		Parce qu'on itère d'abord sur le X (la coordonnée principal),
+		Parce qu'on itère d'abord sur le X (la coordonnée principale),
 		puis on itère un peu le Y, et on re-itère sur le X. Etc.
 		"""
 		self.slice_x = slice_x

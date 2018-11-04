@@ -1,11 +1,12 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point
+import point
 from tile import Tile
 from board_renderer import BoardRenderer
 from positions_iterator import PositionsIterator
 from board_iterator import BoardPosIterator
 
+Point = point.Point
 
 class BoardIndexError(IndexError):
 	pass
@@ -23,11 +24,14 @@ class Board():
 		w=1, h=1,
 		tile_generator=lambda x, y: Tile(x, y),
 		default_renderer=BoardRenderer(),
+		adjacency=None,
 	):
-
 		self.w = w
 		self.h = h
 		self._default_renderer = default_renderer
+		self.adjacency = adjacency
+		if self.adjacency is None:
+			self.adjacency = point.default_adjacency
 
 		self._tiles = [
 			[ tile_generator(x, y) for x in range(w) ]
