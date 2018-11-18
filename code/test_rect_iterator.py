@@ -83,17 +83,3 @@ def test_jumps_and_dir_changes():
 			assert rect_iter.changed_direction == False
 			assert rect_iter.both_coord_changed == False
 
-
-def test_skip_lines():
-
-	# TODO
-	assert False
-
-	slice_x = slice(5)
-	slice_y = slice(3)
-	rect_iter = RectIterator(slice_x, slice_y)
-	# TODO : il faut vérifier qu'on puisse faire un skip_line dès le départ. Même si on n'a pas commencé d'itérer.
-
-
-	for point_elem in rect_iter:
-		pass

@@ -36,6 +36,26 @@ def test_simple_iteration():
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
+def test_iteration_all_board():
+
+	board = Board(4, 5)
+	board_iter_rect = BoardIteratorRect(board)
+
+	for index, tile in enumerate(board_iter_rect):
+		tile.data = chr(index+ord('A'))
+
+	render_result = """
+
+		ABCD
+		EFGH
+		IJKL
+		MNOP
+		QRST
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
 def test_iteration_rotated_and_reversed():
 
 	board = Board(12, 6)
@@ -59,3 +79,26 @@ def test_iteration_rotated_and_reversed():
 
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_skip_lines():
+
+	board = Board(10, 4)
+	board_iter_rect = BoardIteratorRect(board)
+
+	for index, tile in enumerate(board_iter_rect):
+		char_data = chr(index+ord('A'))
+		if char_data in ('D', 'V', 'Z'):
+			board_iter_rect.skip_line()
+		tile.data = char_data
+
+	render_result = """
+
+		ABCD......
+		EFGHIJKLMN
+		OPQRSTUV..
+		WXYZ......
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+

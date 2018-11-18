@@ -100,16 +100,14 @@ class Coord(Enum):
 	Y = 1
 
 
-def iter_from_slice(slice_):
-	start = slice_.start or 0
-	step = slice_.step or 1
-	return iter(range(start, slice_.stop, step))
-
-
 class BoardIteratorRect(BoardIteratorBase):
 	# TODO : passer une liste de coord en param, à la place de slices.
 
-	def __init__(self, board, slice_x, slice_y, id_coord_main=Coord.X):
+	def __init__(
+		self, board,
+		slice_x=slice(None, None, None), slice_y=slice(None, None, None),
+		id_coord_main=Coord.X
+	):
 		"""
 		id_coord_main = Coord.X ou Coord.Y. La coordonnée principale sur laquelle on itère.
 		Exemple : le sens de lecture (en alphabet latin), c'est : id_coord_main = Coord.X
@@ -121,8 +119,8 @@ class BoardIteratorRect(BoardIteratorBase):
 		self.slice_y = slice_y
 		self.id_coord_main = id_coord_main
 		self.val_coord_sub = None
-		self.iter_x = iter_from_slice(slice_x)
-		self.iter_y = iter_from_slice(slice_y)
+		self.iter_x = self._iter_from_slice_x()
+		self.iter_y = self._iter_from_slice_y()
 		self.nb_sub_coord_to_skip = 1
 
 		if self.id_coord_main == Coord.X:
@@ -135,6 +133,20 @@ class BoardIteratorRect(BoardIteratorBase):
 			raise ValueError("id_coord_main doit valoir Coord.X ou Coord.Y")
 
 		self._update_col_line_modification(None)
+
+
+	def _iter_from_slice_x(self):
+		start = self.slice_x.start or 0
+		stop = self.slice_x.stop or self.board.w
+		step = self.slice_x.step or 1
+		return iter(range(start, stop, step))
+
+
+	def _iter_from_slice_y(self):
+		start = self.slice_y.start or 0
+		stop = self.slice_y.stop or self.board.h
+		step = self.slice_y.step or 1
+		return iter(range(start, stop, step))
 
 
 	def skip_sub_coord(self):
@@ -152,10 +164,10 @@ class BoardIteratorRect(BoardIteratorBase):
 	def _apply_skip_sub_coord(self):
 
 		if self.id_coord_main == Coord.X:
-			self.iter_x = iter_from_slice(self.slice_x)
+			self.iter_x = self._iter_from_slice_x()
 			self.iter_main = self.iter_x
 		else:
-			self.iter_y = iter_from_slice(self.slice_y)
+			self.iter_y = self._iter_from_slice_y()
 			self.iter_main = self.iter_y
 
 		self.val_coord_sub = next(self.iter_sub)
@@ -169,16 +181,6 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 	def __next__(self):
-
-		# TODO : crap
-		#if self.must_init:
-		#	x = next(self.iter_x)
-		#	y = next(self.iter_y)
-		#	self.current_point = Point(x, y)
-		#	self.start_of_main = Point(x, y) # TODO : On aura peut-être jamais besoin de ça
-		#	self._update_col_line_modification(True)
-		#	self.must_init = False
-		#	return self.current_point
 
 		while self.nb_sub_coord_to_skip:
 			self._apply_skip_sub_coord()

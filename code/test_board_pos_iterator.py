@@ -41,6 +41,46 @@ def test_simple_iteration():
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
+def test_both_coord_changed():
+
+	positions = [
+		(0, 0), (0, 2), (2, 2),
+		(1, 1), (1, 0),
+		(3, 3), (0, 3) ]
+
+	my_board_renderer = BoardRenderer(
+		tile_w=2,
+		tile_padding_w=1, tile_padding_h=1,
+		chr_fill_tile='.')
+	board = Board(4, 5, default_renderer=my_board_renderer)
+	board_iter_positions = BoardIteratorPositions(board, positions)
+
+	for index, tile in enumerate(board_iter_positions):
+		DICT_MARKERS = {
+			False: '_',
+			True: 'B',
+		}
+		both_coord_marker = DICT_MARKERS[board_iter_positions.both_coord_changed]
+		tile.data = str(index) + both_coord_marker
+
+	# Pour la toute première itération, both_coord_changed est à True.
+	# On considère que le curseur passe de (rien, rien) à (0, 0), et que les deux coords changent.
+	render_result = """
+
+		0B 4_ .. ..
+
+		.. 3B .. ..
+
+		1_ .. 2_ ..
+
+		6_ .. .. 5B
+
+		.. .. .. ..
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
 def test_iteration_jumped_changed_directions():
 
 	positions = [
@@ -85,8 +125,3 @@ def test_iteration_jumped_changed_directions():
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
-
-def test_both_coord_changed():
-
-	# TODO
-	assert False
