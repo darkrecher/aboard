@@ -6,7 +6,7 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
    pour les windows : https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator#6822773
  X Par contre, itérer sur les positions, et sur-itérer sur le board, c'est stupide. Tous les itérateurs ont un board dans leur variable membre. Arrêtons d'être stupide.
  X Tous les TODO de factorisation dans le RectIterator
- - Sur les itérateurs : ajouter une variable de flag : `both_coords_changed`. C'est ce flag qui permet à coup sûr de savoir qu'on est "allé à la ligne" avec un RectIterator. Mais le flag est valable pour tous les types d'itérateurs. (C'est fait, mais faut le tester entièrement).
+ X Sur les itérateurs : ajouter une variable de flag : `both_coords_changed`. C'est ce flag qui permet à coup sûr de savoir qu'on est "allé à la ligne" avec un RectIterator. Mais le flag est valable pour tous les types d'itérateurs. (C'est fait, mais faut le tester entièrement).
  X adjacency est une classe. on instancie l'adjacency par défaut. chaque board a la sienne (mais ça peut être une référence vers toujours la même classe).
  - adjacence "torique", avec une size globale : x = size.x-1 est adjacent à x = 0. adjacence torique avec diagonale.
  - Ranger le code. Tous les tests dans un répertoire. Tout le code dans un répertoire `aboard`. Un main à la racine, un test à la racine. (En espérant que ce soit faisable).

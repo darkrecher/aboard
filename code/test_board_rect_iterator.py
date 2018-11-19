@@ -102,3 +102,33 @@ def test_skip_lines():
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
+
+def test_both_coord_changed_on_rect_iter():
+
+       my_board_renderer = BoardRenderer(
+               tile_w=2,
+               tile_padding_w=1, tile_padding_h=1,
+               chr_fill_tile='.')
+       board = Board(2, 4, default_renderer=my_board_renderer)
+       board_iter_rect = BoardIteratorRect(board)
+
+       for index, tile in enumerate(board_iter_rect):
+               DICT_MARKERS = {
+                       False: '_',
+                       True: 'B',
+               }
+               both_coord_marker = DICT_MARKERS[board_iter_rect.both_coord_changed]
+               tile.data = str(index) + both_coord_marker
+
+       render_result = """
+
+               0B 1_
+
+               2B 3_
+
+               4B 5_
+
+               6B 7_
+
+       """
+       assert strip_multiline(board.render()) == strip_multiline(render_result)
