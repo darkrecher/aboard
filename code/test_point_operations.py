@@ -1,66 +1,76 @@
 # -*- coding: UTF-8 -*-
 
-from point import (
-	Point, Dir,
-	is_adjacent_cross, is_adjacent_diag, set_default_adjacency, is_adjacent,
-	dir_from_str, compute_direction,
-)
+from point import Point, Dir, dir_from_str, compute_direction
+
+from adjacency import (
+	AdjacencyEvaluatorCross, AdjacencyEvaluatorCrossDiag,
+	set_default_adjacency)
+
+from aboard import Board
 
 
 def test_adj_cross():
 
+	simple_board = Board(10, 10, class_adjacency=AdjacencyEvaluatorCross)
+
 	p1 = Point(5, 5)
 	p2 = Point(6, 5)
 	p3 = Point(4, 4)
 
 	# same :
-	assert is_adjacent_cross(p1, p1) == False
+	assert simple_board.is_adjacent(p1, p1) == False
 	# cross :
-	assert is_adjacent_cross(p1, p2) == True
+	assert simple_board.is_adjacent(p1, p2) == True
 	# diag :
-	assert is_adjacent_cross(p1, p3) == False
+	assert simple_board.is_adjacent(p1, p3) == False
 	# none :
-	assert is_adjacent_cross(p2, p3) == False
+	assert simple_board.is_adjacent(p2, p3) == False
 
 
 def test_adj_diag():
 
+	simple_board = Board(10, 10, class_adjacency=AdjacencyEvaluatorCrossDiag)
+
 	p1 = Point(5, 5)
 	p2 = Point(6, 5)
 	p3 = Point(4, 4)
 
 	# same :
-	assert is_adjacent_diag(p1, p1) == False
+	assert simple_board.is_adjacent(p1, p1) == False
 	# cross :
-	assert is_adjacent_diag(p1, p2) == True
+	assert simple_board.is_adjacent(p1, p2) == True
 	# diag :
-	assert is_adjacent_diag(p1, p3) == True
+	assert simple_board.is_adjacent(p1, p3) == True
 	# none :
-	assert is_adjacent_diag(p2, p3) == False
+	assert simple_board.is_adjacent(p2, p3) == False
 
 
 def test_adj_default():
+
+	board_adj_default_cross = Board(10, 10)
 
 	p1 = Point(5, 5)
 	p2 = Point(6, 5)
 	p3 = Point(4, 4)
 
 	# cross:
-	assert is_adjacent(p1, p2) == True
+	assert board_adj_default_cross.is_adjacent(p1, p2) == True
 	# diag :
-	assert is_adjacent(p1, p3) == False
+	assert board_adj_default_cross.is_adjacent(p1, p3) == False
 
-	set_default_adjacency(is_adjacent_cross)
+	set_default_adjacency(AdjacencyEvaluatorCross)
+	board_adj_default_cross_2 = Board(10, 10)
 	# cross:
-	assert is_adjacent(p1, p2) == True
+	assert board_adj_default_cross_2.is_adjacent(p1, p2) == True
 	# diag :
-	assert is_adjacent(p1, p3) == False
+	assert board_adj_default_cross_2.is_adjacent(p1, p3) == False
 
-	set_default_adjacency(is_adjacent_diag)
+	set_default_adjacency(AdjacencyEvaluatorCrossDiag)
+	board_adj_default_cross_diag = Board(10, 10)
 	# cross:
-	assert is_adjacent(p1, p2) == True
+	assert board_adj_default_cross_diag.is_adjacent(p1, p2) == True
 	# diag :
-	assert is_adjacent(p1, p3) == True
+	assert board_adj_default_cross_diag.is_adjacent(p1, p3) == True
 
 
 def test_directions_equivalence():

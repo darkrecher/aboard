@@ -163,39 +163,6 @@ class Point():
 		return self.x == point_other.x and self.y == point_other.y
 
 
-# --- Adjacency operations ---
-
-def is_adjacent_cross(point_1, point_2):
-	if point_1.x == point_2.x:
-		return point_1.y-point_2.y in (-1, 1)
-	if point_1.y == point_2.y:
-		return point_1.x-point_2.x in (-1, 1)
-	return False
-
-
-def is_adjacent_diag(point_1, point_2):
-	abs_diff_x = abs(point_1.x-point_2.x)
-	abs_diff_y = abs(point_1.y-point_2.y)
-	return (
-		(abs_diff_x, abs_diff_y) != (0, 0)
-		and abs_diff_x <= 1
-		and abs_diff_y <= 1
-	)
-
-
-default_adjacency=is_adjacent_cross
-
-
-def set_default_adjacency(new_default_adjacency):
-	global default_adjacency
-	default_adjacency = new_default_adjacency
-
-
-def is_adjacent(point_1, point_2):
-	return default_adjacency(point_1, point_2)
-
-
-
 # --- Direction operations ---
 
 def cmp(a, b):

@@ -1,9 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from point import (
-	Point, Direction,
-	is_adjacent, compute_direction,
-)
+from point import Point, Direction, compute_direction
 
 
 class BoardIteratorBase():
@@ -27,6 +24,7 @@ class BoardIteratorBase():
 		self.changed_direction = False
 		self.both_coord_changed = True
 
+	# TODO crap.
 	#def pouet(
 	#	self, sense='┌ ┐ └ ┘', tell_main_coord_change=False,
 	#	skip_lines=None, rect=None, poses=None,

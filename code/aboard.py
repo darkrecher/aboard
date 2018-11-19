@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import point
+import adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
 
@@ -23,14 +24,17 @@ class Board():
 		w=1, h=1,
 		tile_generator=lambda x, y: Tile(x, y),
 		default_renderer=BoardRenderer(),
-		is_adjacent=None,
+		class_adjacency=None,
 	):
 		self.w = w
 		self.h = h
 		self._default_renderer = default_renderer
-		self.is_adjacent = is_adjacent
-		if self.is_adjacent is None:
-			self.is_adjacent = point.is_adjacent
+		self.class_adjacency = (
+			class_adjacency if class_adjacency is not None
+			else adjacency.class_default_adjacency)
+		print(self.class_adjacency)
+		self.adjacency = self.class_adjacency(self)
+		self.is_adjacent = self.adjacency.is_adjacent
 
 		self._tiles = [
 			[ tile_generator(x, y) for x in range(w) ]
