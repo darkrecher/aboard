@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 
+from point import Point
 from aboard import Board
 from board_renderer import BoardRenderer
 from positions_iterator import BoardIteratorPositions
@@ -8,14 +9,30 @@ from positions_iterator import BoardIteratorPositions
 
 def strip_multiline(multi_string):
 	# J'ai besoin de cette fonction juste pour pouvoir présenter
-	# les strings d'une manière plus lisible.
+	# plus lisiblement les strings des résultats attendus.
 	return '\n'.join([
 		line.strip()
 		for line in multi_string.strip().split('\n')
 	])
 
 
-def test_simple_iteration():
+def test_simple_iteration_check_pos():
+
+	board = Board(20, 20)
+	positions = [ (1, 2), (3, 4), (5, 6), (7, 8) ]
+	check_positions = list(positions)
+
+	for tile in BoardIteratorPositions(board, positions):
+		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
+		point = Point(tile.x, tile.y)
+		print(point)
+		check_pos = check_positions.pop(0)
+		assert point == check_pos
+
+	assert check_positions == []
+
+
+def test_simple_iteration_render():
 
 	positions = [
 		(1, 2), (1, 3), (1, 4),
@@ -41,7 +58,7 @@ def test_simple_iteration():
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
-def test_both_coord_changed():
+def test_both_coord_changed_render():
 
 	positions = [
 		(0, 0), (0, 2), (2, 2),
@@ -81,7 +98,37 @@ def test_both_coord_changed():
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
-def test_iteration_jumped_changed_directions():
+def test_jump_and_dir_change_check_indic():
+
+	board = Board(20, 20)
+	positions = [
+		(1, 2), (1, 3), (1, 4),
+		(2, 4), (3, 4), (5, 4), (6, 4),
+		(9, 0) ]
+
+	pos_iterator = BoardIteratorPositions(board, positions)
+
+	for tile in pos_iterator:
+		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
+		point = Point(tile.x, tile.y)
+		if point == (1, 2):
+			assert pos_iterator.jumped == True
+			assert pos_iterator.changed_direction == False
+		elif point == (2, 4):
+			assert pos_iterator.jumped == False
+			assert pos_iterator.changed_direction == True
+		elif point == (5, 4):
+			assert pos_iterator.jumped == True
+			assert pos_iterator.changed_direction == False
+		elif point == (9, 0):
+			assert pos_iterator.jumped == True
+			assert pos_iterator.changed_direction == True
+		else:
+			assert pos_iterator.jumped == False
+			assert pos_iterator.changed_direction == False
+
+
+def test_jump_and_dir_change_render():
 
 	positions = [
 		(1, 2), (1, 3), (1, 4),

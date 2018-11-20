@@ -3,36 +3,9 @@
 from aboard import Tile, Board, BoardRenderer
 
 
-def test_basic_board():
-	board = Board()
-	assert board.render() == '.'
-
-
-def test_sized_board():
-	board = Board(8, 2)
-	# 2 lignes, constituées de 8 points chacune.
-	# Un saut de ligne entre les deux, mais pas à la fin.
-	assert board.render() == '........\n........'
-
-
-class MyTileTellCoords(Tile):
-
-	def render(self, w=1, h=1):
-		if (w, h) == (1, 1):
-			return hex(self.x * self.y)[2:].upper()
-		else:
-			return [
-				'',
-				'_' + str(self.x) + ',' + str(self.y),
-				# Attention, ici on ne met pas une string, mais un int.
-				# C'est fait exprès. Et ça doit quand même fonctionner.
-				self.x * self.y
-			]
-
-
 def strip_multiline(multi_string):
 	# J'ai besoin de cette fonction juste pour pouvoir présenter
-	# les strings d'une manière plus lisible.
+	# plus lisiblement les strings des résultats attendus.
 	return '\n'.join([
 		line.strip()
 		for line in multi_string.strip().split('\n')
@@ -47,8 +20,25 @@ def test_multiline_stripper():
 	assert strip_multiline(multi_string) == 'abcd\n1234567'
 
 
+def test_basic_board():
+	board = Board()
+	assert board.render() == '.'
+
+
+def test_sized_board():
+	board = Board(8, 2)
+	# 2 lignes, constituées de 8 points chacune.
+	# Un saut de ligne entre les deux, mais pas à la fin.
+	assert board.render() == '........\n........'
+
+
 def test_basic_renderer():
-	board = Board(7, 4, lambda x, y: MyTileTellCoords(x, y))
+
+	class MyTileTellCoordsShort(Tile):
+		def render(self, w=1, h=1):
+			return hex(self.x * self.y)[2:].upper()
+
+	board = Board(7, 4, lambda x, y: MyTileTellCoordsShort(x, y))
 	render_result = """
 
 	0000000
@@ -61,12 +51,23 @@ def test_basic_renderer():
 
 
 def test_padded_renderer():
+
+	class MyTileTellCoordsLong(Tile):
+		def render(self, w=1, h=1):
+			return [
+				'',
+				'_' + str(self.x) + ',' + str(self.y),
+				# Attention, ici on ne met pas une string, mais un int.
+				# C'est fait exprès. Et ça doit quand même fonctionner.
+				self.x * self.y
+			]
+
 	my_board_renderer = BoardRenderer(
 		tile_w=5, tile_h=4,
 		tile_padding_w=3, tile_padding_h=2,
 		chr_fill_tile='.', chr_fill_tile_padding='#',
 	)
-	board = Board(7, 4, lambda x, y: MyTileTellCoords(x, y))
+	board = Board(7, 4, lambda x, y: MyTileTellCoordsLong(x, y))
 	render_result = """
 
 	.....###.....###.....###.....###.....###.....###.....

@@ -1,12 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-"""
-Pour lancer les tests, il faut exécuter dans la console :
-py.test
-Si ça ne marche pas :
-python -m py.test
-Il faut avoir préalablement installé, avec "pip install pytest"
-"""
 
 from tile import Tile
 
