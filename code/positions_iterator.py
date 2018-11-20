@@ -63,9 +63,50 @@ class BoardIteratorBase():
 
 	def __next__(self):
 		"""
-		Il faut définir le nouveau point, et appeler self._update_indicators().
+		Il faut définir le nouveau point, appeler self._update_indicators(),
+		et renvoyer la tile correspondante.
 		"""
 		raise NotImplemented
+
+
+	def sur_iter(self):
+		return SurIteratorTellIndicators(self)
+
+
+
+class SurIteratorTellIndicators():
+
+	def __init__(self, board_iterator):
+		self.board_iterator = board_iterator
+
+	def __iter__(self):
+		return self
+
+	def __next__(self):
+		next_tile = next(self.board_iterator)
+		return self.board_iterator.both_coord_changed, next_tile
+
+"""
+TODO WIP test
+
+from positions_iterator import *
+from aboard import *
+a = Board(3, 2)
+
+#iter_rect = BoardIteratorRect(a)
+#sur_iter = SurIteratorTellIndicators(iter_rect)
+
+for both_coord_changed, tile in BoardIteratorRect(a).sur_iter():
+	print(both_coord_changed, tile)
+
+# Ça marche
+
+"""
+
+# autre sur_itérateur : emmagasiner toutes les tiles, jusqu'à répondre à une certaine condition.
+# Quand ça arrive, ressortir les tiles emmagasinées, et ainsi de suite.
+# (On les ressort sous forme d'un itérateur, ou d'une liste ?)
+# La "certaine condition", ce serait both_coord_changed. Mais on peut mettre autre chose, une lambda, etc.
 
 
 class BoardIteratorPositions(BoardIteratorBase):

@@ -29,10 +29,11 @@ class Board():
 		self.w = w
 		self.h = h
 		self._default_renderer = default_renderer
+
 		self.class_adjacency = (
 			class_adjacency if class_adjacency is not None
 			else adjacency.class_default_adjacency)
-		print(self.class_adjacency)
+
 		self.adjacency = self.class_adjacency(self)
 		self.is_adjacent = self.adjacency.is_adjacent
 
