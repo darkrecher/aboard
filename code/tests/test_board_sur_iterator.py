@@ -1,5 +1,6 @@
-from positions_iterator import BoardIteratorRect, BoardIteratorPositions
+from point import Point
 from aboard import Board
+from positions_iterator import BoardIteratorRect, BoardIteratorPositions, ItInd
 
 
 def test_sur_iter_tell_both_coord_changed():
@@ -15,8 +16,13 @@ def test_sur_iter_tell_both_coord_changed():
 
 def test_sur_iter_tell_everything():
 
-	# TODO
-	assert False
+	itind_everything = (
+		ItInd.PREV_POINT,
+		ItInd.PREV_PREV_POINT,
+		ItInd.JUMPED,
+		ItInd.CHANGED_DIRECTION,
+		ItInd.BOTH_COORD_CHANGED,
+	)
 
 	board = Board(20, 20)
 	positions = [
@@ -24,23 +30,40 @@ def test_sur_iter_tell_everything():
 		(2, 4), (3, 4), (5, 4), (6, 4),
 		(9, 0) ]
 
-	pos_iterator = BoardIteratorPositions(board, positions)
+	prev_positions = [ None ] + positions
+	prev_prev_positions = [ None, None ] + positions
 
-	for tile in pos_iterator:
+	for iter_everything in BoardIteratorPositions(board, positions).tell_indicators(itind_everything):
+
+		print(iter_everything)
+
+		(prev_point, prev_prev_point, jumped, changed_direction, both_coord_changed, tile) = iter_everything
+
+		check_prev_point = prev_positions.pop(0)
+		check_prev_prev_point = prev_prev_positions.pop(0)
+		assert prev_point == check_prev_point
+		assert prev_prev_point == check_prev_prev_point
+
 		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
 		point = Point(tile.x, tile.y)
+
 		if point == (1, 2):
-			assert pos_iterator.jumped == True
-			assert pos_iterator.changed_direction == False
+			assert jumped == True
+			assert changed_direction == False
+			assert both_coord_changed == True
 		elif point == (2, 4):
-			assert pos_iterator.jumped == False
-			assert pos_iterator.changed_direction == True
+			assert jumped == False
+			assert changed_direction == True
+			assert both_coord_changed == False
 		elif point == (5, 4):
-			assert pos_iterator.jumped == True
-			assert pos_iterator.changed_direction == False
+			assert jumped == True
+			assert changed_direction == False
 		elif point == (9, 0):
-			assert pos_iterator.jumped == True
-			assert pos_iterator.changed_direction == True
+			assert jumped == True
+			assert changed_direction == True
+			assert both_coord_changed == True
 		else:
-			assert pos_iterator.jumped == False
-			assert pos_iterator.changed_direction == False
+			assert jumped == False
+			assert changed_direction == False
+			assert both_coord_changed == False
+

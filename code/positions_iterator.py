@@ -98,7 +98,7 @@ class BoardIteratorBase():
 
 
 	def tell_indicators(self, indic_to_tell=(ItInd.BOTH_COORD_CHANGED, )):
-		return SurIteratorTellIndicators(self)
+		return SurIteratorTellIndicators(self, indic_to_tell)
 
 
 class SurIteratorTellIndicators():
