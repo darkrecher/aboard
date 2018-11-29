@@ -2,9 +2,10 @@
 
 # TODO : Les directions, dans un autre fichier
 
-from enum import Enum
+from enum import IntEnum
 
-class Direction(Enum):
+class Direction(IntEnum):
+	# C'est dans l'ordre du sens des aiguilles d'une montre, en commençant par le haut.
 	# Classic
 	UP = 0
 	UP_RIGHT = 1

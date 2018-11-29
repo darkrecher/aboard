@@ -1,23 +1,27 @@
 # TODO List / roadmap
 
 Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
- - pas besoin d'avoir des tell\_jumps, tell\_machin. On fait un sur-itérateur qui fait ça.
- - pareil pour les sliding\_windows et continuous\_sliding\_windows. On sur-itère. Et on pourra proposer ces sur-itérateurs dans une autre classe.
-   pour les windows : https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator#6822773
+ X pas besoin d'avoir des tell\_jumps, tell\_machin. On fait un sur-itérateur qui fait ça.
+ X pareil pour les sliding\_windows et continuous\_sliding\_windows. On sur-itère. Et on pourra proposer ces sur-itérateurs dans une autre classe.
  X Par contre, itérer sur les positions, et sur-itérer sur le board, c'est stupide. Tous les itérateurs ont un board dans leur variable membre. Arrêtons d'être stupide.
  X Tous les TODO de factorisation dans le RectIterator
- X Sur les itérateurs : ajouter une variable de flag : `both_coords_changed`. C'est ce flag qui permet à coup sûr de savoir qu'on est "allé à la ligne" avec un RectIterator. Mais le flag est valable pour tous les types d'itérateurs. (C'est fait, mais faut le tester entièrement).
+ X Sur les itérateurs : ajouter un flag générique : `both_coords_changed`. C'est ce flag qui permet à coup sûr de savoir qu'on est "allé à la ligne" avec un RectIterator.
  X adjacency est une classe. on instancie l'adjacency par défaut. chaque board a la sienne (mais ça peut être une référence vers toujours la même classe).
+ - itération par propagation. Avec une injection de dépendance (une fonction) qui indique si on peut propager ou pas. Fonction is_connected, qui ressemble à une fonction d'adjacence.
+ - classe Board. Itérable avec un RectIterator simple. Itérable avec `board[1:20:3][::-1]` (le sens sera toujours le sens par défaut. FUTURE : on pourra le redéfinir)
+ - borduration : à partir d'un ensemble de position, on prend les positions qui sont adjacentes avec au moins une autre position n'appartenant pas à l'ensemble initial. (quid des bords du board ?)
  - adjacence "torique", avec une size globale : x = size.x-1 est adjacent à x = 0. adjacence torique avec diagonale.
  - Ranger le code. Tous les tests dans un répertoire. Tout le code dans un répertoire `aboard`. Un main à la racine, un test à la racine. (En espérant que ce soit faisable).
- - Test des variables de flags sur le RectIterator.
+ X Test des variables de flags sur le RectIterator.
  X un Iterator générique, et ensuite un PositionIterator puis un RectIterator. Et faut trouver un nom à cet iter générique, ou bien trouver un autre nom à PositionIterator.
- - classe Board. Itérable avec un RectIterator simple. Itérable avec `board[1:20:3][::-1]` (le sens sera toujours le sens par défaut. FUTURE : on pourra le redéfinir)
- - les sliding windows, (éventuellement continuous sliding windows), et les tell_flags, dans l'itérateur générique.
- - classe Direction. Rajouter des noms dans `DICT_DIR_FROM_STR`. Mettre dans un fichier à part. Rendre la classe Direction ordonnable (up = 0, et ensuite dans le sens des aiguilles d'une montre). Itérateur de direction, avec ou sans diag.
+ - un sur-itérateur qui renvoie des subrect. Par exemple un rectange de 3*2, en parcourant toutes les tiles. (On renvoie des rectangles qui se chevauchent).
+ - pour les sliding windows : https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator#6822773
+ - il faut trouver un truc un peu générique avec les sur-itérateurs, qui puisse faire à la fois des sliding windows, des group_by et des sub-rects
+ - sliding windows qui renvoie des itérateurs, au lieu de renvoyer des listes.
+ - classe Direction. Rajouter des noms dans `DICT_DIR_FROM_STR`. Mettre dans un fichier à part. Itérateur de direction, avec ou sans diag.
+ X Rendre la classe Direction ordonnable (up = 0, et ensuite dans le sens des aiguilles d'une montre).
  - tous les TODO qui restent dans le code.
- - itération par propagation. Avec une injection de dépendance (une fonction) qui indique si on peut propager ou pas. (à priori, faudra un iterator, puis un BoardIterator.)
  - finir le renderer.
- - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les paths possible.
+ - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les shortest paths possible, ou tous les paths possible.
  - doc, processus d'obfuscation et rassemblement en un seul fichier, démo avec des entraînement de coding game, ...
- - un sur-itérateur qui renvoie des subsquare. Par exemple un rectange de 3*2, en parcourant toutes les tiles. (On renvoie des rectangles qui se chevauchent).
+

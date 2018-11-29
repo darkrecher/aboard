@@ -84,6 +84,12 @@ def test_directions_equivalence():
 	assert Dir.UP_LEFT == Dir.UL == Dir.NORTH_WEST == Dir.NW == Dir.PAD_7 == dir_from_str('┌') == dir_from_str('↖')
 
 
+def test_directions_ordering():
+	dirs = [ Dir.LEFT, Dir.UP_LEFT, Dir.DOWN_RIGHT, Dir.RIGHT, Dir.UP, Dir.DOWN_LEFT, Dir.UP_RIGHT, Dir.DOWN ]
+	dirs.sort()
+	assert dirs == [ Dir.UP, Dir.UP_RIGHT, Dir.RIGHT, Dir.DOWN_RIGHT, Dir.DOWN, Dir.DOWN_LEFT, Dir.LEFT, Dir.UP_LEFT ]
+
+
 def test_directions_computing():
 	center = Point(4, 7)
 	assert compute_direction(center, Point(4, 5)) == Dir.UP

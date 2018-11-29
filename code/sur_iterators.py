@@ -49,7 +49,6 @@ class SurIteratorGroupTiles():
 		board_iterator,
 		grouping_separator=group_by_subcoord
 	):
-		# TODO : fonction de grouping.
 		self.board_iterator = board_iterator
 		self.grouping_separator = grouping_separator
 		self.current_group_tiles = []
