@@ -2,7 +2,7 @@
 
 from point import Point, Direction, compute_direction
 from iter_indicators import IterIndicator
-from sur_iterators import SurIteratorTellIndicators
+from sur_iterators import SurIteratorTellIndicators, SurIteratorGroupTiles
 
 ItInd = IterIndicator
 
@@ -83,6 +83,14 @@ class BoardIteratorBase():
 
 	def tell_indicators(self, indic_to_tell=(ItInd.BOTH_COORD_CHANGED, )):
 		return SurIteratorTellIndicators(self, indic_to_tell)
+
+
+	def group_by_subcoord(self):
+		return SurIteratorGroupTiles(self)
+
+
+	def group_by(self, grouping_separator):
+		return SurIteratorGroupTiles(self, grouping_separator)
 
 
 class BoardIteratorPositions(BoardIteratorBase):

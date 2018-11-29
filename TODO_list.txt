@@ -20,4 +20,4 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - finir le renderer.
  - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les paths possible.
  - doc, processus d'obfuscation et rassemblement en un seul fichier, démo avec des entraînement de coding game, ...
-
+ - un sur-itérateur qui renvoie des subsquare. Par exemple un rectange de 3*2, en parcourant toutes les tiles. (On renvoie des rectangles qui se chevauchent).

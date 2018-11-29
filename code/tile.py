@@ -1,12 +1,19 @@
 # -*- coding: UTF-8 -*-
 
+from point import Point
+
 
 class Tile():
 
 	def __init__(self, x=None, y=None, board_father=None):
-		# TODO : Point !
+		# TODO : il faut accepter le même bazar de param que pour l'objet Point.
 		self.x = x
 		self.y = y
+		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
+		try:
+			self.point = Point(x, y)
+		except:
+			self.point = None
 		self.board_father = board_father
 		self.data = '.'
 

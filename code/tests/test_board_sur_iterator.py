@@ -3,6 +3,15 @@ from aboard import Board
 from positions_iterator import BoardIteratorRect, BoardIteratorPositions, ItInd
 
 
+def strip_multiline(multi_string):
+	# J'ai besoin de cette fonction juste pour pouvoir présenter
+	# les strings d'une manière plus lisible.
+	return '\n'.join([
+		line.strip()
+		for line in multi_string.strip().split('\n')
+	])
+
+
 def test_sur_iter_tell_both_coord_changed():
 
 	board = Board(3, 2)
@@ -67,3 +76,56 @@ def test_sur_iter_tell_everything():
 			assert changed_direction == False
 			assert both_coord_changed == False
 
+
+def test_sur_iter_group_by_simple():
+
+	board = Board(5, 8)
+	y_coord = 0
+
+	for tile_group in BoardIteratorRect(board).group_by_subcoord():
+		print(*map(str, tile_group))
+		check_coords = [ (x, y_coord) for x in range(5) ]
+		for tile, check_coord in zip(tile_group, check_coords):
+			assert tile.point == check_coord
+		y_coord += 1
+
+	assert y_coord == 8
+
+
+def test_sur_iter_groub_by_dir_changes():
+
+	board = Board(10, 10)
+	positions = [
+		(1, 2), (1, 3), (1, 4), (1, 5),
+		(2, 5), (3, 5), (4, 5), (5, 5), (6, 5), (7, 5), (8, 5),
+		(7, 6), (6, 7), (5, 8), (4, 9),
+		(3, 8), (2, 7), (1, 6), (0, 5),
+	 ]
+
+	group_marker = 'a'
+
+	for tile_group in BoardIteratorPositions(board, positions).group_by(lambda b:b.changed_direction):
+		print(*map(str, tile_group))
+		tile_group[0].data = group_marker.upper()
+		for tile in tile_group[1:]:
+			tile.data = group_marker
+		group_marker = chr(ord(group_marker) + 1)
+
+	render_result = """
+
+		..........
+		..........
+		.A........
+		.a........
+		.a........
+		daBbbbbbb.
+		.d.....C..
+		..d...c...
+		...D.c....
+		....c.....
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+# TODO : tester un cas où la fonction de séparation renvoie True sur la dernière tile.

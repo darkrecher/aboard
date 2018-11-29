@@ -40,6 +40,62 @@ class SurIteratorTellIndicators():
 		return tuple(returned_infos)
 
 
+group_by_subcoord=lambda board_iterator:board_iterator.both_coord_changed
+
+class SurIteratorGroupTiles():
+
+	def __init__(
+		self,
+		board_iterator,
+		grouping_separator=group_by_subcoord
+	):
+		# TODO : fonction de grouping.
+		self.board_iterator = board_iterator
+		self.grouping_separator = grouping_separator
+		self.current_group_tiles = []
+		self.next_tile = None
+
+
+	def __iter__(self):
+		# FUTURE : il faut faire une première pré-itération.
+		# Et à chaque renvoi d'un nouveau groupe, on a également une itération d'avance.
+		# C'est un peu étrange et je me demande s'il n'y aurait pas moyen de faire plus simple.
+		self.next_tile = next(self.board_iterator)
+		return self
+
+
+	def __next__(self):
+
+		if self.next_tile is None:
+			raise StopIteration
+
+		self.current_group_tiles.append(self.next_tile)
+		finished_iterator = False
+
+		try:
+			self.next_tile = next(self.board_iterator)
+		except StopIteration:
+			finished_iterator = True
+
+		while not self.grouping_separator(self.board_iterator) and not finished_iterator:
+			self.current_group_tiles.append(self.next_tile)
+			try:
+				self.next_tile = next(self.board_iterator)
+			except StopIteration:
+				finished_iterator = True
+
+		# TODO : à factoriser, mais après avoir testé le cas qui reste, à faire dans test_board_sur_iterator.
+		if finished_iterator:
+			self.next_tile = None
+			returned_group_tiles = self.current_group_tiles
+			self.current_group_tiles = []
+			return returned_group_tiles
+		else:
+			returned_group_tiles = self.current_group_tiles
+			self.current_group_tiles = []
+			return returned_group_tiles
+
+
 # autre sur_itérateur : emmagasiner toutes les tiles, jusqu'à répondre à une certaine condition.
 # Quand ça arrive, ressortir les tiles emmagasinées, et ainsi de suite.
 # (On les ressort sous forme d'un itérateur, ou d'une liste ? On va dire une liste)
