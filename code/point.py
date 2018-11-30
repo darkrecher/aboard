@@ -164,6 +164,10 @@ class Point():
 		return self.x == point_other.x and self.y == point_other.y
 
 
+	def __hash__(self):
+		return hash((self.x, self.y))
+
+
 # --- Direction operations ---
 
 def cmp(a, b):

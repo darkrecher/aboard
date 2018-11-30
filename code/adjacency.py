@@ -1,11 +1,16 @@
 # -*- coding: UTF-8 -*-
 
+from point import Point
+
 class AdjacencyEvaluator():
 
 	def __init__(self, board):
 		self.board = board
 
 	def is_adjacent(self, point_1, point_2):
+		raise NotImplemented
+
+	def adjacent_tiles(self, point):
 		raise NotImplemented
 
 
@@ -17,6 +22,18 @@ class AdjacencyEvaluatorCross(AdjacencyEvaluator):
 		if point_1.y == point_2.y:
 			return point_1.x-point_2.x in (-1, 1)
 		return False
+
+	def adjacent_points(self, point):
+		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
+		# C'est à dire dans le sens des aiguilles d'une montre.
+		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
+		offsets = [ (0, -1), (+1, 0), (0, +1), (-1, 0) ]
+		for offset in offsets:
+			x = point.x + offset[0]
+			y = point.y + offset[1]
+			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
+			if (0 <= point.x < self.board.w) and (0 <= point.y < self.board.h):
+				yield Point(x, y)
 
 
 class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
@@ -30,11 +47,25 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 			and abs_diff_y <= 1
 		)
 
+	def adjacent_points(self, point):
+		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
+		# C'est à dire dans le sens des aiguilles d'une montre.
+		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
+		offsets = [
+			(0, -1), (+1, -1), (+1, 0), (+1, +1),
+			(0, +1), (-1, +1), (-1, 0), (-1, -1),
+		]
+		for offset in offsets:
+			x = point.x + offset[0]
+			y = point.y + offset[1]
+			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
+			if (0 <= point.x < self.board.w) and (0 <= point.y < self.board.h):
+				yield Point(x, y)
+
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
-# TODO : un itérateur dans chaque classe, renvoyant les point adjacents au point passés en paramètre.
-#        (et faudrait checker en même temps si les points sont valides. Vu qu'on a le board, autant le faire ici).
-#        (un itérateur qui renvoie que les valides, et un qui renvoie des None sur les pas valides).
+# TODO : tester les fonctions adjacent_points.
+# FUTURE : un itérateur qui renvoie des None sur les points pas valides. (je sais pas si on en aura besoin)
 
 
 class_default_adjacency = AdjacencyEvaluatorCross
