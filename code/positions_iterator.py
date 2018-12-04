@@ -24,9 +24,9 @@ class BoardIteratorBase():
 		self.prev_point = None
 		self.prev_prev_point = None
 		self.jumped = True
-		# TODO : renommer ça pour que tout les indicateurs finissent par "ed"
 		self.changed_direction = False
 		self.both_coord_changed = True
+		self.propag_dist = None
 
 	# TODO crap.
 	#def pouet(
@@ -70,6 +70,7 @@ class BoardIteratorBase():
 			ItInd.JUMPED: self.jumped,
 			ItInd.CHANGED_DIRECTION: self.changed_direction,
 			ItInd.BOTH_COORD_CHANGED: self.both_coord_changed,
+			ItInd.PROPAG_DIST : self.propag_dist,
 		}
 
 

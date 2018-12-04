@@ -32,7 +32,7 @@ class AdjacencyEvaluatorCross(AdjacencyEvaluator):
 			x = point.x + offset[0]
 			y = point.y + offset[1]
 			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
-			if (0 <= point.x < self.board.w) and (0 <= point.y < self.board.h):
+			if (0 <= x < self.board.w) and (0 <= y < self.board.h):
 				yield Point(x, y)
 
 
@@ -59,7 +59,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 			x = point.x + offset[0]
 			y = point.y + offset[1]
 			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
-			if (0 <= point.x < self.board.w) and (0 <= point.y < self.board.h):
+			if (0 <= x < self.board.w) and (0 <= y < self.board.h):
 				yield Point(x, y)
 
 

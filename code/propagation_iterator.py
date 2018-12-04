@@ -50,6 +50,7 @@ class BoardIteratorPropagation(BoardIteratorBase):
 
 					self.to_propagate_points.append((dist+1, adj_point))
 
+			self.propag_dist = dist
 			self._update_indicators(new_point)
 			return self.board.get_tile(new_point)
 
