@@ -36,8 +36,7 @@ class BoardIteratorPropagation(BoardIteratorBase):
 			self.propagated_points[new_point] = dist
 
 			to_propagate_only_points = [
-				o_point
-				for o_dist, o_point
+				o_point for o_dist, o_point
 				in self.to_propagate_points
 			]
 			for adj_point in self.board.adjacency.adjacent_points(new_point):

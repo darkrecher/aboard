@@ -4,6 +4,7 @@ import point
 import adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
+from positions_iterator import BoardIteratorRect
 
 Point = point.Point
 
@@ -46,6 +47,7 @@ class Board():
 	def get_tile(self, *args, **kwargs):
 		point = Point(*args, **kwargs)
 
+		# Dans une toute petite fonction "in_bounds"
 		if any((
 			point.x < 0,
 			point.x >= self.w,
@@ -59,7 +61,21 @@ class Board():
 		return self._tiles[point.y][point.x]
 
 
-	def __getitem__(self, *args):
+	def __getitem__(self, args):
+
+		print("TODO ouech getitem", args)
+		print("TODO ouech getitem", isinstance(args[0], slice))
+
+		if not args:
+			return BoardIteratorRect(self)
+
+		if isinstance(args[0], slice) or len(args) > 1 and isinstance(args[1], slice):
+			if args[0] is None:
+				args[0] = slice(None, None, None)
+			args = [ self ] + list(args)
+			print("TODO ouech board")
+			return BoardIteratorRect(*args)
+
 		try:
 			point = Point(*args)
 		except ValueError:
@@ -141,7 +157,7 @@ class Board():
 # ----------------- tests des trucs en cours ------------------
 # (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
 
-def main():
+def main_osef():
 	from my_log import debug, answer, log
 	log('Hellow')
 
@@ -192,6 +208,22 @@ def main():
 	print(board.get_tile(1, 6))
 
 	log('End')
+
+
+def main():
+	 b=Board(10,10)
+
+	 for t in b[2:5,1:3]:print(t)
+
+	 print("one tile")
+	 print(b[4,9])
+
+	 print("all en second-coord")
+
+	 # TODO : faire marcher ça :
+	 #for t in b[7,slice(None)]:print(t)
+
+	 for t in b[7:8,slice(None)]:print(t)
 
 
 if __name__ == '__main__':
