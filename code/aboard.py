@@ -47,7 +47,7 @@ class Board():
 	def get_tile(self, *args, **kwargs):
 		point = Point(*args, **kwargs)
 
-		# Dans une toute petite fonction "in_bounds"
+		# TODO : Dans une toute petite fonction "in_bounds"
 		if any((
 			point.x < 0,
 			point.x >= self.w,
@@ -125,6 +125,19 @@ class Board():
 		if renderer is None:
 			renderer = self._default_renderer
 		return renderer.render(self)
+
+
+	def set_data_from_string(self, data_lines, sep_line=None, sep_tiles=None):
+
+		if sep_line is not None:
+			data_lines = data_lines.split(sep_line)
+		board_iter = BoardIteratorRect(self).group_by_subcoord()
+
+		for data_line, board_line in zip(data_lines, board_iter):
+			if sep_tiles is not None:
+				data_line = data_line.split(sep_tiles)
+			for data_tile, tile in zip(data_line, board_line):
+				tile.data = data_tile
 
 
 	# TODO : tout cela est un peu useless, mais je le laisse pour l'instant.
