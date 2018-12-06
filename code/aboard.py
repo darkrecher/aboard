@@ -4,7 +4,7 @@ import point
 import adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
-from positions_iterator import BoardIteratorRect
+from positions_iterator import BoardIteratorRect, Coord
 
 Point = point.Point
 
@@ -63,18 +63,49 @@ class Board():
 
 	def __getitem__(self, args):
 
-		print("TODO ouech getitem", args)
-		print("TODO ouech getitem", isinstance(args[0], slice))
+		# TODO : accès à partir de la fin avec les index négatifs.
+		#        aussi bien pour les itération que pour la récup d'un seul élément.
 
 		if not args:
 			return BoardIteratorRect(self)
 
-		if isinstance(args[0], slice) or len(args) > 1 and isinstance(args[1], slice):
-			if args[0] is None:
-				args[0] = slice(None, None, None)
-			args = [ self ] + list(args)
-			print("TODO ouech board")
-			return BoardIteratorRect(*args)
+		slice_x = None
+		slice_y = None
+		id_coord_main = Coord.X
+
+		try:
+			iter_on_args = iter(args)
+			slice_x = next(iter_on_args)
+			slice_y = next(iter_on_args)
+			id_coord_main = next(iter_on_args)
+		except TypeError:
+			slice_x = args
+		except StopIteration:
+			pass
+
+		if slice_x is None or slice_y is None or isinstance(slice_x, slice) or isinstance(slice_y, slice):
+
+			# Mode itération
+			if slice_x is None:
+				slice_x = slice(None, None, None)
+			if isinstance(slice_x, int):
+				slice_x = slice(slice_x, slice_x+1, None)
+
+			if slice_y is None:
+				slice_y = slice(None, None, None)
+			if isinstance(slice_y, int):
+				slice_y = slice(slice_y, slice_y+1, None)
+
+			dict_coord_from_str = {
+				'X': Coord.X,
+				'Y': Coord.Y,
+			}
+			if isinstance(id_coord_main, str):
+				id_coord_main = id_coord_main.upper()
+				if id_coord_main in dict_coord_from_str:
+					id_coord_main = dict_coord_from_str[id_coord_main]
+
+			return BoardIteratorRect(self, slice_x, slice_y, id_coord_main)
 
 		try:
 			point = Point(*args)
@@ -82,12 +113,12 @@ class Board():
 			point = None
 
 		if point is not None:
+			# Mode un seul élément
 			# TODO : raiser une exception si l'une des coords est out of bounds.
 			return self._tiles[point.y][point.x]
 
-		# TODO
-		print("TODO")
-		return args
+		# Mode fail
+		raise Exception("TODO fail get item" + "".join(args))
 
 
 	def render(self, renderer=None):
@@ -96,7 +127,9 @@ class Board():
 		return renderer.render(self)
 
 
-	# TODO : useless ???
+	# TODO : tout cela est un peu useless, mais je le laisse pour l'instant.
+	# Pour de la doc et des réflexions de conception-tralala.
+
 	#def iter_pos(
 	#	self, *args, **kwargs):
 	#
@@ -121,49 +154,29 @@ class Board():
 	# par défaut (de gauche à droite et de haut en bas). Et ça utilise un BoardIterator
 	# interne.
 
-
-	def iter_osef(self, sense='┌ ┐ └ ┘', tell_prime_coord_change=False, skip_lines=None, rect=None, poses=None):
-		if skip_lines is None:
-			skip_lines=lambda tile:False
-		pass
-
-
-	def iter_one_vector(self, sense='┌ └', prime_coord=None, x=None, y=None, dir='UPWARD, ...', rect=None):
-		# cas particulier de la fonction ci-dessus.
-		pass
-
-
 	def iter_vectors(self, sense='(┌ ┐),(└ ┘)', rect=None):
 		# ça va renvoyer des itérateurs, genre iter_one_vector.
 		pass
 
-
-	def iter_by_poses(self, poses):
+	def sort_posis(self, posis, key):
 		pass
 
-
-	def sort_poses(self, poses, key):
-		pass
-
-	# Donc il faut un itérateur sur un rect.
-
-	# Il faut aussi des itérateur de poses avec des ellipsis.
+	# TODO : Il faut des itérateur de posis avec des ellipsis.
 	# Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
 
-	# Une poses est une liste de position. C'est tout. On peut itérer dessus. Et filtrer.
+	# Une posis est une liste de point. C'est tout. On peut itérer dessus. Et filtrer.
 	# Avec la fonction built-in filter().
 
 
 # ----------------- tests des trucs en cours ------------------
-# (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
+# TODO : (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
 
-def main_osef():
+def main():
+
 	from my_log import debug, answer, log
 	log('Hellow')
 
 	# http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
-
-
 	from collections import deque
 	from itertools import islice
 
@@ -181,49 +194,14 @@ def main_osef():
 	b = Board(15, 15)
 	log(b[11])
 	log(b[11, 5])
-	log(b[11, ...])
-	log(b[..., 5])
+	#log(b[11, ...])
+	#log(b[..., 5])
 	log(b[11:18:2])
 	log(b[11:18:2, 1:33:5])
 	log(b[11:, :33])
 	log(b[:, ::5])
 
-	log('Not End')
-
-	positions = [
-		(1, 2), (1, 3), (1, 4),
-		(2, 4), (3, 4), (5, 4), (6, 4),
-		(8, 1) ]
-
-	board = Board(10, 6)
-
-	for index, point in enumerate(board.iter_pos(positions, step=2)):
-		point.data = index
-
-	print(board.render())
-
-	print(board.get_tile(1, 4))
-	print(board.get_tile(1, 4).data)
-	print(board.get_tile(x=0, y=0).data)
-	print(board.get_tile(1, 6))
-
 	log('End')
-
-
-def main():
-	 b=Board(10,10)
-
-	 for t in b[2:5,1:3]:print(t)
-
-	 print("one tile")
-	 print(b[4,9])
-
-	 print("all en second-coord")
-
-	 # TODO : faire marcher ça :
-	 #for t in b[7,slice(None)]:print(t)
-
-	 for t in b[7:8,slice(None)]:print(t)
 
 
 if __name__ == '__main__':
