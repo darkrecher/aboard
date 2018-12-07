@@ -42,6 +42,25 @@ class Board():
 			[ tile_generator(x, y) for x in range(w) ]
 			for y in range(h)
 		]
+		self.mobile_items = []
+		# clé : un objet Point.
+		# valeur : une liste de mobile items
+		self.mobile_items_by_pos = {}
+
+
+	def _indexify_mobi_add(mobile_item):
+		# TODO WIP
+		pass
+
+
+	def _indexify_mobi_move(mobile_item):
+		# TODO WIP
+		pass
+
+
+	def _indexify_mobi_del(mobile_item):
+		# TODO WIP
+		pass
 
 
 	def get_tile(self, *args, **kwargs):
