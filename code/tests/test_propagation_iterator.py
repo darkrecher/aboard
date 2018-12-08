@@ -125,16 +125,13 @@ def test_propagation_dist_with_iter():
 # TODO : test avec une condition de propagation plus compliquée. (impliquant source et dest).
 
 
-def test_find_path():
+def test_find_path_simple():
 
 	board = Board(15, 10, class_adjacency=AdjacencyEvaluatorCross)
 	iter_find_path = BoardIteratorFindPath(board, (3, 2), (6, 9))
 
 	for index, tile in enumerate(iter_find_path):
 		tile.data = hex(index)[2]
-	#for key, val in iter_find_path.iter_propag.propagated_points.items():
-	#	print(key, val)
-	#print(iter_find_path.iter_propag.propagated_points)
 
 	print(board.render())
 
@@ -153,3 +150,71 @@ def test_find_path():
 
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_find_path_obstacle():
+
+	board = Board(15, 10, class_adjacency=AdjacencyEvaluatorCross)
+
+	# TODO : il faudra faire une init du board from input. Pour que ce soit plus compréhensible.
+	pos_walls = [
+		(2, 3), (3, 3), (4, 3), (5, 3), (6, 3),
+		(6, 4), (6, 5), (6, 6),
+		(5, 6), (4, 6),
+		(4, 7), (4, 8),
+		(3, 8), (2, 8),
+		(2, 7), (2, 6), (2, 5), (2, 4),
+	]
+	for pos in pos_walls:
+		board.get_tile(pos).data = '*'
+	pos_start = (5, 2)
+	pos_end = (4, 9)
+
+	for index, tile in enumerate(BoardIteratorFindPath(board, pos_start, pos_end)):
+		tile.data = hex(index)[2]
+
+	render_result = """
+
+		...............
+		...............
+		.....012.......
+		..*****3.......
+		..*...*4.......
+		..*...*5.......
+		..*.***6.......
+		..*.*987.......
+		..***a.........
+		....cb.........
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_find_path_no_path():
+
+	board = Board(15, 10)
+
+	# TODO : il faudra faire une init du board from input. Pour que ce soit plus compréhensible.
+	pos_walls = [
+		(2, 3), (3, 3), (4, 3), (5, 3), (6, 3),
+		(6, 4), (6, 5), (6, 6),
+		(5, 6), (4, 6),
+		(4, 7), (4, 8),
+		(3, 8), (2, 8),
+		(2, 7), (2, 6), (2, 5), (2, 4),
+	]
+	for pos in pos_walls:
+		board.get_tile(pos).data = '*'
+	pos_start = (5, 4)
+	pos_end = (0, 9)
+
+	path_found = True
+	try:
+		for index, tile in enumerate(BoardIteratorFindPath(board, pos_start, pos_end)):
+			tile.data = 'o'
+		print(board.render())
+	except ValueError:
+		path_found = False
+
+	assert path_found == False
+

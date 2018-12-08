@@ -112,7 +112,9 @@ class BoardIteratorFindPath(BoardIteratorBase):
 
 	def __iter__(self):
 		if self.path is None:
-			raise ValueError("Imposible de trouver un chemin")
+			# TODO : raiser une exception spécifique.
+			# TODO : ou alors, faut signaler de manière moins violente que y'a pas de chemin.
+			raise ValueError("Impossible de trouver un chemin")
 		return self
 
 
