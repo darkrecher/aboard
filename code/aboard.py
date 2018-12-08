@@ -1,12 +1,10 @@
 # -*- coding: UTF-8 -*-
 
-import point
-import adjacency
+from point import Point
+from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
 from positions_iterator import BoardIteratorRect, Coord
-
-Point = point.Point
 
 
 class BoardIndexError(IndexError):
@@ -33,7 +31,7 @@ class Board():
 
 		self.class_adjacency = (
 			class_adjacency if class_adjacency is not None
-			else adjacency.class_default_adjacency)
+			else get_default_adjacency())
 
 		self.adjacency = self.class_adjacency(self)
 		self.is_adjacent = self.adjacency.is_adjacent

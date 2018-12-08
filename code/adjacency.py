@@ -74,3 +74,7 @@ class_default_adjacency = AdjacencyEvaluatorCross
 def set_default_adjacency(new_class_default_adjacency):
 	global class_default_adjacency
 	class_default_adjacency = new_class_default_adjacency
+
+def get_default_adjacency():
+	global class_default_adjacency
+	return class_default_adjacency
