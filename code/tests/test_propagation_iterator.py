@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from aboard import Board
-from propagation_iterator import BoardIteratorPropagation
+from propagation_iterator import BoardIteratorPropagation, BoardIteratorFindPath
 from adjacency import AdjacencyEvaluatorCross
 from iter_indicators import ItInd
 
@@ -125,3 +125,31 @@ def test_propagation_dist_with_iter():
 # TODO : test avec une condition de propagation plus compliquée. (impliquant source et dest).
 
 
+def test_find_path():
+
+	board = Board(15, 10, class_adjacency=AdjacencyEvaluatorCross)
+	iter_find_path = BoardIteratorFindPath(board, (3, 2), (6, 9))
+
+	for index, tile in enumerate(iter_find_path):
+		tile.data = hex(index)[2]
+	#for key, val in iter_find_path.iter_propag.propagated_points.items():
+	#	print(key, val)
+	#print(iter_find_path.iter_propag.propagated_points)
+
+	print(board.render())
+
+	render_result = """
+
+		...............
+		...............
+		...0123........
+		......4........
+		......5........
+		......6........
+		......7........
+		......8........
+		......9........
+		......a........
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)

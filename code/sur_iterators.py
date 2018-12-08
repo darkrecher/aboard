@@ -9,6 +9,7 @@ def _fetch_indicators(obj_source, obj_dest):
 	obj_dest.jumped = obj_source.jumped
 	obj_dest.changed_direction = obj_source.changed_direction
 	obj_dest.both_coord_changed = obj_source.both_coord_changed
+	obj_dest.propag_dist = obj_source.propag_dist
 	obj_dest.iter_indicators = obj_source.iter_indicators
 
 

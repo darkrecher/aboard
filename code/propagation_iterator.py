@@ -57,3 +57,73 @@ class BoardIteratorPropagation(BoardIteratorBase):
 
 			raise StopIteration
 
+
+class BoardIteratorFindPath(BoardIteratorBase):
+
+	def __init__(
+		self, board,
+		pos_start, pos_end,
+		pass_through_condition=propag_cond_default
+	):
+	# FUTURE : pathfinding avec tous les shortest paths possibles.
+	# pathfinding avec tous les paths possibles
+
+		super().__init__(board)
+		self.pass_through_condition = pass_through_condition
+		pos_start = Point(pos_start)
+		pos_end = Point(pos_end)
+		self.pos_start = pos_start
+		self.pos_end = pos_end
+
+		iter_propag = BoardIteratorPropagation(
+			self.board,
+			self.pos_start,
+			pass_through_condition)
+
+		try:
+			while pos_end not in iter_propag.propagated_points:
+				next(iter_propag)
+		except StopIteration:
+			self.path = None
+			return
+
+		propagated_points = iter_propag.propagated_points
+
+		# Et maintenant, on parcourt la propagation à l'envers,
+		# pour retrouver le chemin.
+		pos_cur = pos_end
+		dist_cur = propagated_points[pos_cur]
+		self.path = [ pos_cur ]
+
+		while pos_cur != pos_start:
+
+			advanced = False
+			for adj_point in self.board.adjacency.adjacent_points(pos_cur):
+				if propagated_points.get(adj_point, -2) == dist_cur - 1:
+					pos_cur = adj_point
+					dist_cur -= 1
+					self.path.append(pos_cur)
+					advanced = True
+					break
+
+			if not advanced:
+				raise Exception("No adj point with dist-1. Not supposed to happen")
+
+
+	def __iter__(self):
+		if self.path is None:
+			raise ValueError("Imposible de trouver un chemin")
+		return self
+
+
+	def __next__(self):
+		if self.path:
+			pos_path = self.path.pop()
+			self._update_indicators(pos_path)
+			# TODO : le __getitem__ doit pouvoir accepter des objets Point.
+			return self.board[pos_path.x, pos_path.y]
+		else:
+			raise StopIteration
+
+
+
