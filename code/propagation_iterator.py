@@ -99,7 +99,11 @@ class BoardIteratorFindPath(BoardIteratorBase):
 
 			advanced = False
 			for adj_point in self.board.adjacency.adjacent_points(pos_cur):
-				if propagated_points.get(adj_point, -2) == dist_cur - 1:
+				if (
+					(propagated_points.get(adj_point, -2) == dist_cur - 1) and
+					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.
+					pass_through_condition(self.board.get_tile(adj_point), self.board.get_tile(pos_cur))
+				):
 					pos_cur = adj_point
 					dist_cur -= 1
 					self.path.append(pos_cur)
