@@ -234,5 +234,3 @@ def main():
 	log('End')
 
 
-if __name__ == '__main__':
-	main()

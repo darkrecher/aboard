@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 
-from my_log import debug, answer, log
 from tile import Tile
 
 
