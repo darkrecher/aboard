@@ -26,6 +26,10 @@ class Tile():
 		return str(self.data)[:w]
 
 
+	def __eq__(self, other):
+		return self.data == other.data
+
+
 	# TODO WIP pas testé.
 	def is_adjacent(self, other):
 		if self.board_father is None:
