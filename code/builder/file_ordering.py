@@ -8,6 +8,7 @@ ORDERED_CODE_FILENAMES = (
 	"board_renderer.py",
 	"positions_iterator.py",
 	"propagation_iterator.py",
+	"board_comparator.py",
 	"sur_iterators.py",
 	"mobitem.py",
 	"aboard.py",
