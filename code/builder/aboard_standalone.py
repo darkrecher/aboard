@@ -142,11 +142,7 @@ class Point():
 		if self._compute_coords(x, y):
 			return
 
-		try:
-			print(param_1, param_2, x, y)
-		except:
-			pass
-		raise ValueError("Impossible de déduire des coordonnées.")
+		raise ValueError("Impossible de déduire des coordonnées de ces params : %s %s %s %s" % (param_1, param_2, x, y))
 
 
 	def _compute_coords(self, final_x, final_y):
@@ -173,6 +169,23 @@ class Point():
 
 	def as_dict(self):
 		return {'x': self.x, 'y': self.y }
+
+
+	# TODO : fonction à tester vite fait.
+	def move(self, direction, dist=1):
+		DICT_VECT_FROM_DIRS = {
+			Dir.UP: (0, -1),
+			Dir.UP_RIGHT: (+1, -1),
+			Dir.RIGHT: (+1, 0),
+			Dir.DOWN_RIGHT: (+1, +1),
+			Dir.DOWN: (0, +1),
+			Dir.DOWN_LEFT: (-1, +1),
+			Dir.LEFT: (-1, 0),
+			Dir.UP_LEFT: (-1, -1),
+		}
+		mov_x, mov_y = DICT_VECT_FROM_DIRS[direction]
+		self.x += mov_x * dist
+		self.y += mov_y * dist
 
 
 	def __eq__(self, other):
@@ -1184,6 +1197,37 @@ class Board():
 
 	# Une posis est une liste de point. C'est tout. On peut itérer dessus. Et filtrer.
 	# Avec la fonction built-in filter().
+
+
+	def replace_tile(self, new_tile, pos):
+		new_tile.x = pos.x
+		new_tile.y = pos.y
+		self._tiles[pos.y][pos.x] = new_tile
+
+
+	def circular_permute_tiles(self, positions):
+		# TODO : positions devrait pouvoir être un itérable.
+		#        et donc si on pouvait faire des itérables sur les pos, et pas les tiles.
+		#        puisque là on bouge les tiles, alors on n'est pas sûr de ce que ça peut donnéer d'itérer dessus en même temps.
+
+		first_pos = positions.pop(0)
+		first_tile = self._tiles[first_pos.y][first_pos.x]
+		prev_pos = first_pos
+
+		while positions:
+			cur_pos = positions.pop(0)
+			cur_tile = self._tiles[cur_pos.y][cur_pos.x]
+			cur_tile.x = prev_pos.x
+			cur_tile.y = prev_pos.y
+			self._tiles[prev_pos.y][prev_pos.x] = cur_tile
+			prev_pos = cur_pos
+
+		first_tile.x = cur_pos.x
+		first_tile.y = cur_pos.y
+		self._tiles[cur_pos.y][cur_pos.x] = first_tile
+
+
+
 
 
 # ----------------- tests des trucs en cours ------------------

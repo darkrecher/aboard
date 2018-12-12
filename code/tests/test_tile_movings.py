@@ -82,6 +82,7 @@ def test_permute_column():
 	board.set_data_from_string(setting_data)
 
 	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[2, :] ]
+	assert len(pos_to_permute) == 7
 
 	board.circular_permute_tiles(pos_to_permute)
 	print(board.render())
@@ -99,9 +100,8 @@ def test_permute_column():
 
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
-
-
-# TODO : Test de push, dans les 4 directions. Parce qu'il le faut pour Xmas Rush.
+	# TODO : ça foire, parce que la fonction de permutation vide la liste, et c'est mal.
+	assert len(pos_to_permute) == 7
 
 
 def test_push_cols_lines():

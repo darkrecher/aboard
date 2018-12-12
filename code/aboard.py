@@ -208,6 +208,7 @@ class Board():
 		# TODO : positions devrait pouvoir être un itérable.
 		#        et donc si on pouvait faire des itérables sur les pos, et pas les tiles.
 		#        puisque là on bouge les tiles, alors on n'est pas sûr de ce que ça peut donnéer d'itérer dessus en même temps.
+		# BIG TODO : oui, et vu qu'on pop comme un connard, ça vide la liste.
 
 		first_pos = positions.pop(0)
 		first_tile = self._tiles[first_pos.y][first_pos.x]
