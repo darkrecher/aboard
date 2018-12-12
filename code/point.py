@@ -155,6 +155,23 @@ class Point():
 		return {'x': self.x, 'y': self.y }
 
 
+	# TODO : fonction à tester vite fait.
+	def move(self, direction, dist=1):
+		DICT_VECT_FROM_DIRS = {
+			Dir.UP: (0, -1),
+			Dir.UP_RIGHT: (+1, -1),
+			Dir.RIGHT: (+1, 0),
+			Dir.DOWN_RIGHT: (+1, +1),
+			Dir.DOWN: (0, +1),
+			Dir.DOWN_LEFT: (-1, +1),
+			Dir.LEFT: (-1, 0),
+			Dir.UP_LEFT: (-1, -1),
+		}
+		mov_x, mov_y = DICT_VECT_FROM_DIRS[direction]
+		self.x += mov_x * dist
+		self.y += mov_y * dist
+
+
 	def __eq__(self, other):
 		point_other = Point(other)
 		return self.x == point_other.x and self.y == point_other.y
