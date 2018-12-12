@@ -100,7 +100,8 @@ def test_permute_column():
 
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
-	# TODO : ça foire, parce que la fonction de permutation vide la liste, et c'est mal.
+	# Pour vérifier que la fonction de permutation ne vide pas la liste.
+	# Ça le faisait avant, et c'était mal.
 	assert len(pos_to_permute) == 7
 
 

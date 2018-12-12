@@ -205,29 +205,29 @@ class Board():
 
 
 	def circular_permute_tiles(self, positions):
-		# TODO : positions devrait pouvoir être un itérable.
+		# TODO : positions est un itérable.
 		#        et donc si on pouvait faire des itérables sur les pos, et pas les tiles.
 		#        puisque là on bouge les tiles, alors on n'est pas sûr de ce que ça peut donnéer d'itérer dessus en même temps.
-		# BIG TODO : oui, et vu qu'on pop comme un connard, ça vide la liste.
 
-		first_pos = positions.pop(0)
-		first_tile = self._tiles[first_pos.y][first_pos.x]
-		prev_pos = first_pos
+		made_first_iteration = False
 
-		while positions:
-			cur_pos = positions.pop(0)
-			cur_tile = self._tiles[cur_pos.y][cur_pos.x]
-			cur_tile.x = prev_pos.x
-			cur_tile.y = prev_pos.y
-			self._tiles[prev_pos.y][prev_pos.x] = cur_tile
-			prev_pos = cur_pos
+		for pos in positions:
+			if made_first_iteration:
+				cur_pos = pos
+				cur_tile = self._tiles[cur_pos.y][cur_pos.x]
+				cur_tile.x = prev_pos.x
+				cur_tile.y = prev_pos.y
+				self._tiles[prev_pos.y][prev_pos.x] = cur_tile
+				prev_pos = cur_pos
+			else:
+				first_pos = pos
+				first_tile = self._tiles[first_pos.y][first_pos.x]
+				prev_pos = first_pos
+				made_first_iteration = True
 
-		first_tile.x = cur_pos.x
-		first_tile.y = cur_pos.y
-		self._tiles[cur_pos.y][cur_pos.x] = first_tile
-
-
-
+		first_tile.x = pos.x
+		first_tile.y = pos.y
+		self._tiles[pos.y][pos.x] = first_tile
 
 
 # ----------------- tests des trucs en cours ------------------
