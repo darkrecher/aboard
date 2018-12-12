@@ -126,11 +126,7 @@ class Point():
 		if self._compute_coords(x, y):
 			return
 
-		try:
-			print(param_1, param_2, x, y)
-		except:
-			pass
-		raise ValueError("Impossible de déduire des coordonnées.")
+		raise ValueError("Impossible de déduire des coordonnées de ces params : %s %s %s %s" % (param_1, param_2, x, y))
 
 
 	def _compute_coords(self, final_x, final_y):

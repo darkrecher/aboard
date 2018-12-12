@@ -233,3 +233,5 @@ def test_getitem_square_reversed_stepped_on_y_grouped():
 # TODO : Tester les exceptions quand les index sont out of range
 # TODO : Tester les exceptions avec des steps de slice à 0. (à priori, c'est géré tout seul).
 
+# TODO : board[::-1, 0] ne marche pas. Il faut spécifier explicitement board[board.w:-1:-1, 0]
+#        Si on pouvait éviter de faire moins dégueulasse, ce serait super.

@@ -25,6 +25,7 @@ def test_replace_simple():
 	new_tile.data = 'Z'
 
 	board.replace_tile(new_tile, Point(3, 1))
+
 	print(board.render())
 
 	assert new_tile.x == 3
@@ -80,9 +81,9 @@ def test_permute_column():
 	setting_data = ('ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXY', '01234', '56789')
 	board.set_data_from_string(setting_data)
 
-	pos_lines = [ Point(tile.x, tile.y) for tile in board[2, :] ]
+	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[2, :] ]
 
-	board.circular_permute_tiles(pos_lines)
+	board.circular_permute_tiles(pos_to_permute)
 	print(board.render())
 
 	render_result = """
@@ -101,5 +102,141 @@ def test_permute_column():
 
 
 # TODO : Test de push, dans les 4 directions. Parce qu'il le faut pour Xmas Rush.
+
+
+def test_push_cols_lines():
+	"""
+	Test de déplacement de toutes les tiles d'une ligne ou d'une colonne,
+	en ajoutant une nouvelle tile qui va pousser les autres.
+	Comme dans le jeu de plateau 'Labyrinthe', et dans le challenge CodinGame 'Xmas Rush'
+	"""
+
+	# PUSH 3 RIGHT
+
+	board = Board(5, 7)
+	setting_data = ('ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXY', '01234', '56789')
+	board.set_data_from_string(setting_data)
+
+	added_tile = Tile()
+	added_tile.data = '#'
+	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[board.w-1:-1:-1, 3] ]
+
+	board.circular_permute_tiles(pos_to_permute)
+	removed_tile = board[0, 3]
+	board.replace_tile(added_tile, Point(0, 3))
+	print(board.render())
+
+	assert removed_tile.data == 'T'
+
+	render_result = """
+
+		ABCDE
+		FGHIJ
+		KLMNO
+		#PQRS
+		UVWXY
+		01234
+		56789
+
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+	print("")
+
+	# PUSH 0 LEFT
+
+	board = Board(5, 7)
+	setting_data = ('ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXY', '01234', '56789')
+	board.set_data_from_string(setting_data)
+
+	added_tile = Tile()
+	added_tile.data = '#'
+	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[:, 0] ]
+
+	board.circular_permute_tiles(pos_to_permute)
+	removed_tile = board[4, 0]
+	board.replace_tile(added_tile, Point(4, 0))
+	print(board.render())
+
+	assert removed_tile.data == 'A'
+
+	render_result = """
+
+		BCDE#
+		FGHIJ
+		KLMNO
+		PQRST
+		UVWXY
+		01234
+		56789
+
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+	print("")
+
+	# PUSH 4 DOWN
+
+	board = Board(5, 7)
+	setting_data = ('ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXY', '01234', '56789')
+	board.set_data_from_string(setting_data)
+
+	added_tile = Tile()
+	added_tile.data = '#'
+	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[4, board.h-1:-1:-1] ]
+
+	board.circular_permute_tiles(pos_to_permute)
+	removed_tile = board[4, 0]
+	board.replace_tile(added_tile, Point(4, 0))
+	print(board.render())
+
+	assert removed_tile.data == '9'
+
+	render_result = """
+
+		ABCD#
+		FGHIE
+		KLMNJ
+		PQRSO
+		UVWXT
+		0123Y
+		56784
+
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+	print("")
+
+	# PUSH 1 UP
+
+	board = Board(5, 7)
+	setting_data = ('ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXY', '01234', '56789')
+	board.set_data_from_string(setting_data)
+
+	added_tile = Tile()
+	added_tile.data = '#'
+	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[1, :] ]
+
+	board.circular_permute_tiles(pos_to_permute)
+	removed_tile = board[1, board.h-1]
+	board.replace_tile(added_tile, Point(1, board.h-1))
+	print(board.render())
+
+	assert removed_tile.data == 'B'
+
+	render_result = """
+
+		AGCDE
+		FLHIJ
+		KQMNO
+		PVRST
+		U1WXY
+		06234
+		5#789
+
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+	print("")
 
 
