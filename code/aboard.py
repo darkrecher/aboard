@@ -198,6 +198,37 @@ class Board():
 	# Avec la fonction built-in filter().
 
 
+	def replace_tile(self, new_tile, pos):
+		new_tile.x = pos.x
+		new_tile.y = pos.y
+		self._tiles[pos.y][pos.x] = new_tile
+
+
+	def circular_permute_tiles(self, positions):
+		# TODO : positions devrait pouvoir être un itérable.
+		#        et donc si on pouvait faire des itérables sur les pos, et pas les tiles.
+		#        puisque là on bouge les tiles, alors on n'est pas sûr de ce que ça peut donnéer d'itérer dessus en même temps.
+
+		first_pos = positions.pop(0)
+		first_tile = self._tiles[first_pos.y][first_pos.x]
+		prev_pos = first_pos
+
+		while positions:
+			cur_pos = positions.pop(0)
+			cur_tile = self._tiles[cur_pos.y][cur_pos.x]
+			cur_tile.x = prev_pos.x
+			cur_tile.y = prev_pos.y
+			self._tiles[prev_pos.y][prev_pos.x] = cur_tile
+			prev_pos = cur_pos
+
+		first_tile.x = cur_pos.x
+		first_tile.y = cur_pos.y
+		self._tiles[cur_pos.y][cur_pos.x] = first_tile
+
+
+
+
+
 # ----------------- tests des trucs en cours ------------------
 # TODO : (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
 
