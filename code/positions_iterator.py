@@ -160,16 +160,42 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 	def _iter_from_slice_x(self):
-		start = self.slice_x.start or 0
-		stop = self.slice_x.stop or self.board.w
-		step = self.slice_x.step or 1
+		# TODO : faut trouver le fonctionnement exact des slices.
+		# Et factoriser ça dans une fonction de base, générique tools et tout ça.
+		# Actuellement, un truc comme [1:-1] ne marchera pas.
+		# Et y'a tellement de cas tordus qu'il faudra peut-être tester tous les cas possibles.
+		# (start, stop, step) X (pos, neg, 0, indéfini).
+		step = self.slice_x.step
+		if step is None: step = 1
+
+		start = self.slice_x.start
+		stop = self.slice_x.stop
+		if step > 0:
+			if start is None: start = 0
+			if stop is None: stop = self.board.w
+		else:
+			if start is None: start = self.board.w - 1
+			if stop is None: stop = -1
+
+		#print('TODO debug x', start, stop, step)
 		return iter(range(start, stop, step))
 
 
 	def _iter_from_slice_y(self):
-		start = self.slice_y.start or 0
-		stop = self.slice_y.stop or self.board.h
-		step = self.slice_y.step or 1
+
+		step = self.slice_y.step
+		if step is None: step = 1
+
+		start = self.slice_y.start
+		stop = self.slice_y.stop
+		if step > 0:
+			if start is None: start = 0
+			if stop is None: stop = self.board.h
+		else:
+			if start is None: start = self.board.h - 1
+			if stop is None: stop = -1
+
+		#print('TODO debug y', start, stop, step)
 		return iter(range(start, stop, step))
 
 

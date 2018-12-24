@@ -308,7 +308,60 @@ def test_getitem_square_reversed_stepped_on_y_grouped():
 	print(board.render())
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
-# TODO : Tester les exceptions avec des steps de slice à 0. (à priori, c'est géré tout seul).
 
-# TODO : board[::-1, 0] ne marche pas. Il faut spécifier explicitement board[board.w:-1:-1, 0]
-#        Si on pouvait éviter de faire moins dégueulasse, ce serait super.
+def test_getitem_square_neg_coords():
+
+	board = Board(8, 8)
+
+	for index, tile in enumerate(board[-5:-2, -7:-3]):
+		tile.data = hex(index)[2]
+
+	render_result = """
+
+		........
+		...012..
+		...345..
+		...678..
+		...9ab..
+		........
+		........
+		........
+
+	"""
+	print(board.render())
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_getitem_square_reversed_all():
+
+	board = Board(3, 2)
+
+	for index, tile in enumerate(board[::-1, ::-1]):
+		tile.data = hex(index)[2]
+
+	render_result = """
+
+		543
+		210
+
+	"""
+	print(board.render())
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_getitem_fail_step_zero():
+
+	board = Board(1, 1)
+	failed_at_failing = False
+	try:
+		for t in board[::0]:pass
+		failed_at_failing = True
+	except ValueError as e:
+		print(e)
+	try:
+		for t in board[:, ::0]:pass
+		failed_at_failing = True
+	except ValueError as e:
+		print(e)
+	assert failed_at_failing == False
+

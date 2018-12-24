@@ -61,23 +61,6 @@ class Board():
 		pass
 
 
-	# TODO : uselesse crap
-	#def _in_bounds(self, point):
-	#
-	#	x, y = point.x, point.y
-	#	if x < 0:
-	#		x = x + self.w
-	#	if y < 0:
-	#		y = y + self.h
-	#
-	#	if x >= self.w or y >= self.h:
-	#		msg = "Coord not in board. coord : %s. board size : %s, %s."
-	#		data = (str(point), self.w, self.h)
-	#		raise BoardIndexError(msg % data)
-	#
-	#	return x, y
-
-
 	def _get_tile(self, x, y):
 		try:
 			return self._tiles[y][x]
