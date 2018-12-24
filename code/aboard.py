@@ -61,30 +61,50 @@ class Board():
 		pass
 
 
-	def get_tile(self, *args, **kwargs):
-		point = Point(*args, **kwargs)
+	# TODO : uselesse crap
+	#def _in_bounds(self, point):
+	#
+	#	x, y = point.x, point.y
+	#	if x < 0:
+	#		x = x + self.w
+	#	if y < 0:
+	#		y = y + self.h
+	#
+	#	if x >= self.w or y >= self.h:
+	#		msg = "Coord not in board. coord : %s. board size : %s, %s."
+	#		data = (str(point), self.w, self.h)
+	#		raise BoardIndexError(msg % data)
+	#
+	#	return x, y
 
-		# TODO : Dans une toute petite fonction "in_bounds"
-		if any((
-			point.x < 0,
-			point.x >= self.w,
-			point.y < 0,
-			point.y >= self.h
-		)):
-			msg = "Coord not in board. coord : %s. board size : %s, %s."
-			data = (str(point), self.w, self.h)
+
+	def _get_tile(self, x, y):
+		try:
+			return self._tiles[y][x]
+		except IndexError:
+			msg = "Coord not in board. coord : %s %s. board size : %s, %s."
+			data = (x, y, self.w, self.h)
 			raise BoardIndexError(msg % data)
 
-		return self._tiles[point.y][point.x]
+
+	def get_tile(self, *args, **kwargs):
+		point = Point(*args, **kwargs)
+		return self._get_tile(point.x, point.y)
 
 
 	def __getitem__(self, args):
 
-		# TODO : accès à partir de la fin avec les index négatifs.
-		#        aussi bien pour les itération que pour la récup d'un seul élément.
-
 		if not args:
 			return BoardIteratorRect(self)
+
+		try:
+			point = Point(args)
+		except ValueError:
+			point = None
+
+		if point is not None:
+			# Mode un seul élément
+			return self._get_tile(point.x, point.y)
 
 		slice_x = None
 		slice_y = None
@@ -123,16 +143,6 @@ class Board():
 					id_coord_main = dict_coord_from_str[id_coord_main]
 
 			return BoardIteratorRect(self, slice_x, slice_y, id_coord_main)
-
-		try:
-			point = Point(*args)
-		except ValueError:
-			point = None
-
-		if point is not None:
-			# Mode un seul élément
-			# TODO : raiser une exception si l'une des coords est out of bounds.
-			return self._tiles[point.y][point.x]
 
 		# Mode fail
 		raise Exception("TODO fail get item" + "".join(args))
@@ -235,7 +245,7 @@ class Board():
 
 def main():
 
-	from my_log import debug, answer, log
+	from my_log import log
 	log('Hellow')
 
 	# http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
@@ -254,15 +264,20 @@ def main():
 		log(x)
 
 	b = Board(15, 15)
-	log(b[11])
-	log(b[11, 5])
-	#log(b[11, ...])
-	#log(b[..., 5])
-	log(b[11:18:2])
-	log(b[11:18:2, 1:33:5])
-	log(b[11:, :33])
-	log(b[:, ::5])
+	#log(b[11])
+	b[11, 5].data = 'Z'
+	##log(b[11, ...])
+	##log(b[..., 5])
+	#log(b[11:18:2])
+	#log(b[11:18:2, 1:33:5])
+	#log(b[11:, :33])
+	#log(b[:, ::5])
+	a=Point(3, 4)
+	b[a].data = 'Y'
+	log(b.render())
 
 	log('End')
 
 
+if __name__ == '__main__':
+	main()

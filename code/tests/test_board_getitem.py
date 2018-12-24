@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 
-from aboard import Board
+from aboard import Board, BoardIndexError
+from point import Point
 from board_renderer import BoardRenderer
 
 
@@ -17,16 +18,15 @@ def strip_multiline(multi_string):
 def test_getitem_one_elem():
 
 	board = Board(9, 5)
-	board[0,0].data = '\\'
-	board[4,0].data = '^'
-	board[8,0].data = '/'
-	board[0,2].data = '<'
-	board[4,2].data = '+'
-	board[8,2].data = '>'
-	board[0,4].data = 'L'
-	board[4,4].data = 'V'
-	board[8,4].data = 'J'
-
+	board[0, 0].data = '\\'
+	board[4, 0].data = '^'
+	board[8, 0].data = '/'
+	board[0, 2].data = '<'
+	board[4, 2].data = '+'
+	board[8, 2].data = '>'
+	board[0, 4].data = 'L'
+	board[4, 4].data = 'V'
+	board[8, 4].data = 'J'
 
 	render_result = """
 
@@ -39,6 +39,84 @@ def test_getitem_one_elem():
 	"""
 	print(board.render())
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_getitem_one_elem_negative_coords():
+
+	board = Board(9, 5)
+	board[-9, -5].data = '{'
+	board[-8, -5].data = '('
+	board[-9, -4].data = '['
+	board[-1, 0].data = '"'
+	board[0, -1].data = '\''
+	board[-5, 2].data = '#'
+	board[-1, -2].data = ']'
+	board[-2, -1].data = ')'
+	board[-1, -1].data = '}'
+
+	render_result = """
+
+		{(......"
+		[........
+		....#....
+		........]
+		'......)}
+
+	"""
+	print(board.render())
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_getitem_point():
+
+	board = Board(3, 3)
+	p = Point(1, 0)
+	board[p].data = '|'
+	board[Point(0, -2)].data = '-'
+	board[Point(-2, 1)].data = '*'
+	board[Point(-1, -2)].data = '~'
+	board[{'x':1, 'y':2}].data = 'I'
+
+	render_result = """
+
+		.|.
+		-*~
+		.I.
+
+	"""
+	print(board.render())
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_getitem_fail():
+
+	board = Board(5, 14)
+	failed_at_failing = False
+
+	try:
+		a = board[0, 14]
+		failed_at_failing = True
+	except BoardIndexError as e:
+		print(e)
+	try:
+		p=Point(5, 0)
+		a = board[p]
+		failed_at_failing = True
+	except BoardIndexError as e:
+		print(e)
+	try:
+		a = board[0, -15]
+		failed_at_failing = True
+	except BoardIndexError as e:
+		print(e)
+	try:
+		p=Point(-6, 0)
+		a = board[p]
+		failed_at_failing = True
+	except BoardIndexError as e:
+		print(e)
+
+	assert failed_at_failing == False
 
 
 def test_getitem_square():
@@ -94,7 +172,7 @@ def test_getitem_all():
 
 	board = Board(2, 3)
 
-	for index, tile in enumerate(board[::]):
+	for index, tile in enumerate(board[:]):
 		tile.data = hex(index)[2]
 
 	render_result = """
@@ -112,7 +190,7 @@ def test_getitem_all_on_y():
 
 	board = Board(5, 3)
 
-	for index, tile in enumerate(board[::,::,'y']):
+	for index, tile in enumerate(board[:,:,'y']):
 		tile.data = hex(index)[2]
 
 	render_result = """
@@ -130,7 +208,7 @@ def test_getitem_one_line():
 
 	board = Board(8, 8)
 
-	for index, tile in enumerate(board[::,6]):
+	for index, tile in enumerate(board[:,6]):
 		tile.data = hex(index)[2]
 
 	render_result = """
@@ -230,7 +308,6 @@ def test_getitem_square_reversed_stepped_on_y_grouped():
 	print(board.render())
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
-# TODO : Tester les exceptions quand les index sont out of range
 # TODO : Tester les exceptions avec des steps de slice à 0. (à priori, c'est géré tout seul).
 
 # TODO : board[::-1, 0] ne marche pas. Il faut spécifier explicitement board[board.w:-1:-1, 0]
