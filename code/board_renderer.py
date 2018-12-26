@@ -3,6 +3,11 @@
 from tile import Tile
 
 
+# BIG TODO : vu qu'on va afficher des tiles avec des mobitems dessus,
+# il va carrément falloir un objet "Canvas / Surface / GraphicContext".
+# Mais au lieu que ce soit des pixels, ce sera des chars.
+# On fera simple, quand même.
+
 class BoardRenderer():
 
 	AUTHORIZED_ATTRIBUTES = {
@@ -78,6 +83,16 @@ class BoardRenderer():
 				lines.append(self._str_resized(line))
 
 		last_lines = [ self.chr_fill_tile*self.tile_w ] * (self.tile_h - 1)
+
+		# Pour l'instant, on n'affiche que la première ligne des mobile_items. Osef.
+		first_line = lines[0]
+		for mobile_item in tile.mobile_items:
+			line_mobitem = mobile_item.render()
+			if line_mobitem is not None:
+				first_line = line_mobitem + first_line[len(line_mobitem):]
+
+		lines[0] = first_line[:self.tile_w]
+
 		return lines + last_lines
 
 

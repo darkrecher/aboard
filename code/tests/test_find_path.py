@@ -96,7 +96,7 @@ def test_find_path_roads():
 
 	renderer = BoardRenderer(tile_w=3, tile_h=3, tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding='.')
 	board = Board(
-		7, 7, tile_generator=lambda x, y: XmasTile(x, y),
+		7, 7, tile_generator=lambda x, y, myself: XmasTile(x, y, myself),
 		default_renderer=renderer,
 	)
 

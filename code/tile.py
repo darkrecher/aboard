@@ -6,7 +6,8 @@ from point import Point
 class Tile():
 
 	def __init__(self, x=None, y=None, board_father=None):
-		# TODO : il faut accepter le même bazar de param que pour l'objet Point.
+		# TODO : il faut accepter le même bazar de param que pour l'objet Point. Ou pas.
+		# TODO : renommer board_father en board_owner.
 		self.x = x
 		self.y = y
 		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
@@ -16,6 +17,7 @@ class Tile():
 			self.point = None
 		self.board_father = board_father
 		self.data = '.'
+		self.mobile_items = []
 
 
 	def __str__(self):

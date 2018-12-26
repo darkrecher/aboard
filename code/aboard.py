@@ -18,10 +18,11 @@ class Board():
 	# Pour résoudre des problèmes "genre 4 elements".
 
 	# TODO : on devrait pouvoir spécifier juste une classe héritée de Tile. Sans lambda.
+	# RE TODO : d'autant plus que ça devient tout poucrave avec le "myself".
 	def __init__(
 		self,
 		w=1, h=1,
-		tile_generator=lambda x, y: Tile(x, y),
+		tile_generator=lambda x, y, myself: Tile(x, y, myself),
 		default_renderer=BoardRenderer(),
 		class_adjacency=None,
 	):
@@ -37,28 +38,9 @@ class Board():
 		self.is_adjacent = self.adjacency.is_adjacent
 
 		self._tiles = [
-			[ tile_generator(x, y) for x in range(w) ]
+			[ tile_generator(x, y, self) for x in range(w) ]
 			for y in range(h)
 		]
-		self.mobile_items = []
-		# clé : un objet Point.
-		# valeur : une liste de mobile items
-		self.mobile_items_by_pos = {}
-
-
-	def _indexify_mobi_add(mobile_item):
-		# TODO WIP
-		pass
-
-
-	def _indexify_mobi_move(mobile_item):
-		# TODO WIP
-		pass
-
-
-	def _indexify_mobi_del(mobile_item):
-		# TODO WIP
-		pass
 
 
 	def _get_tile(self, x, y):
@@ -76,6 +58,8 @@ class Board():
 
 
 	def __getitem__(self, args):
+		# FUTURE : on a le droit de faire du *args, **kwargs avec getitem ?
+		# Et ça donne quoi si on le fait ? À tester.
 
 		if not args:
 			return BoardIteratorRect(self)
@@ -229,6 +213,8 @@ class Board():
 def main():
 
 	from my_log import log
+	from mobitem import MobileItem
+
 	log('Hellow')
 
 	# http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
@@ -246,17 +232,22 @@ def main():
 	for x in window('azertyuiop', 3):
 		log(x)
 
-	b = Board(15, 15)
+	b = Board(10, 10)
+	mob = MobileItem(b, None, None, (3, 5))
 	#log(b[11])
-	b[11, 5].data = 'Z'
+	#b[11, 5].data = 'Z'
 	##log(b[11, ...])
 	##log(b[..., 5])
 	#log(b[11:18:2])
 	#log(b[11:18:2, 1:33:5])
 	#log(b[11:, :33])
 	#log(b[:, ::5])
-	a=Point(3, 4)
-	b[a].data = 'Y'
+	#a=Point(3, 4)
+	#b[a].data = 'Y'
+	log(b.render())
+	log('-' * 40)
+	print("before move")
+	mob.move(None, None, None, (7, 4))
 	log(b.render())
 
 	log('End')

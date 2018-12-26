@@ -38,7 +38,7 @@ def test_basic_renderer():
 		def render(self, w=1, h=1):
 			return hex(self.x * self.y)[2:].upper()
 
-	board = Board(7, 4, lambda x, y: MyTileTellCoordsShort(x, y))
+	board = Board(7, 4, lambda x, y, myself: MyTileTellCoordsShort(x, y, myself))
 	render_result = """
 
 	0000000
@@ -67,7 +67,7 @@ def test_padded_renderer():
 		tile_padding_w=3, tile_padding_h=2,
 		chr_fill_tile='.', chr_fill_tile_padding='#',
 	)
-	board = Board(7, 4, lambda x, y: MyTileTellCoordsLong(x, y))
+	board = Board(7, 4, lambda x, y, myself: MyTileTellCoordsLong(x, y, myself))
 	render_result = """
 
 	.....###.....###.....###.....###.....###.....###.....
