@@ -8,7 +8,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
+# Recher : suppression de ce répertoire du gitignore, car sphinx place la doc dans le répertoire /aboard/docs/build
+# build/
 develop-eggs/
 dist/
 downloads/
