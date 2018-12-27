@@ -20,8 +20,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'aboard'
-copyright = '2018, Réchèr'
-author = 'Réchèr'
+copyright = u'2018, Réchèr'
+author = u'Réchèr'
 
 # The short X.Y version
 version = ''
@@ -135,7 +135,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'aboard.tex', 'aboard Documentation',
-     'Réchèr', 'manual'),
+     u'Réchèr', 'manual'),
 ]
 
 
