@@ -1,10 +1,14 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point
+from point import Point, Dir
 from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
 from positions_iterator import BoardIteratorRect, Coord
+from propagation_iterator import (
+	propag_cond_default,
+	BoardIteratorPropagation, BoardIteratorFindPath
+)
 
 
 class BoardIndexError(IndexError):
@@ -47,7 +51,7 @@ class Board():
 		try:
 			return self._tiles[y][x]
 		except IndexError:
-			msg = "Coord not in board. coord : %s %s. board size : %s, %s."
+			msg = "Coord not in board. coord : %s, %s. board size : %s, %s."
 			data = (x, y, self.w, self.h)
 			raise BoardIndexError(msg % data)
 
@@ -115,10 +119,22 @@ class Board():
 		raise Exception("TODO fail get item" + "".join(args))
 
 
+	def __iter__(self):
+		return BoardIteratorRect(self)
+
+
 	def render(self, renderer=None):
 		if renderer is None:
 			renderer = self._default_renderer
 		return renderer.render(self)
+
+
+	def get_by_propagation(self, pos_start, propag_condition=propag_cond_default):
+		return BoardIteratorPropagation(self, pos_start, propag_condition)
+
+
+	def get_by_pathfinding(self, pos_start, pos_end, pass_through_condition=propag_cond_default):
+		return BoardIteratorFindPath(self, pos_start, pos_end, pass_through_condition)
 
 
 	def set_data_from_string(self, data_lines, sep_line=None, sep_tiles=None):
@@ -182,9 +198,9 @@ class Board():
 
 
 	def circular_permute_tiles(self, positions):
-		# TODO : positions est un itérable.
-		#        et donc si on pouvait faire des itérables sur les pos, et pas les tiles.
-		#        puisque là on bouge les tiles, alors on n'est pas sûr de ce que ça peut donnéer d'itérer dessus en même temps.
+		"""
+		positions est un itérable.
+		"""
 
 		made_first_iteration = False
 

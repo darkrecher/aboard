@@ -53,6 +53,44 @@ def test_propagation_simple():
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
+def test_propagation_simple_2():
+
+	board = Board(15, 10)
+	# TODO : il faudra faire une init du board from input. Pour que ce soit plus compréhensible.
+	pos_walls = [
+		(2, 3), (3, 3), (4, 3), (5, 3), (6, 3),
+		(6, 4), (6, 5), (6, 6),
+		(5, 6), (4, 6),
+		(4, 7), (4, 8),
+		(3, 8), (2, 8),
+		(2, 7), (2, 6), (2, 5), (2, 4),
+	]
+	for pos in pos_walls:
+		board.get_tile(pos).data = '*'
+	print(board.render())
+
+	for point in board.get_by_propagation((4, 4)):
+		print(point)
+		board.get_tile(point).data = 'o'
+	print(board.render())
+
+	render_result = """
+
+		...............
+		...............
+		...............
+		..*****........
+		..*ooo*........
+		..*ooo*........
+		..*o***........
+		..*o*..........
+		..***..........
+		...............
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
 def test_propagation_dist():
 
 	board = Board(15, 10, class_adjacency=AdjacencyEvaluatorCross)
@@ -129,6 +167,33 @@ def test_find_path_simple():
 
 	board = Board(15, 10, class_adjacency=AdjacencyEvaluatorCross)
 	iter_find_path = BoardIteratorFindPath(board, (3, 2), (6, 9))
+
+	for index, tile in enumerate(iter_find_path):
+		tile.data = hex(index)[2]
+
+	print(board.render())
+
+	render_result = """
+
+		...............
+		...............
+		...0123........
+		......4........
+		......5........
+		......6........
+		......7........
+		......8........
+		......9........
+		......a........
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
+def test_find_path_simple_2():
+
+	board = Board(15, 10, class_adjacency=AdjacencyEvaluatorCross)
+	iter_find_path = board.get_by_pathfinding((3, 2), (6, 9))
 
 	for index, tile in enumerate(iter_find_path):
 		tile.data = hex(index)[2]

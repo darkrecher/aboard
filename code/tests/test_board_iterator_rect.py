@@ -62,6 +62,22 @@ def test_simple_iteration_main_y():
 	assert positions_check == []
 
 
+def test_iteration_all_board_render():
+
+	board = Board(5, 2)
+
+	for index, tile in enumerate(board):
+		tile.data = index
+
+	render_result = """
+
+		01234
+		56789
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
+
+
 def test_simple_iteration_render():
 
 	board = Board(12, 6)
