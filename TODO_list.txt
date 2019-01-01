@@ -22,8 +22,9 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - classe Direction. Rajouter des noms dans `DICT_DIR_FROM_STR`. Mettre dans un fichier à part. Itérateur de direction, avec ou sans diag.
  X Rendre la classe Direction ordonnable (up = 0, et ensuite dans le sens des aiguilles d'une montre).
  - tous les TODO qui restent dans le code.
+ - tout ce qui est exposé publiquement doit être importable depuis `aboard.py`.
  - finir le renderer.
  - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les shortest paths possible, ou tous les paths possible. (ça avance mais c'est pas fini).
  - permutation de tiles. on a le droit de déplacer des tiles, mais on est obligé de toujours avoir un objet tile dans chaque case du board.
- - doc, processus d'obfuscation et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
+ - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
 

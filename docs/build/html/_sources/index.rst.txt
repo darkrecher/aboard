@@ -3,14 +3,26 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to aboard's documentation!
-==================================
+aboard
+======
+
+Lib Python 3 de gestion de quadrillages en 2D, avec des opérations de base permettant d'implémenter une game logic ou des bots pour des jeux de plateaux.
+
+Pas de "pip install" pour l'instant. Il faut copier manuellement les fichiers de code dans votre projet, et éventuellement modifier votre PYTHONPATH.
+
+Le fichier "aboard_standalone.py" est généré avec tout le code de la lib. Il est possible de copier-coller son contenu, pour l'utiliser dans n'importe quel contexte (par exemple, un puzzle ou un challenge du site codingame).
+
+
+Sommaire
+========
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    advanced
+
+* :ref:`search`
+
 
 Quickstart
 ==========
@@ -28,7 +40,7 @@ Création, accès aux tiles, affichage.
 .........
 .........
 
-Accès à des lignes et des rectangles de tiles via des itérateurs.
+Accès à des lignes, colonnes, rectangles de tiles via des itérateurs.
 
 >>> for tile in board[2, :]:
 ...     tile.data = '|'
@@ -44,10 +56,10 @@ Accès à des lignes et des rectangles de tiles via des itérateurs.
 ..|######
 ..|######
 
-Accès via le coin inférieur droit, par des coordonnées négatives.
+Accès à partir du coin inférieur droit, avec des coordonnées négatives.
 
->>> for point in [(-1, -1), (-1, 4), (-2, 4)]:
-...     board[point].data = '.'
+>>> for coord in [(-1, -1), (-1, 4), (-2, 4)]:
+...     board[coord].data = '.'
 >>> print(board.render())
 ..|......
 ..|======
@@ -56,7 +68,7 @@ Accès via le coin inférieur droit, par des coordonnées négatives.
 ..|####..
 ..|#####.
 
-Itération par remplissage.
+Remplissage par propagation.
 
 >>> from propagation_iterator import BoardIteratorPropagation
 >>> for tile in BoardIteratorPropagation(board, (6, 3)):
@@ -69,18 +81,40 @@ Itération par remplissage.
 ..|####//
 ..|#####/
 
-Vérification des coordonnées, déplacement d'un Point selon une direction.
+Vérification des coordonnées, déplacement selon une direction.
 
-TODO
+>>> from aboard import BoardIndexError
+>>> from point import Point, Dir
+>>> point = Point(9, 0)
+>>> try:
+...     board[point]
+... except BoardIndexError as e:
+...     print(e)
+Coord not in board. coord : 9 0. board size : 9, 6.
+TODO : il manque une virgule.
+>>> point.move(Dir.LEFT, 7)
+>>> board[point].data = '.'
+>>> point.move(Dir.DOWN)
+>>> board[point].data = '.'
+>>> print(board.render())
+.........
+...======
+..|Z/////
+..|//////
+..|####//
+..|#####/
 
-Recherche du chemin le plus court. (En config par défaut : sans les diagonales).
+Recherche du chemin le plus court. (La configuration par défaut n'autorise pas les mouvements en diagonale, mais c'est modifiable).
 
-TODO
+>>> from propagation_iterator import BoardIteratorFindPath
+>>> for idx,tile in enumerate(BoardIteratorFindPath(board, (1,3), (6,0))):
+...    tile.data = idx
+>>> print(board.render())
+..45678..
+.23======
+.1|Z/////
+.0|//////
+..|####//
+..|#####/
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

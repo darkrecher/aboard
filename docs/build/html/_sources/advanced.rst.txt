@@ -1,11 +1,8 @@
 **********************************
-aboard, fonctions avancées
+Doc détaillée
 **********************************
 
 TODO
-
-advanced
-========
 
 Adjacency
 =========
@@ -28,3 +25,10 @@ specific fill et path-finding
 build pour codingame
 ====================
 
+mobile item (en construction)
+=============================
+
+exemple complet
+===============
+
+Jeu de plateau "Labyrinthe".
