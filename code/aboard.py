@@ -21,12 +21,10 @@ class Board():
 	# ensemble donné. (Si c'est possible).
 	# Pour résoudre des problèmes "genre 4 elements".
 
-	# TODO : on devrait pouvoir spécifier juste une classe héritée de Tile. Sans lambda.
-	# RE TODO : d'autant plus que ça devient tout poucrave avec le "myself".
 	def __init__(
 		self,
 		w=1, h=1,
-		tile_generator=lambda x, y, myself: Tile(x, y, myself),
+		class_tile=Tile,
 		default_renderer=BoardRenderer(),
 		class_adjacency=None,
 	):
@@ -42,7 +40,7 @@ class Board():
 		self.is_adjacent = self.adjacency.is_adjacent
 
 		self._tiles = [
-			[ tile_generator(x, y, self) for x in range(w) ]
+			[ class_tile(x, y, self) for x in range(w) ]
 			for y in range(h)
 		]
 
