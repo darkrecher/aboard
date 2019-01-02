@@ -1,5 +1,12 @@
 # -*- coding: UTF-8 -*-
 
+# Version stand-alone de la librairie python aboard.
+# https://github.com/darkrecher/aboard
+# https://aboard.readthedocs.io/fr/latest/
+#
+# Date du build : 2019-01-02 10:12
+# commit git : cedfdc9fe5cc177f36177701c46b3a17de5cd0b5
+
 
 """
 On va faire simple.
@@ -321,7 +328,8 @@ ItInd = IterIndicator
 class Tile():
 
 	def __init__(self, x=None, y=None, board_father=None):
-		# TODO : il faut accepter le même bazar de param que pour l'objet Point.
+		# TODO : il faut accepter le même bazar de param que pour l'objet Point. Ou pas.
+		# TODO : renommer board_father en board_owner.
 		self.x = x
 		self.y = y
 		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
@@ -331,6 +339,7 @@ class Tile():
 			self.point = None
 		self.board_father = board_father
 		self.data = '.'
+		self.mobile_items = []
 
 
 	def __str__(self):
@@ -355,6 +364,11 @@ class Tile():
 # -*- coding: UTF-8 -*-
 
 
+
+# BIG TODO : vu qu'on va afficher des tiles avec des mobitems dessus,
+# il va carrément falloir un objet "Canvas / Surface / GraphicContext".
+# Mais au lieu que ce soit des pixels, ce sera des chars.
+# On fera simple, quand même.
 
 class BoardRenderer():
 
@@ -431,6 +445,16 @@ class BoardRenderer():
 				lines.append(self._str_resized(line))
 
 		last_lines = [ self.chr_fill_tile*self.tile_w ] * (self.tile_h - 1)
+
+		# Pour l'instant, on n'affiche que la première ligne des mobile_items. Osef.
+		first_line = lines[0]
+		for mobile_item in tile.mobile_items:
+			line_mobitem = mobile_item.render()
+			if line_mobitem is not None:
+				first_line = line_mobitem + first_line[len(line_mobitem):]
+
+		lines[0] = first_line[:self.tile_w]
+
 		return lines + last_lines
 
 
@@ -622,16 +646,42 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 	def _iter_from_slice_x(self):
-		start = self.slice_x.start or 0
-		stop = self.slice_x.stop or self.board.w
-		step = self.slice_x.step or 1
+		# TODO : faut trouver le fonctionnement exact des slices.
+		# Et factoriser ça dans une fonction de base, générique tools et tout ça.
+		# Actuellement, un truc comme [1:-1] ne marchera pas.
+		# Et y'a tellement de cas tordus qu'il faudra peut-être tester tous les cas possibles.
+		# (start, stop, step) X (pos, neg, 0, indéfini).
+		step = self.slice_x.step
+		if step is None: step = 1
+
+		start = self.slice_x.start
+		stop = self.slice_x.stop
+		if step > 0:
+			if start is None: start = 0
+			if stop is None: stop = self.board.w
+		else:
+			if start is None: start = self.board.w - 1
+			if stop is None: stop = -1
+
+		#print('TODO debug x', start, stop, step)
 		return iter(range(start, stop, step))
 
 
 	def _iter_from_slice_y(self):
-		start = self.slice_y.start or 0
-		stop = self.slice_y.stop or self.board.h
-		step = self.slice_y.step or 1
+
+		step = self.slice_y.step
+		if step is None: step = 1
+
+		start = self.slice_y.start
+		stop = self.slice_y.stop
+		if step > 0:
+			if start is None: start = 0
+			if stop is None: stop = self.board.h
+		else:
+			if start is None: start = self.board.h - 1
+			if stop is None: stop = -1
+
+		#print('TODO debug y', start, stop, step)
 		return iter(range(start, stop, step))
 
 
@@ -996,13 +1046,68 @@ class SurIteratorGroupTiles():
 
 class MobileItem():
 
-	def __init__(self, board_owner, pos_param_1=None, pos_param_2=None, x=None, y=None):
-		self.board_owner = board_owner
+	# TODO : les params, c'est totalement nawak. Faut arranger ça autrement.
+
+	def __init__(
+		self,
+		board_owner=None, tile_owner=None, z_index=None,
+		*args, **kwargs
+	):
+		self.tile_owner = None
 		self.data = '#'
-		self.pos = Point(pos_param_1, pos_param_2, x, y)
+		self.move(board_owner, tile_owner, z_index, *args, **kwargs)
 
 
+	def move(
+		self,
+		board_owner=None, tile_owner=None, z_index=None,
+		*args, **kwargs
+	):
+		"""
+		Param prioritaire : tile_owner.
+		Sinon : les autres params.
+		"""
+		# FUTURE : j'ai plein de fonctions qui crée un point à partir de args et kwargs.
+		# Y'aurait peut-être moyen de le factoriser avec un décorateur.
 
+		if self.tile_owner is not None:
+			# --- suppression du mobitem de la tile où il était avant ---
+			# Si self n'est pas mobile_items, ça va raiser une exception.
+			# C'est ce qu'on veut, parce que not supposed to happen.
+			index_myself = self.tile_owner.mobile_items.index(self)
+			del self.tile_owner.mobile_items[index_myself]
+			# --- définition éventuelle de board_owner, à partir de l'actuel board_owner ---
+			if board_owner is None:
+				board_owner = self.tile_owner.board_father
+
+		# --- définition éventuelle de board_owner, à partir du nouveau tile_owner ---
+		if tile_owner is not None:
+			board_owner = tile_owner.board_father
+
+		# --- définition éventuelle de tile_owner, à partir de board_owner et des param de pos ---
+		if tile_owner is None and board_owner is not None:
+			try:
+				point = Point(*args, **kwargs)
+				tile_owner = board_owner[point]
+			except:
+				tile_owner = None
+
+		# --- Enregistrement dans le nouveau tile_owner, si défini ---
+		if tile_owner is not None:
+			self.tile_owner = tile_owner
+			if z_index is None:
+				tile_owner.mobile_items.append(self)
+			else:
+				tile_owner.mobile_items.insert(z_index, self)
+
+
+	def unlink(self):
+		pass
+		# TODO : c'est comme un move, mais avec tout à None.
+
+
+	def render(self, w=1, h=1, chr_transparency=" "):
+		return str(self.data)[:w]
 
 # -*- coding: UTF-8 -*-
 
@@ -1018,11 +1123,10 @@ class Board():
 	# ensemble donné. (Si c'est possible).
 	# Pour résoudre des problèmes "genre 4 elements".
 
-	# TODO : on devrait pouvoir spécifier juste une classe héritée de Tile. Sans lambda.
 	def __init__(
 		self,
 		w=1, h=1,
-		tile_generator=lambda x, y: Tile(x, y),
+		class_tile=Tile,
 		default_renderer=BoardRenderer(),
 		class_adjacency=None,
 	):
@@ -1038,54 +1142,40 @@ class Board():
 		self.is_adjacent = self.adjacency.is_adjacent
 
 		self._tiles = [
-			[ tile_generator(x, y) for x in range(w) ]
+			[ class_tile(x, y, self) for x in range(w) ]
 			for y in range(h)
 		]
-		self.mobile_items = []
-		# clé : un objet Point.
-		# valeur : une liste de mobile items
-		self.mobile_items_by_pos = {}
 
 
-	def _indexify_mobi_add(mobile_item):
-		# TODO WIP
-		pass
-
-
-	def _indexify_mobi_move(mobile_item):
-		# TODO WIP
-		pass
-
-
-	def _indexify_mobi_del(mobile_item):
-		# TODO WIP
-		pass
+	def _get_tile(self, x, y):
+		try:
+			return self._tiles[y][x]
+		except IndexError:
+			msg = "Coord not in board. coord : %s, %s. board size : %s, %s."
+			data = (x, y, self.w, self.h)
+			raise BoardIndexError(msg % data)
 
 
 	def get_tile(self, *args, **kwargs):
 		point = Point(*args, **kwargs)
-
-		# TODO : Dans une toute petite fonction "in_bounds"
-		if any((
-			point.x < 0,
-			point.x >= self.w,
-			point.y < 0,
-			point.y >= self.h
-		)):
-			msg = "Coord not in board. coord : %s. board size : %s, %s."
-			data = (str(point), self.w, self.h)
-			raise BoardIndexError(msg % data)
-
-		return self._tiles[point.y][point.x]
+		return self._get_tile(point.x, point.y)
 
 
 	def __getitem__(self, args):
-
-		# TODO : accès à partir de la fin avec les index négatifs.
-		#        aussi bien pour les itération que pour la récup d'un seul élément.
+		# FUTURE : on a le droit de faire du *args, **kwargs avec getitem ?
+		# Et ça donne quoi si on le fait ? À tester.
 
 		if not args:
 			return BoardIteratorRect(self)
+
+		try:
+			point = Point(args)
+		except ValueError:
+			point = None
+
+		if point is not None:
+			# Mode un seul élément
+			return self._get_tile(point.x, point.y)
 
 		slice_x = None
 		slice_y = None
@@ -1125,24 +1215,26 @@ class Board():
 
 			return BoardIteratorRect(self, slice_x, slice_y, id_coord_main)
 
-		try:
-			point = Point(*args)
-		except ValueError:
-			point = None
-
-		if point is not None:
-			# Mode un seul élément
-			# TODO : raiser une exception si l'une des coords est out of bounds.
-			return self._tiles[point.y][point.x]
-
 		# Mode fail
 		raise Exception("TODO fail get item" + "".join(args))
+
+
+	def __iter__(self):
+		return BoardIteratorRect(self)
 
 
 	def render(self, renderer=None):
 		if renderer is None:
 			renderer = self._default_renderer
 		return renderer.render(self)
+
+
+	def get_by_propagation(self, pos_start, propag_condition=propag_cond_default):
+		return BoardIteratorPropagation(self, pos_start, propag_condition)
+
+
+	def get_by_pathfinding(self, pos_start, pos_end, pass_through_condition=propag_cond_default):
+		return BoardIteratorFindPath(self, pos_start, pos_end, pass_through_condition)
 
 
 	def set_data_from_string(self, data_lines, sep_line=None, sep_tiles=None):
@@ -1206,34 +1298,36 @@ class Board():
 
 
 	def circular_permute_tiles(self, positions):
-		# TODO : positions devrait pouvoir être un itérable.
-		#        et donc si on pouvait faire des itérables sur les pos, et pas les tiles.
-		#        puisque là on bouge les tiles, alors on n'est pas sûr de ce que ça peut donnéer d'itérer dessus en même temps.
+		"""
+		positions est un itérable.
+		"""
 
-		first_pos = positions.pop(0)
-		first_tile = self._tiles[first_pos.y][first_pos.x]
-		prev_pos = first_pos
+		made_first_iteration = False
 
-		while positions:
-			cur_pos = positions.pop(0)
-			cur_tile = self._tiles[cur_pos.y][cur_pos.x]
-			cur_tile.x = prev_pos.x
-			cur_tile.y = prev_pos.y
-			self._tiles[prev_pos.y][prev_pos.x] = cur_tile
-			prev_pos = cur_pos
+		for pos in positions:
+			if made_first_iteration:
+				cur_pos = pos
+				cur_tile = self._tiles[cur_pos.y][cur_pos.x]
+				cur_tile.x = prev_pos.x
+				cur_tile.y = prev_pos.y
+				self._tiles[prev_pos.y][prev_pos.x] = cur_tile
+				prev_pos = cur_pos
+			else:
+				first_pos = pos
+				first_tile = self._tiles[first_pos.y][first_pos.x]
+				prev_pos = first_pos
+				made_first_iteration = True
 
-		first_tile.x = cur_pos.x
-		first_tile.y = cur_pos.y
-		self._tiles[cur_pos.y][cur_pos.x] = first_tile
-
-
-
+		first_tile.x = pos.x
+		first_tile.y = pos.y
+		self._tiles[pos.y][pos.x] = first_tile
 
 
 # ----------------- tests des trucs en cours ------------------
 # TODO : (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
 
 def main():
+
 
 	log('Hellow')
 
@@ -1252,17 +1346,27 @@ def main():
 	for x in window('azertyuiop', 3):
 		log(x)
 
-	b = Board(15, 15)
-	log(b[11])
-	log(b[11, 5])
-	#log(b[11, ...])
-	#log(b[..., 5])
-	log(b[11:18:2])
-	log(b[11:18:2, 1:33:5])
-	log(b[11:, :33])
-	log(b[:, ::5])
+	b = Board(10, 10)
+	mob = MobileItem(b, None, None, (3, 5))
+	#log(b[11])
+	#b[11, 5].data = 'Z'
+	##log(b[11, ...])
+	##log(b[..., 5])
+	#log(b[11:18:2])
+	#log(b[11:18:2, 1:33:5])
+	#log(b[11:, :33])
+	#log(b[:, ::5])
+	#a=Point(3, 4)
+	#b[a].data = 'Y'
+	log(b.render())
+	log('-' * 40)
+	print("before move")
+	mob.move(None, None, None, (7, 4))
+	log(b.render())
 
 	log('End')
 
 
+if __name__ == '__main__':
+	main()
 

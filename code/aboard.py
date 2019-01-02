@@ -5,10 +5,7 @@ from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
 from positions_iterator import BoardIteratorRect, Coord
-from propagation_iterator import (
-	propag_cond_default,
-	BoardIteratorPropagation, BoardIteratorFindPath
-)
+from propagation_iterator import (propag_cond_default, BoardIteratorPropagation, BoardIteratorFindPath)
 
 
 class BoardIndexError(IndexError):
