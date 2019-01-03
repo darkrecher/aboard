@@ -70,8 +70,7 @@ Accès à partir du coin inférieur droit, avec des coordonnées négatives.
 
 Remplissage par propagation.
 
->>> from propagation_iterator import BoardIteratorPropagation
->>> for tile in BoardIteratorPropagation(board, (6, 3)):
+>>> for tile in board.get_by_propagation((6, 3)):
 ...     tile.data = '/'
 >>> print(board.render())
 ..|......
@@ -83,15 +82,13 @@ Remplissage par propagation.
 
 Vérification des coordonnées, déplacement selon une direction.
 
->>> from aboard import BoardIndexError
->>> from point import Point, Dir
+>>> from aboard import BoardIndexError, Point, Dir
 >>> point = Point(9, 0)
 >>> try:
 ...     board[point]
 ... except BoardIndexError as e:
 ...     print(e)
-Coord not in board. coord : 9 0. board size : 9, 6.
-TODO : il manque une virgule.
+Coord not in board. coord : 9, 0. board size : 9, 6.
 >>> point.move(Dir.LEFT, 7)
 >>> board[point].data = '.'
 >>> point.move(Dir.DOWN)
@@ -107,7 +104,7 @@ TODO : il manque une virgule.
 Recherche du chemin le plus court. (La configuration par défaut n'autorise pas les mouvements en diagonale, mais c'est modifiable).
 
 >>> from propagation_iterator import BoardIteratorFindPath
->>> for idx,tile in enumerate(BoardIteratorFindPath(board, (1,3), (6,0))):
+>>> for idx, tile in enumerate(board.get_by_pathfinding((1, 3), (6, 0))):
 ...    tile.data = idx
 >>> print(board.render())
 ..45678..
@@ -116,5 +113,4 @@ Recherche du chemin le plus court. (La configuration par défaut n'autorise pas 
 .0|//////
 ..|####//
 ..|#####/
-
 
