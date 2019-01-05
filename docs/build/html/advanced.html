@@ -36,12 +36,57 @@
             
   <div class="section" id="doc-detaillee">
 <h1>Doc détaillée<a class="headerlink" href="#doc-detaillee" title="Lien permanent vers ce titre">¶</a></h1>
-<p>TODO</p>
-<div class="section" id="adjacency">
-<h2>Adjacency<a class="headerlink" href="#adjacency" title="Lien permanent vers ce titre">¶</a></h2>
+<div class="section" id="objets-de-base-lecture-ecriture-simple">
+<h2>Objets de base, lecture/écriture simple<a class="headerlink" href="#objets-de-base-lecture-ecriture-simple" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Un Board est un tableau à deux dimensions contenant des objets Tile.</p>
+<p>La taille (largeur, hauteur) est à spécifier à la création.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="enumeration-avec-liste-de-points">
-<h2>Énumeration avec liste de points<a class="headerlink" href="#enumeration-avec-liste-de-points" title="Lien permanent vers ce titre">¶</a></h2>
+<p>La Tile en haut à gauche correspond à la coordonnée (0, 0), celle à sa droite à la coordonnée (1, 0), etc.</p>
+<p>La dernière Tile en bas à droite a pour coordonnée (largeur-1, hauteur-1).</p>
+<p>Une Tile possède les attributs suivants :</p>
+<blockquote>
+<div><ul class="simple">
+<li>board_father : référence vers l’objet Board contenant la Tile.</li>
+<li>x, y : position de la Tile dans le Board conteneur.</li>
+<li>data : string. Donnée stockée. Initialisée au caractère «&nbsp;.&nbsp;» (un point).</li>
+</ul>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">board_father</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code> et <code class="docutils literal notranslate"><span class="pre">y</span></code> peuvent être lus, mais ne devraient jamais être directement modifiés.</p>
+<p><code class="docutils literal notranslate"><span class="pre">data</span></code> peut être lu et modifié.</p>
+<p>Pour accéder à une Tile dans un Board, utilisez l’opérateur «&nbsp;[]&nbsp;» (<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>), en spécifiant les coordonnées x et y.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tile</span> <span class="o">=</span> <span class="n">board</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="go">.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;ABCD&quot;</span>
+</pre></div>
+</div>
+<p>La fonction <cite>Board.render()</cite> renvoie une string multi-ligne (séparateur : «&nbsp;\n&nbsp;»), représentant le Board.</p>
+<p>Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l’attribut data.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
+<span class="go">.......</span>
+<span class="go">.......</span>
+<span class="go">...A...</span>
+<span class="go">.......</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="iterateurs">
+<h2>Itérateurs<a class="headerlink" href="#iterateurs" title="Lien permanent vers ce titre">¶</a></h2>
+<div class="section" id="iterateurs-par-rectangle">
+<h3>Itérateurs par rectangle<a class="headerlink" href="#iterateurs-par-rectangle" title="Lien permanent vers ce titre">¶</a></h3>
+</div>
+<div class="section" id="iterateurs-par-liste-de-points">
+<h3>Itérateurs par liste de points<a class="headerlink" href="#iterateurs-par-liste-de-points" title="Lien permanent vers ce titre">¶</a></h3>
+</div>
+<div class="section" id="informations-d-iterations">
+<h3>Informations d’itérations<a class="headerlink" href="#informations-d-iterations" title="Lien permanent vers ce titre">¶</a></h3>
+</div>
 </div>
 <div class="section" id="override-class-tiles">
 <h2>override class tiles<a class="headerlink" href="#override-class-tiles" title="Lien permanent vers ce titre">¶</a></h2>
@@ -51,6 +96,9 @@
 </div>
 <div class="section" id="sur-iterators">
 <h2>sur_iterators<a class="headerlink" href="#sur-iterators" title="Lien permanent vers ce titre">¶</a></h2>
+</div>
+<div class="section" id="adjacency">
+<h2>Adjacency<a class="headerlink" href="#adjacency" title="Lien permanent vers ce titre">¶</a></h2>
 </div>
 <div class="section" id="specific-fill-et-path-finding">
 <h2>specific fill et path-finding<a class="headerlink" href="#specific-fill-et-path-finding" title="Lien permanent vers ce titre">¶</a></h2>
@@ -86,11 +134,12 @@
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Doc détaillée</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#adjacency">Adjacency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#enumeration-avec-liste-de-points">Énumeration avec liste de points</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#objets-de-base-lecture-ecriture-simple">Objets de base, lecture/écriture simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#iterateurs">Itérateurs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#override-class-tiles">override class tiles</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#rendering">rendering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#sur-iterators">sur_iterators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adjacency">Adjacency</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#specific-fill-et-path-finding">specific fill et path-finding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#build-pour-codingame">build pour codingame</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mobile-item-en-construction">mobile item (en construction)</a></li>
