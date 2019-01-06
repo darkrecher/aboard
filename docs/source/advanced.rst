@@ -36,6 +36,10 @@ Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem
 .
 >>> tile.data = "ABCD"
 
+L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``. (Voir plus loin).
+
+TODO : et donc on va renommer la classe Point en Pos, car c'est plus clair comme ça.
+
 La fonction `Board.render()` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
 
 Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l'attribut data.
@@ -86,9 +90,45 @@ Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caract
 26AAAA
 37AAAA
 
+Les slices renvoient un itérable, mais pas un indexable. On ne peut donc pas accéder directement à un élément en particulier. Mais on peut dérouler l'itérable dans une liste ou un tuple.
 
-Itérateurs par liste de points
-------------------------------
+>>> board[2, ::]
+<positions_iterator.BoardIteratorRect object at 0x00BA6590>
+>>> list(board[2, ::])
+[<tile.Tile object at 0x00BE6DD0>, <tile.Tile object at 0x00BF1050>, <tile.Tile
+object at 0x00BF11D0>, <tile.Tile object at 0x00BF1350>]
+
+TODO : et faut que je rajoute un "repr" propre pour les Tile.
+
+
+Itérateurs par liste de positions
+---------------------------------
+
+TODO. Bon c'est moche. Faut pouvoir appeler cet itérateur directement depuis le board.
+
+Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de tuple de coordonnées : ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
+
+L'itérateur ``BoardIteratorPositions`` permet la même chose, mais renvoie directement les Tiles, et donne également des indicateurs durant l'itération.
+
+TODO : ce sera prev_pos. Et aussi tile.pos, et non pas tile.x et tile.y.
+
+>>> positions = [ (0, 0), (1, 0), (2, 0), (4, 0), (4, 1), (3, 3) ]
+>>> iter_pos = BoardIteratorPositions(board, positions)
+>>> for tile in iter_pos:
+...    print(
+...        "pos:", tile.x, tile.y,
+...        "prev:", iter_pos.prev_point,
+...        "jumped:", iter_pos.jumped,
+...        "changed_dir:", iter_pos.changed_direction,
+...        "both_changed:", iter_pos.both_coord_changed
+...    )
+pos: 0 0 prev: None jumped: True changed_dir: False both_changed: True
+pos: 1 0 prev: <Point 0, 0 > jumped: False changed_dir: False both_changed: False
+pos: 2 0 prev: <Point 1, 0 > jumped: False changed_dir: False both_changed: False
+pos: 4 0 prev: <Point 2, 0 > jumped: True changed_dir: False both_changed: False
+pos: 4 1 prev: <Point 4, 0 > jumped: False changed_dir: True both_changed: False
+pos: 3 3 prev: <Point 4, 1 > jumped: True changed_dir: True both_changed: True
+
 
 Informations d'itérations
 -------------------------

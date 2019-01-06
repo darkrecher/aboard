@@ -8,6 +8,7 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  X Sur les itérateurs : ajouter un flag générique : `both_coords_changed`. C'est ce flag qui permet à coup sûr de savoir qu'on est "allé à la ligne" avec un RectIterator.
  X adjacency est une classe. on instancie l'adjacency par défaut. chaque board a la sienne (mais ça peut être une référence vers toujours la même classe).
  - itération par propagation. Avec une injection de dépendance (une fonction) qui indique si on peut propager ou pas. Fonction is_connected, qui ressemble à une fonction d'adjacence. Presque fini. faut juste tester un ou deux cas avec une injection de dépendance.
+ - fonction par défaut pour les propag et les path-finding : il faut vérifier le premier char de `data`, et non pas tout `data` en entier.
  X classe Board. Itérable avec un RectIterator simple. Itérable avec `board[1:20:3][::-1]` (on peut changer le sens 'par colonne' ou 'par ligne' en indiquant 'x' ou 'y' en 3ème param).
  - classe Board. accès __getitem__, avec un peu nimp comme paramètre : tuple de coord, point, ...
  - borduration : à partir d'un ensemble de position, on prend les positions qui sont adjacentes avec au moins une autre position n'appartenant pas à l'ensemble initial. (quid des bords du board ?)
