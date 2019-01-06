@@ -47,12 +47,45 @@ Dans la configuration de rendering par défaut, chaque Tile est représentée pa
 .......
 
 
-
 Itérateurs
 ==========
 
 Itérateurs par rectangle
 ------------------------
+
+Avec l'opérateur "[]", remplacez une ou les deux coordonnées, par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
+
+Exemple :
+
+>>> board = Board(6, 4)
+>>> for tile in board[1:4, 1]:
+...     tile.data = "#"
+>>> print(board.render())
+......
+.###..
+......
+......
+
+>>> for index, tile in enumerate(board[4::-1, :-1:-2]):
+...     tile.data = index
+>>> print(board.render())
+......
+98765.
+......
+43210.
+
+Attention. Pour l'instant : board[1:-1] ne fonctione pas. TODO : Dans le code, il suffit de faire range(self.w)[param_slice], et tout marche tout seul.
+
+Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caractère "y" en troisième paramètre.
+
+>>> for index, tile in enumerate(board[::, ::, 'y']):
+...     tile.data = index if index < 10 else "A"
+>>> print(board.render())
+048AAA
+159AAA
+26AAAA
+37AAAA
+
 
 Itérateurs par liste de points
 ------------------------------
