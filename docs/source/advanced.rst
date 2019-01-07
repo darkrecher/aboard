@@ -108,7 +108,24 @@ TODO. Bon c'est moche. Faut pouvoir appeler cet itérateur directement depuis le
 
 Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de tuple de coordonnées : ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
 
-L'itérateur ``BoardIteratorPositions`` permet la même chose, mais renvoie directement les Tiles, et donne également des indicateurs durant l'itération.
+L'itérateur ``BoardIteratorPositions`` permet la même chose, mais renvoie directement les Tiles. Voir chapitre suivant pour un exemple.
+
+
+Informations d'itérations
+-------------------------
+
+Les itérateurs possèdent des indicateurs mis à jour automatiquement :
+
+ - prev_point : position précédente (vaut None à la première itération)
+ - jumped : vaut True si la position précédente et la position courante ne sont pas adjacentes
+ - changed_direction : vaut True si la direction de déplacement a changé lors de l'itération qui vient d'être effectuée
+ - both_coord_changed : vaut True si les deux coordonnées x et y de la position précédente et de la position courante sont différentes.
+
+Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet de savoir si on vient de changer de colonne ou de ligne.
+
+>>> iter_board = board[:3, ::]
+>>> for tile in iter_board:
+...     print("pos:", tile.x, tile.y, "newline: ", iter_board.both_coord_changed)
 
 TODO : ce sera prev_pos. Et aussi tile.pos, et non pas tile.x et tile.y.
 
@@ -130,8 +147,6 @@ pos: 4 1 prev: <Point 4, 0 > jumped: False changed_dir: True both_changed: False
 pos: 3 3 prev: <Point 4, 1 > jumped: True changed_dir: True both_changed: True
 
 
-Informations d'itérations
--------------------------
 
 override class tiles
 ====================
