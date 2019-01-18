@@ -148,11 +148,31 @@ pos: 3 3 prev: <Point 4, 1 > jumped: True changed_dir: True both_changed: True
 
 
 
-override class tiles
-====================
+Héritage de la classe Tile
+==========================
 
-rendering
-=========
+Il est possible de créer des classes héritées de la classe Tile, et de s'en servir pour créer un board.
+
+>>> class MyTile(Tile)
+>>> board_with_my_tiles = Board(6, 4, class_tile=MyTile)
+
+TODO : virer le __eq__ de la class Tile, car on ne sait pas ce que ça devrait faire.
+
+Les classes héritées peuvent utiliser d'autres attributs de données, en plus de tile.data.
+
+Il est conseillé d'overrider les fonctions ``__str__`` et ``__repr__``. Les versions de base affichent uniquement tile.data.
+
+Fonction ``tile.render``
+------------------------
+
+Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction ``board.render``.
+
+Par défaut, chaque tile est rendue sur un seul caractère. Même si ``tile.render`` en renvoie plus, seul le premier sera utilisé. Il est possible de configurer un renderer pour le faire afficher des tiles sur des rectangles de caractères (voir plus loin).
+
+Lorsque la fonction ``tile.render`` est appelée, deux paramètres ``w`` et ``h`` lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de ``h`` éléments, chacun d'eux devant être une string de ``w`` caractères.
+
+Si ce n'est pas exactement cette structure de données qui est renvoyée, le renderer la remet en forme. Il coupe des éléments de la liste et des caractères, et ajoute des espaces, de façon à avoir un rectangle de rendu correct.
+
 
 sur_iterators
 =============
