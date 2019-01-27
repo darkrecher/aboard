@@ -28,5 +28,6 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - pathfinding avec une fonction de coût pour aller d'une tile à une autre. La fonction peut renvoyer None pour indiquer un coût infini. Il faut ajouter une fonction renvoyant des tiles supplémentaires de passage d'une tile à une autre. Pour représenter des "téléporteurs".
  - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les shortest paths possible, ou tous les paths possible. (ça avance mais c'est pas fini).
  - permutation de tiles. on a le droit de déplacer des tiles, mais on est obligé de toujours avoir un objet tile dans chaque case du board.
+ - un petit `Board.set_default_renderer` ne serait pas de trop.
  - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
 
