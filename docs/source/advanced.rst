@@ -292,8 +292,30 @@ Les paramètres sont à indiquer lors de l'instanciation du BoardRenderer. Ils o
  - chr_fill_tile_padding : caractère utilisé pour écrire les paddings horizontaux et verticaux. Par défaut : ' ' (espace).
 
 
-Adjacency
-=========
+Règle d'adjacence
+==================
+
+La règle d'adjacence a pour but d'indiquer, pour deux Tiles d'un même Board, si elles sont adjacentes ou non.
+
+Elle est utilisée dans les fonctions de pathfinding, de remplissage par propagation et pour les indicateurs d'itération (indicateur "jumped").
+
+
+Sélection de la règle
+----------------------
+
+Un board possède dans ses variables membres une instance d'une classe ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, un board utilise ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont sur la même ligne ou la même colonne, et côte à côte.
+
+Pour utiliser une autre règle
+
+>>> from adjacency import AdjacencyEvaluatorCrossDiag
+WIP
+
+La classe ``AdjacencyEvaluatorCrossDiag`` considère que
+
+
+Création d'une règle d'adjacence customisée
+-------------------------------------------
+
 
 specific fill et path-finding
 =============================
