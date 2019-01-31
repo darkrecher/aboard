@@ -303,18 +303,45 @@ Elle est utilisée dans les fonctions de pathfinding, de remplissage par propaga
 Sélection de la règle
 ----------------------
 
-Un board possède dans ses variables membres une instance d'une classe ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, un board utilise ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont sur la même ligne ou la même colonne, et côte à côte.
+Un board possède dans ses variables membres une instance d'une classe ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, un board utilise ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont côte à côte, sur la même ligne ou la même colonne, mais pas en diagonale.
 
-Pour utiliser une autre règle
+Pour utiliser une autre règle d'adjacence, il faut la spécifier lors de la création du board.
 
 >>> from adjacency import AdjacencyEvaluatorCrossDiag
-WIP
+>>> board_adj_diag = Board(4, 3, class_adjacency=AdjacencyEvaluatorCrossDiag)
 
-La classe ``AdjacencyEvaluatorCrossDiag`` considère que
+La classe ``AdjacencyEvaluatorCrossDiag`` considère que deux tiles sont adjacente si elles sont côte à côte ou en diagonale.
+
+>>> print([
+...    str(tile)
+...    for tile in board.get_by_pathfinding((0, 1), (1, 2))
+... ])
+['<Tile (0, 1): .>', '<Tile (1, 1): .>', '<Tile (1, 2): .>']
+>>> print([
+...    str(tile)
+...    for tile in board_adj_diag.get_by_pathfinding((0, 1), (1, 2))
+... ])
+['<Tile (0, 1): .>', '<Tile (1, 2): .>']
+
+Il est également possible de redéfinir l'adjacence par défaut, qui sera utilisée lors de la création de tous les prochains Boards.
+
+>>> from adjacency import set_default_adjacency
+>>> set_default_adjacency(AdjacencyEvaluatorCrossDiag)
 
 
 Création d'une règle d'adjacence customisée
 -------------------------------------------
+
+TODO : à nouveau, c'est pos et pas points. Et il y a une erreur dans les noms de fonction : adjacent_tiles au lieu de adjacent_posis.
+
+Pour créer une autre règle d'adjacence, il faut hériter la classe ``AdjacencyEvaluator``, et surcharger deux de ses fonctions :
+
+ - ``is_adjacent(self, pos_1, pos_2)`` : renvoie un booléen, indiquant si les deux positions passées en paramètre sont adjacentes.
+ - ``adjacent_posis(self, pos):`` : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.
+
+La classe héritée possède un paramètre ``board``, correspondant au Board d'appartenance, sur lequel la règle d'adjacence doit s'appliquer.
+
+WIP. Exemple avec une adjacence "torique".
 
 
 specific fill et path-finding
