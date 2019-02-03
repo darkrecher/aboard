@@ -341,11 +341,36 @@ Pour créer une autre règle d'adjacence, il faut hériter la classe ``Adjacency
 
 La classe héritée possède un paramètre ``board``, correspondant au Board d'appartenance, sur lequel la règle d'adjacence doit s'appliquer.
 
-WIP. Exemple avec une adjacence "torique".
+Exemple de création d'une règle d'adjacence "torique". Cette règle considère que le Board est un tore. Lorsqu'on se déplace sur un bord, on est téléporté de l'autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.
+
+>>> class AdjacencyEvaluatorCrossTore(AdjacencyEvaluator):
+...     def is_adjacent(self, point_1, point_2):
+...         if point_1.x == point_2.x:
+...             if (point_1.y + 1) % self.board.h == point_2.y:return True
+...             if (point_2.y + 1) % self.board.h == point_1.y:return True
+...         if point_1.y == point_2.y:
+...             if (point_1.x + 1) % self.board.w == point_2.x:return True
+...             if (point_2.x + 1) % self.board.w == point_1.x:return True
+...         return False
+...     def adjacent_points(self, point):
+...         offsets = [ (0, -1), (+1, 0), (0, +1), (-1, 0) ]
+...         for offset_x, offset_y in offsets:
+...             x = (point.x + offset_x + self.board.w) % self.board.w
+...             y = (point.y + offset_y + self.board.h) % self.board.h
+...             yield Point(x, y)
+>>> board_adj_tore = Board(11, 3, class_adjacency=AdjacencyEvaluatorCrossTore)
+>>> for tile in board_adj_tore.get_by_pathfinding((2, 1), (9, 1)):tile.data = 'X'
+>>> print(board_adj_tore.render())
+...........
+XXX......XX
+...........
+
+Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est pas un déplacement vers la droite, mais vers la gauche. On est téléporté du côté gauche vers le côté droit.
 
 
-specific fill et path-finding
-=============================
+Fonctions fill et path-finding
+==============================
+
 
 build pour codingame
 ====================
