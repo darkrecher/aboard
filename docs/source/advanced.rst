@@ -370,9 +370,9 @@ Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est 
 
 
 Fonction de remplissage par propagation
-========================================
+=======================================
 
-La fonction ``get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut un point. Il est possible de la redéfinir via le paramètre ``propag_condition``.
+La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut un point. Il est possible de la redéfinir via le paramètre ``propag_condition``.
 
 Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Cette fonction doit renvoyer un booléen, indiquant si la propagation est possible ou non.
 
@@ -431,8 +431,16 @@ TODO : line too long.
 .....6
 
 
-path-finding
+Path-finding
 ============
+
+La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre deux positions, et effectue une itération depuis la tile de départ vers la tile d'arrivée.
+
+Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
+
+Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_points``.
+
+
 
 build pour codingame
 ====================
