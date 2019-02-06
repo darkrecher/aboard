@@ -359,7 +359,8 @@ Exemple de création d'une règle d'adjacence "torique". Cette règle considère
 ...             y = (point.y + offset_y + self.board.h) % self.board.h
 ...             yield Point(x, y)
 >>> board_adj_tore = Board(11, 3, class_adjacency=AdjacencyEvaluatorCrossTore)
->>> for tile in board_adj_tore.get_by_pathfinding((2, 1), (9, 1)):tile.data = 'X'
+>>> for tile in board_adj_tore.get_by_pathfinding((2, 1), (9, 1)):
+...     tile.data = 'X'
 >>> print(board_adj_tore.render())
 ...........
 XXX......XX
@@ -368,9 +369,70 @@ XXX......XX
 Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est pas un déplacement vers la droite, mais vers la gauche. On est téléporté du côté gauche vers le côté droit.
 
 
-Fonctions fill et path-finding
-==============================
+Fonction de remplissage par propagation
+========================================
 
+La fonction ``get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut un point. Il est possible de la redéfinir via le paramètre ``propag_condition``.
+
+Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Cette fonction doit renvoyer un booléen, indiquant si la propagation est possible ou non.
+
+>>> def to_right_and_last_column(tile_source, tile_dest):
+...     if tile_dest.x > tile_source.x:return True
+...     if tile_dest.x == tile_dest.board_father.w-1:return True
+...     return False
+>>> board = Board(6, 5)
+>>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
+...     tile.data = 'X'
+>>> print(board.render())
+.....X
+.....X
+.XXXXX
+.....X
+.....X
+
+La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'itération dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_points``.
+
+>>> board = Board(6, 5)
+>>> for index, tile in enumerate(
+...    board.get_by_propagation((1, 2), to_right_and_last_column)
+... ):
+...     tile.data = index
+>>> print(board.render())
+.....7
+.....5
+.01234
+.....6
+.....8
+
+Le changement de règle d'adjacence peut avoir des conséquences sur la propagation.
+
+>>> board = Board(6, 5, class_adjacency=AdjacencyEvaluatorCrossDiag)
+>>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
+...     tile.data = 'X'
+>>> print(board.render())
+...XXX
+..XXXX
+.XXXXX
+..XXXX
+...XXX
+
+L'itérateur par propagation possède un indicateur spécifique : ``PROPAG_DIST``, indiquant la distance parcourue depuis la tile initiale jusqu'à la case courante.
+
+TODO : line too long.
+
+>>> board = Board(6, 5)
+>>> for dist, tile in board.get_by_propagation((1, 2), to_right_and_last_column).tell_indicators((ItInd.PROPAG_DIST, )):
+...     tile.data = dist
+>>> print(board.render())
+.....6
+.....5
+.01234
+.....5
+.....6
+
+
+path-finding
+============
 
 build pour codingame
 ====================
