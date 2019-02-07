@@ -434,16 +434,76 @@ TODO : line too long.
 Path-finding
 ============
 
-La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre deux positions, et effectue une itération depuis la tile de départ vers la tile d'arrivée.
+La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre deux positions, et effectue une itération dessus, à partir de la tile de départ vers la tile d'arrivée.
 
 Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
 
 Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_points``.
 
+La fonction ``pass_through_condition`` fonctionne de la même manière que ``propag_condition``. Elle possède deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se déplacer), et doit renvoyer un booléen, indiquant si le déplacement est possible ou non.
+
+Le path-finding déclenche une exception ``ValueError`` si il n'existe aucun chemin possible.
+
+>>> board = Board(9, 7)
+>>> for tile in board[2:7, 2]:tile.data = '#'
+>>> for tile in board[2, 3:6]:tile.data = '#'
+>>> for tile in board[6, 3:6]:tile.data = '>'
+>>> for tile in board[2:7, 5]:tile.data = '#'
+>>> print(board.render())
+.........
+.........
+..#####..
+..#...>..
+..#...>..
+..#####..
+.........
+
+>>> for tile in board.get_by_pathfinding((3, 4), (0, 0)):
+...     if tile.data != '>': tile.data = '*'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/path/to/git/aboard/code/propagation_iterator.py", line 121, in __iter__
+    raise ValueError("Impossible de trouver un chemin")
+ValueError: Impossible de trouver un chemin
+
+>>> def my_pass_through_condition(tile_source, tile_dest):
+...     tile_datas = (tile_source.data, tile_dest.data)
+...     if tile_datas == ('.', '.'):return True
+...     if tile_datas in (('.', '>'), ('>', '.')):
+...         return tile_source.x <= tile_dest.x
+...     return False
+
+>>> for tile in board.get_by_pathfinding((3, 4), (0, 0), my_pass_through_condition):
+...     if tile.data != '>': tile.data = '*'
+>>> print(board.render())
+********.
+.......*.
+..#####*.
+..#...>*.
+..#***>*.
+..#####..
+.........
+
+Le chemin aurait été un peu différent avec une règle d'adjacence autorisant les diagonales.
+
+
+Échanges et permutations circulaires de tiles
+=============================================
 
 
 build pour codingame
 ====================
+
+La librairie aboard est compilée en un seul fichier de code : ``code/builder/aboard_standalone.py``. Ce fichier permet une utilisation de la librairie dans des contextes spécifiques. Par exemple, il est possible de copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.
+
+Le début du fichier stand-alone indique la version et le commit git qui ont été utilisés pour le générer.
+
+Le script ``code/builder/builder.py`` permet de regénérer manuellement ce fichier à partir du code actuel.
+
+TODO : faire tous les TODO de builder.py. (Ha ha ha, un TODO à propos des TODO ... )
+
+TODO : et refaire un build, bien sûr.
+
 
 mobile item (en construction)
 =============================
