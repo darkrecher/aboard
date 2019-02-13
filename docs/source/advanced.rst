@@ -490,6 +490,23 @@ Le chemin aurait été un peu différent avec une règle d'adjacence autorisant 
 Échanges et permutations circulaires de tiles
 =============================================
 
+Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItem`` (voir plus loin).
+
+Cependant, comme c'est une fonctionnalité qui pourrait être utile, et que les ``MobileItem`` ne sont pas terminés, il est possible d'utiliser la fonction ``board.replace_tile``. Celle-ci met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
+
+>>> from aboard import Board, Tile, Point
+>>> board = Board(3, 2)
+>>> new_t = Tile()
+>>> new_t.data = 'X'
+>>> print(new_t)
+<Tile (None, None): X>
+>>> board.replace_tile(new_t, Point(0, 1))
+>>> print(board.render())
+...
+X..
+>>> print(new_t)
+<Tile (0, 1): X>
+
 
 build pour codingame
 ====================
