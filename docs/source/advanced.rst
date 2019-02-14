@@ -490,22 +490,37 @@ Le chemin aurait été un peu différent avec une règle d'adjacence autorisant 
 Échanges et permutations circulaires de tiles
 =============================================
 
-Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItem`` (voir plus loin).
+Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItems`` (voir plus loin).
 
-Cependant, comme c'est une fonctionnalité qui pourrait être utile, et que les ``MobileItem`` ne sont pas terminés, il est possible d'utiliser la fonction ``board.replace_tile``. Celle-ci met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
+Cependant, comme cette fonctionnalité pourrait être utile, et que les ``MobileItem`` ne sont pas terminés, il est possible d'utiliser la fonction ``board.replace_tile``. Celle-ci met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
 
 >>> from aboard import Board, Tile, Point
+
+TODO : a-t-on besoin de cette ligne d'import ?
+
 >>> board = Board(3, 2)
 >>> new_t = Tile()
->>> new_t.data = 'X'
+>>> new_t.data = 'A'
 >>> print(new_t)
-<Tile (None, None): X>
+<Tile (None, None): A>
 >>> board.replace_tile(new_t, Point(0, 1))
 >>> print(board.render())
 ...
-X..
+A..
 >>> print(new_t)
-<Tile (0, 1): X>
+<Tile (0, 1): A>
+
+Pour déplacer plusieurs tiles en une seule opération de permutation circulaire, utiliser la fonction ``board.circular_permute_tiles``.
+
+>>> board = Board(6, 3)
+>>> for index, tile in enumerate(board[:, 1]):
+...     tile.data = index
+>>> positions = [ Point(tile) for tile in board[1:5, 1] ]
+>>> board.circular_permute_tiles(positions)
+>>> print(board.render())
+......
+023415
+......
 
 
 build pour codingame
@@ -522,10 +537,37 @@ TODO : faire tous les TODO de builder.py. (Ha ha ha, un TODO à propos des TODO 
 TODO : et refaire un build, bien sûr.
 
 
-mobile item (en construction)
+Mobile Items (en construction)
 =============================
+
+Ça fonctionne mais ce n'est vraiment pas pratique et il n'y a pas beaucoup de fonctions pour les manipuler, les déplacer, etc.
+
+Cette partie sera détaillé plus tard.
+
+>>> from mobitem import MobileItem
+>>> board = Board(2, 2)
+>>> mobitem = MobileItem(tile_owner=board[0, 0])
+>>> print(board.render())
+..
+.#
+>>> mobitem.move(x=1, y=0)
+>>> mobitem.data = 'M'
+>>> print(board.render())
+.M
+..
+
 
 exemple complet
 ===============
 
 Jeu de plateau "Labyrinthe".
+
+
+"""
+
+ F---7
+F+7  |
+||   |
+L----J
+
+"""

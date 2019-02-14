@@ -30,5 +30,6 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les shortest paths possible, ou tous les paths possible. (ça avance mais c'est pas fini).
  - permutation de tiles. on a le droit de déplacer des tiles, mais on est obligé de toujours avoir un objet tile dans chaque case du board.
  - un petit `Board.set_default_renderer` ne serait pas de trop.
+ - `board.circular_permute_tiles(board[1:5, 1])` ne génère pas d'erreurs, mais ne fait pas du tout ce qu'il faut. Il faut pré-récupérer les positions, puis permuter. Même si c'est vilain et que ça bouffe de la mémoire.
  - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
 
