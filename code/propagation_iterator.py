@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from positions_iterator import BoardIteratorBase
-from position import Point
+from position import Pos
 
 
 # TODO : un sur-itérateur renvoyant la distance de propagation.
@@ -17,11 +17,11 @@ class BoardIteratorPropagation(BoardIteratorBase):
 		super().__init__(board)
 		self.propag_condition = propag_condition
 		# Dict
-		#  - clé : le point propagé.
-		#  - valeur : la distance depuis le point de départ jusqu'au point propagé.
-		self.propagated_points = {}
-		# liste de tuple de 2 éléments : la distance et le point propagé.
-		self.to_propagate_points = [ (0, Point(pos_start)) ]
+		#  - clé : la pos propagée.
+		#  - valeur : la distance depuis la pos de départ jusqu'à la pos propagée.
+		self.propagated_poss = {}
+		# liste de tuple de 2 éléments : la distance et la pos propagée.
+		self.to_propagate_poss = [ (0, Pos(pos_start)) ]
 
 
 	def __iter__(self):
@@ -30,28 +30,28 @@ class BoardIteratorPropagation(BoardIteratorBase):
 
 	def __next__(self):
 
-		if self.to_propagate_points:
+		if self.to_propagate_poss:
 
-			dist, new_point = self.to_propagate_points.pop(0)
-			self.propagated_points[new_point] = dist
+			dist, new_pos = self.to_propagate_poss.pop(0)
+			self.propagated_poss[new_pos] = dist
 
-			to_propagate_only_points = [
-				o_point for o_dist, o_point
-				in self.to_propagate_points
+			to_propagate_only_poss = [
+				o_pos for o_dist, o_pos
+				in self.to_propagate_poss
 			]
-			for adj_point in self.board.adjacency.adjacent_points(new_point):
+			for adj_pos in self.board.adjacency.adjacent_poss(new_pos):
 				# TODO : mise en forme
 				if all((
-					adj_point not in self.propagated_points,
-					adj_point not in to_propagate_only_points,
-					self.propag_condition(self.board.get_tile(new_point), self.board.get_tile(adj_point))
+					adj_pos not in self.propagated_poss,
+					adj_pos not in to_propagate_only_poss,
+					self.propag_condition(self.board.get_tile(new_pos), self.board.get_tile(adj_pos))
 				)):
 
-					self.to_propagate_points.append((dist+1, adj_point))
+					self.to_propagate_poss.append((dist+1, adj_pos))
 
 			self.propag_dist = dist
-			self._update_indicators(new_point)
-			return self.board.get_tile(new_point)
+			self._update_indicators(new_pos)
+			return self.board.get_tile(new_pos)
 
 		else:
 
@@ -70,8 +70,8 @@ class BoardIteratorFindPath(BoardIteratorBase):
 
 		super().__init__(board)
 		self.pass_through_condition = pass_through_condition
-		pos_start = Point(pos_start)
-		pos_end = Point(pos_end)
+		pos_start = Pos(pos_start)
+		pos_end = Pos(pos_end)
 		self.pos_start = pos_start
 		self.pos_end = pos_end
 
@@ -81,37 +81,37 @@ class BoardIteratorFindPath(BoardIteratorBase):
 			pass_through_condition)
 
 		try:
-			while pos_end not in iter_propag.propagated_points:
+			while pos_end not in iter_propag.propagated_poss:
 				next(iter_propag)
 		except StopIteration:
 			self.path = None
 			return
 
-		propagated_points = iter_propag.propagated_points
+		propagated_poss = iter_propag.propagated_poss
 
 		# Et maintenant, on parcourt la propagation à l'envers,
 		# pour retrouver le chemin.
 		pos_cur = pos_end
-		dist_cur = propagated_points[pos_cur]
+		dist_cur = propagated_poss[pos_cur]
 		self.path = [ pos_cur ]
 
 		while pos_cur != pos_start:
 
 			advanced = False
-			for adj_point in self.board.adjacency.adjacent_points(pos_cur):
+			for adj_pos in self.board.adjacency.adjacent_poss(pos_cur):
 				if (
-					(propagated_points.get(adj_point, -2) == dist_cur - 1) and
+					(propagated_poss.get(adj_pos, -2) == dist_cur - 1) and
 					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.
-					pass_through_condition(self.board.get_tile(adj_point), self.board.get_tile(pos_cur))
+					pass_through_condition(self.board.get_tile(adj_pos), self.board.get_tile(pos_cur))
 				):
-					pos_cur = adj_point
+					pos_cur = adj_pos
 					dist_cur -= 1
 					self.path.append(pos_cur)
 					advanced = True
 					break
 
 			if not advanced:
-				raise Exception("No adj point with dist-1. Not supposed to happen")
+				raise Exception("No adj pos with dist-1. Not supposed to happen")
 
 
 	def __iter__(self):
@@ -126,7 +126,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 		if self.path:
 			pos_path = self.path.pop()
 			self._update_indicators(pos_path)
-			# TODO : le __getitem__ doit pouvoir accepter des objets Point.
+			# TODO : le __getitem__ doit pouvoir accepter des objets Pos.
 			return self.board[pos_path.x, pos_path.y]
 		else:
 			raise StopIteration

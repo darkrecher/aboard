@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 
-from position import Point
+from position import Pos
 from tile import Tile
 from aboard import Board
 from board_renderer import BoardRenderer
@@ -24,7 +24,7 @@ def test_replace_simple():
 	new_tile = Tile()
 	new_tile.data = 'Z'
 
-	board.replace_tile(new_tile, Point(3, 1))
+	board.replace_tile(new_tile, Pos(3, 1))
 
 	print(board.render())
 
@@ -52,7 +52,7 @@ def test_permute_simple():
 	tile_with_c = board[2, 0]
 	tile_with_n = board[3, 2]
 
-	board.circular_permute_tiles([Point(2, 0), Point(3, 2)])
+	board.circular_permute_tiles([Pos(2, 0), Pos(3, 2)])
 	print(board.render())
 
 	assert tile_with_c.x == 3
@@ -81,7 +81,7 @@ def test_permute_column():
 	setting_data = ('ABCDE', 'FGHIJ', 'KLMNO', 'PQRST', 'UVWXY', '01234', '56789')
 	board.set_data_from_string(setting_data)
 
-	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[2, :] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[2, :] ]
 	assert len(pos_to_permute) == 7
 
 	board.circular_permute_tiles(pos_to_permute)
@@ -120,11 +120,11 @@ def test_push_cols_lines():
 
 	added_tile = Tile()
 	added_tile.data = '#'
-	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[board.w-1:-1:-1, 3] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[board.w-1:-1:-1, 3] ]
 
 	board.circular_permute_tiles(pos_to_permute)
 	removed_tile = board[0, 3]
-	board.replace_tile(added_tile, Point(0, 3))
+	board.replace_tile(added_tile, Pos(0, 3))
 	print(board.render())
 
 	assert removed_tile.data == 'T'
@@ -152,11 +152,11 @@ def test_push_cols_lines():
 
 	added_tile = Tile()
 	added_tile.data = '#'
-	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[:, 0] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[:, 0] ]
 
 	board.circular_permute_tiles(pos_to_permute)
 	removed_tile = board[4, 0]
-	board.replace_tile(added_tile, Point(4, 0))
+	board.replace_tile(added_tile, Pos(4, 0))
 	print(board.render())
 
 	assert removed_tile.data == 'A'
@@ -184,11 +184,11 @@ def test_push_cols_lines():
 
 	added_tile = Tile()
 	added_tile.data = '#'
-	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[4, board.h-1:-1:-1] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[4, board.h-1:-1:-1] ]
 
 	board.circular_permute_tiles(pos_to_permute)
 	removed_tile = board[4, 0]
-	board.replace_tile(added_tile, Point(4, 0))
+	board.replace_tile(added_tile, Pos(4, 0))
 	print(board.render())
 
 	assert removed_tile.data == '9'
@@ -216,11 +216,11 @@ def test_push_cols_lines():
 
 	added_tile = Tile()
 	added_tile.data = '#'
-	pos_to_permute = [ Point(tile.x, tile.y) for tile in board[1, :] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[1, :] ]
 
 	board.circular_permute_tiles(pos_to_permute)
 	removed_tile = board[1, board.h-1]
-	board.replace_tile(added_tile, Point(1, board.h-1))
+	board.replace_tile(added_tile, Pos(1, board.h-1))
 	print(board.render())
 
 	assert removed_tile.data == 'B'

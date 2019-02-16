@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from position import Point, Direction, compute_direction
+from position import Pos, Direction, compute_direction
 from iter_indicators import IterIndicator
 from sur_iterators import SurIteratorTellIndicators, SurIteratorGroupTiles
 
@@ -20,9 +20,9 @@ class BoardIteratorBase():
 		# Diagonale ou pas diagonale ? (mais on a la fonction dans le board)
 
 		self.board = board
-		self.current_point = None
-		self.prev_point = None
-		self.prev_prev_point = None
+		self.current_pos = None
+		self.prev_pos = None
+		self.prev_prev_pos = None
 		self.jumped = True
 		self.changed_direction = False
 		self.both_coord_changed = True
@@ -40,15 +40,15 @@ class BoardIteratorBase():
 		return self
 
 
-	def _update_indicators(self, new_point):
+	def _update_indicators(self, new_pos):
 
-		self.prev_prev_point = self.prev_point
-		self.prev_point = self.current_point
-		self.current_point = new_point
+		self.prev_prev_pos = self.prev_pos
+		self.prev_pos = self.current_pos
+		self.current_pos = new_pos
 
-		prev_prev_p = self.prev_prev_point
-		prev_p = self.prev_point
-		cur_p = self.current_point
+		prev_prev_p = self.prev_prev_pos
+		prev_p = self.prev_pos
+		cur_p = self.current_pos
 
 		if prev_p is not None:
 
@@ -65,8 +65,8 @@ class BoardIteratorBase():
 			)
 
 		self.iter_indicators = {
-			ItInd.PREV_POINT: self.prev_point,
-			ItInd.PREV_PREV_POINT: self.prev_prev_point,
+			ItInd.PREV_POS: self.prev_pos,
+			ItInd.PREV_PREV_POS: self.prev_prev_pos,
 			ItInd.JUMPED: self.jumped,
 			ItInd.CHANGED_DIRECTION: self.changed_direction,
 			ItInd.BOTH_COORD_CHANGED: self.both_coord_changed,
@@ -76,7 +76,7 @@ class BoardIteratorBase():
 
 	def __next__(self):
 		"""
-		Il faut définir le nouveau point, appeler self._update_indicators(),
+		Il faut définir la nouvelle pos, appeler self._update_indicators(),
 		et renvoyer la tile correspondante.
 		"""
 		raise NotImplemented
@@ -111,9 +111,9 @@ class BoardIteratorPositions(BoardIteratorBase):
 		if self.current_posis_index >= len(self.posis):
 			raise StopIteration
 
-		new_point = Point(self.posis[self.current_posis_index])
-		self._update_indicators(new_point)
-		return self.board.get_tile(self.current_point)
+		new_pos = Pos(self.posis[self.current_posis_index])
+		self._update_indicators(new_pos)
+		return self.board.get_tile(self.current_pos)
 
 
 # TODO : dans un autre fichier ?
@@ -258,7 +258,7 @@ class BoardIteratorRect(BoardIteratorBase):
 			x = self.val_coord_sub
 			y = val_coord_main
 
-		new_point = Point(x, y)
-		self._update_indicators(new_point)
-		return self.board.get_tile(self.current_point)
+		new_pos = Pos(x, y)
+		self._update_indicators(new_pos)
+		return self.board.get_tile(self.current_pos)
 

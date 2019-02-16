@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from position import Point, Dir
+from position import Pos, Dir
 from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
@@ -52,8 +52,8 @@ class Board():
 
 
 	def get_tile(self, *args, **kwargs):
-		point = Point(*args, **kwargs)
-		return self._get_tile(point.x, point.y)
+		pos = Pos(*args, **kwargs)
+		return self._get_tile(pos.x, pos.y)
 
 
 	def __getitem__(self, args):
@@ -64,13 +64,13 @@ class Board():
 			return BoardIteratorRect(self)
 
 		try:
-			point = Point(args)
+			pos = Pos(args)
 		except ValueError:
-			point = None
+			pos = None
 
-		if point is not None:
+		if pos is not None:
 			# Mode un seul élément
-			return self._get_tile(point.x, point.y)
+			return self._get_tile(pos.x, pos.y)
 
 		slice_x = None
 		slice_y = None
@@ -182,7 +182,7 @@ class Board():
 	# TODO : Il faut des itérateur de posis avec des ellipsis.
 	# Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
 
-	# Une posis est une liste de point. C'est tout. On peut itérer dessus. Et filtrer.
+	# Une posis est une liste de pos. C'est tout. On peut itérer dessus. Et filtrer.
 	# Avec la fonction built-in filter().
 
 
@@ -253,7 +253,7 @@ def main():
 	#log(b[11:18:2, 1:33:5])
 	#log(b[11:, :33])
 	#log(b[:, ::5])
-	#a=Point(3, 4)
+	#a=Pos(3, 4)
 	#b[a].data = 'Y'
 	log(b.render())
 	log('-' * 40)

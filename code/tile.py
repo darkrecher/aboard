@@ -1,20 +1,20 @@
 # -*- coding: UTF-8 -*-
 
-from position import Point
+from position import Pos
 
 
 class Tile():
 
 	def __init__(self, x=None, y=None, board_father=None):
-		# TODO : il faut accepter le même bazar de param que pour l'objet Point. Ou pas.
+		# TODO : il faut accepter le même bazar de param que pour l'objet Pos. Ou pas.
 		# TODO : renommer board_father en board_owner.
 		self.x = x
 		self.y = y
 		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
 		try:
-			self.point = Point(x, y)
+			self.pos = Pos(x, y)
 		except:
-			self.point = None
+			self.pos = None
 		self.board_father = board_father
 		self.data = '.'
 		self.mobile_items = []

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 
-from position import Point
+from position import Pos
 from aboard import Board
 from board_renderer import BoardRenderer
 from positions_iterator import BoardIteratorRect, Coord
@@ -30,11 +30,11 @@ def test_simple_iteration_main_x():
 	]
 
 	for tile in BoardIteratorRect(board, slice_x, slice_y):
-		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
-		point = Point(tile.x, tile.y)
-		print(point)
+		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
+		pos = Pos(tile.x, tile.y)
+		print(pos)
 		position_check = positions_check.pop(0)
-		assert point == position_check
+		assert pos == position_check
 
 	assert positions_check == []
 
@@ -53,11 +53,11 @@ def test_simple_iteration_main_y():
 	]
 
 	for tile in BoardIteratorRect(board, slice_x, slice_y, Coord.Y):
-		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
-		point = Point(tile.x, tile.y)
-		print(point)
+		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
+		pos = Pos(tile.x, tile.y)
+		print(pos)
 		position_check = positions_check.pop(0)
-		assert point == position_check
+		assert pos == position_check
 
 	assert positions_check == []
 
@@ -152,22 +152,22 @@ def test_jump_and_dir_change():
 	rect_iter = BoardIteratorRect(board, slice_x, slice_y)
 
 	for tile in rect_iter:
-		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
-		point = Point(tile.x, tile.y)
-		print(point)
-		if point == (0, 0):
+		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
+		pos = Pos(tile.x, tile.y)
+		print(pos)
+		if pos == (0, 0):
 			assert rect_iter.jumped == True
 			assert rect_iter.changed_direction == False
 			assert rect_iter.both_coord_changed == True
-		elif point == (1, 0):
+		elif pos == (1, 0):
 			assert rect_iter.jumped == False
 			assert rect_iter.changed_direction == False
 			assert rect_iter.both_coord_changed == False
-		elif point.x == 0:
+		elif pos.x == 0:
 			assert rect_iter.jumped == True
 			assert rect_iter.changed_direction == True
 			assert rect_iter.both_coord_changed == True
-		elif point.x == 1:
+		elif pos.x == 1:
 			assert rect_iter.jumped == False
 			assert rect_iter.changed_direction == True
 			assert rect_iter.both_coord_changed == False

@@ -1,4 +1,4 @@
-from position import Point
+from position import Pos
 from aboard import Board
 from positions_iterator import BoardIteratorRect, BoardIteratorPositions, ItInd
 
@@ -26,8 +26,8 @@ def test_sur_iter_tell_both_coord_changed():
 def test_sur_iter_tell_everything():
 
 	itind_everything = (
-		ItInd.PREV_POINT,
-		ItInd.PREV_PREV_POINT,
+		ItInd.PREV_POS,
+		ItInd.PREV_PREV_POS,
 		ItInd.JUMPED,
 		ItInd.CHANGED_DIRECTION,
 		ItInd.BOTH_COORD_CHANGED,
@@ -46,28 +46,28 @@ def test_sur_iter_tell_everything():
 
 		print(iter_everything)
 
-		(prev_point, prev_prev_point, jumped, changed_direction, both_coord_changed, tile) = iter_everything
+		(prev_pos, prev_prev_pos, jumped, changed_direction, both_coord_changed, tile) = iter_everything
 
-		check_prev_point = prev_positions.pop(0)
-		check_prev_prev_point = prev_prev_positions.pop(0)
-		assert prev_point == check_prev_point
-		assert prev_prev_point == check_prev_prev_point
+		check_prev_pos = prev_positions.pop(0)
+		check_prev_prev_pos = prev_prev_positions.pop(0)
+		assert prev_pos == check_prev_pos
+		assert prev_prev_pos == check_prev_prev_pos
 
-		# TODO : choper direct le point à partir de la tile, quand ce sera possible.
-		point = Point(tile.x, tile.y)
+		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
+		pos = Pos(tile.x, tile.y)
 
-		if point == (1, 2):
+		if pos == (1, 2):
 			assert jumped == True
 			assert changed_direction == False
 			assert both_coord_changed == True
-		elif point == (2, 4):
+		elif pos == (2, 4):
 			assert jumped == False
 			assert changed_direction == True
 			assert both_coord_changed == False
-		elif point == (5, 4):
+		elif pos == (5, 4):
 			assert jumped == True
 			assert changed_direction == False
-		elif point == (9, 0):
+		elif pos == (9, 0):
 			assert jumped == True
 			assert changed_direction == True
 			assert both_coord_changed == True
@@ -86,7 +86,7 @@ def test_sur_iter_group_by_simple():
 		print(*map(str, tile_group))
 		check_coords = [ (x, y_coord) for x in range(5) ]
 		for tile, check_coord in zip(tile_group, check_coords):
-			assert tile.point == check_coord
+			assert tile.pos == check_coord
 		y_coord += 1
 
 	assert y_coord == 8

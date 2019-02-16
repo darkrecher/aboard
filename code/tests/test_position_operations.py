@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from position import Point, Dir, dir_from_str, compute_direction
+from position import Pos, Dir, dir_from_str, compute_direction
 
 from adjacency import (
 	AdjacencyEvaluatorCross, AdjacencyEvaluatorCrossDiag,
@@ -13,9 +13,9 @@ def test_adj_cross():
 
 	simple_board = Board(10, 10, class_adjacency=AdjacencyEvaluatorCross)
 
-	p1 = Point(5, 5)
-	p2 = Point(6, 5)
-	p3 = Point(4, 4)
+	p1 = Pos(5, 5)
+	p2 = Pos(6, 5)
+	p3 = Pos(4, 4)
 
 	# same :
 	assert simple_board.is_adjacent(p1, p1) == False
@@ -31,9 +31,9 @@ def test_adj_diag():
 
 	simple_board = Board(10, 10, class_adjacency=AdjacencyEvaluatorCrossDiag)
 
-	p1 = Point(5, 5)
-	p2 = Point(6, 5)
-	p3 = Point(4, 4)
+	p1 = Pos(5, 5)
+	p2 = Pos(6, 5)
+	p3 = Pos(4, 4)
 
 	# same :
 	assert simple_board.is_adjacent(p1, p1) == False
@@ -49,9 +49,9 @@ def test_adj_default():
 
 	board_adj_default_cross = Board(10, 10)
 
-	p1 = Point(5, 5)
-	p2 = Point(6, 5)
-	p3 = Point(4, 4)
+	p1 = Pos(5, 5)
+	p2 = Pos(6, 5)
+	p3 = Pos(4, 4)
 
 	# cross:
 	assert board_adj_default_cross.is_adjacent(p1, p2) == True
@@ -91,21 +91,21 @@ def test_directions_ordering():
 
 
 def test_directions_computing():
-	center = Point(4, 7)
-	assert compute_direction(center, Point(4, 5)) == Dir.UP
-	assert compute_direction(center, Point(5, 5)) == Dir.UP_RIGHT
-	assert compute_direction(center, Point(6, 5)) == Dir.UP_RIGHT
-	assert compute_direction(center, Point(6, 6)) == Dir.UP_RIGHT
-	assert compute_direction(center, Point(6, 7)) == Dir.RIGHT
-	assert compute_direction(center, Point(6, 8)) == Dir.DOWN_RIGHT
-	assert compute_direction(center, Point(6, 9)) == Dir.DOWN_RIGHT
-	assert compute_direction(center, Point(5, 9)) == Dir.DOWN_RIGHT
-	assert compute_direction(center, Point(4, 9)) == Dir.DOWN
-	assert compute_direction(center, Point(3, 9)) == Dir.DOWN_LEFT
-	assert compute_direction(center, Point(2, 9)) == Dir.DOWN_LEFT
-	assert compute_direction(center, Point(2, 8)) == Dir.DOWN_LEFT
-	assert compute_direction(center, Point(2, 7)) == Dir.LEFT
-	assert compute_direction(center, Point(2, 6)) == Dir.UP_LEFT
-	assert compute_direction(center, Point(2, 5)) == Dir.UP_LEFT
-	assert compute_direction(center, Point(3, 5)) == Dir.UP_LEFT
+	center = Pos(4, 7)
+	assert compute_direction(center, Pos(4, 5)) == Dir.UP
+	assert compute_direction(center, Pos(5, 5)) == Dir.UP_RIGHT
+	assert compute_direction(center, Pos(6, 5)) == Dir.UP_RIGHT
+	assert compute_direction(center, Pos(6, 6)) == Dir.UP_RIGHT
+	assert compute_direction(center, Pos(6, 7)) == Dir.RIGHT
+	assert compute_direction(center, Pos(6, 8)) == Dir.DOWN_RIGHT
+	assert compute_direction(center, Pos(6, 9)) == Dir.DOWN_RIGHT
+	assert compute_direction(center, Pos(5, 9)) == Dir.DOWN_RIGHT
+	assert compute_direction(center, Pos(4, 9)) == Dir.DOWN
+	assert compute_direction(center, Pos(3, 9)) == Dir.DOWN_LEFT
+	assert compute_direction(center, Pos(2, 9)) == Dir.DOWN_LEFT
+	assert compute_direction(center, Pos(2, 8)) == Dir.DOWN_LEFT
+	assert compute_direction(center, Pos(2, 7)) == Dir.LEFT
+	assert compute_direction(center, Pos(2, 6)) == Dir.UP_LEFT
+	assert compute_direction(center, Pos(2, 5)) == Dir.UP_LEFT
+	assert compute_direction(center, Pos(3, 5)) == Dir.UP_LEFT
 

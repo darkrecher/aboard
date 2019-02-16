@@ -2,7 +2,7 @@
 
 
 from aboard import Board, BoardIndexError
-from position import Point
+from position import Pos
 from board_renderer import BoardRenderer
 
 
@@ -67,14 +67,14 @@ def test_getitem_one_elem_negative_coords():
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
-def test_getitem_point():
+def test_getitem_pos():
 
 	board = Board(3, 3)
-	p = Point(1, 0)
+	p = Pos(1, 0)
 	board[p].data = '|'
-	board[Point(0, -2)].data = '-'
-	board[Point(-2, 1)].data = '*'
-	board[Point(-1, -2)].data = '~'
+	board[Pos(0, -2)].data = '-'
+	board[Pos(-2, 1)].data = '*'
+	board[Pos(-1, -2)].data = '~'
 	board[{'x':1, 'y':2}].data = 'I'
 
 	render_result = """
@@ -99,7 +99,7 @@ def test_getitem_fail():
 	except BoardIndexError as e:
 		print(e)
 	try:
-		p=Point(5, 0)
+		p=Pos(5, 0)
 		a = board[p]
 		failed_at_failing = True
 	except BoardIndexError as e:
@@ -110,7 +110,7 @@ def test_getitem_fail():
 	except BoardIndexError as e:
 		print(e)
 	try:
-		p=Point(-6, 0)
+		p=Pos(-6, 0)
 		a = board[p]
 		failed_at_failing = True
 	except BoardIndexError as e:

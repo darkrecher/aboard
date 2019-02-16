@@ -87,7 +87,7 @@ def dir_from_str(char):
 	return DICT_DIR_FROM_STR[char]
 
 
-class Point():
+class Pos():
 
 	def __init__(self, param_1=None, param_2=None, x=None, y=None):
 
@@ -144,7 +144,7 @@ class Point():
 
 
 	def __str__(self):
-		return '<Point %s, %s >' % (str(self.x), str(self.y))
+		return '<Pos %s, %s >' % (str(self.x), str(self.y))
 
 
 	def as_tuple(self):
@@ -173,13 +173,15 @@ class Point():
 
 
 	def __eq__(self, other):
-		point_other = Point(other)
-		return self.x == point_other.x and self.y == point_other.y
+		pos_other = Pos(other)
+		return self.x == pos_other.x and self.y == pos_other.y
 
 
 	def __hash__(self):
 		return hash((self.x, self.y))
 
+# Si on veut un nom de classe plus explicite et plus long.
+Position = Pos
 
 # --- Direction operations ---
 
@@ -187,9 +189,9 @@ def cmp(a, b):
 	# https://stackoverflow.com/questions/15556813/python-why-cmp-is-useful
 	return (a > b) - (a < b)
 
-def compute_direction(point_1, point_2):
-	cmp_x = cmp(point_2.x, point_1.x)
-	cmp_y = cmp(point_2.y, point_1.y)
+def compute_direction(pos_1, pos_2):
+	cmp_x = cmp(pos_2.x, pos_1.x)
+	cmp_y = cmp(pos_2.y, pos_1.y)
 	cmps = (cmp_x, cmp_y)
 	DICT_DIR_FROM_CMPS = {
 		(0, 0): None,

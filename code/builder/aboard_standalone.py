@@ -110,7 +110,7 @@ def dir_from_str(char):
 	return DICT_DIR_FROM_STR[char]
 
 
-class Point():
+class Pos():
 
 	def __init__(self, param_1=None, param_2=None, x=None, y=None):
 
@@ -167,7 +167,7 @@ class Point():
 
 
 	def __str__(self):
-		return '<Point %s, %s >' % (str(self.x), str(self.y))
+		return '<Pos %s, %s >' % (str(self.x), str(self.y))
 
 
 	def as_tuple(self):
@@ -196,8 +196,8 @@ class Point():
 
 
 	def __eq__(self, other):
-		point_other = Point(other)
-		return self.x == point_other.x and self.y == point_other.y
+		pos_other = Pos(other)
+		return self.x == pos_other.x and self.y == pos_other.y
 
 
 	def __hash__(self):
@@ -210,9 +210,9 @@ def cmp(a, b):
 	# https://stackoverflow.com/questions/15556813/python-why-cmp-is-useful
 	return (a > b) - (a < b)
 
-def compute_direction(point_1, point_2):
-	cmp_x = cmp(point_2.x, point_1.x)
-	cmp_y = cmp(point_2.y, point_1.y)
+def compute_direction(pos_1, pos_2):
+	cmp_x = cmp(pos_2.x, pos_1.x)
+	cmp_y = cmp(pos_2.y, pos_1.y)
 	cmps = (cmp_x, cmp_y)
 	DICT_DIR_FROM_CMPS = {
 		(0, 0): None,
@@ -235,47 +235,47 @@ class AdjacencyEvaluator():
 	def __init__(self, board):
 		self.board = board
 
-	def is_adjacent(self, point_1, point_2):
+	def is_adjacent(self, pos_1, pos_2):
 		raise NotImplemented
 
-	def adjacent_tiles(self, point):
+	def adjacent_tiles(self, pos):
 		raise NotImplemented
 
 
 class AdjacencyEvaluatorCross(AdjacencyEvaluator):
 
-	def is_adjacent(self, point_1, point_2):
-		if point_1.x == point_2.x:
-			return point_1.y-point_2.y in (-1, 1)
-		if point_1.y == point_2.y:
-			return point_1.x-point_2.x in (-1, 1)
+	def is_adjacent(self, pos_1, pos_2):
+		if pos_1.x == pos_2.x:
+			return pos_1.y-pos_2.y in (-1, 1)
+		if pos_1.y == pos_2.y:
+			return pos_1.x-pos_2.x in (-1, 1)
 		return False
 
-	def adjacent_points(self, point):
+	def adjacent_poss(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
 		offsets = [ (0, -1), (+1, 0), (0, +1), (-1, 0) ]
 		for offset in offsets:
-			x = point.x + offset[0]
-			y = point.y + offset[1]
+			x = pos.x + offset[0]
+			y = pos.y + offset[1]
 			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
 			if (0 <= x < self.board.w) and (0 <= y < self.board.h):
-				yield Point(x, y)
+				yield Pos(x, y)
 
 
 class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 
-	def is_adjacent(self, point_1, point_2):
-		abs_diff_x = abs(point_1.x-point_2.x)
-		abs_diff_y = abs(point_1.y-point_2.y)
+	def is_adjacent(self, pos_1, pos_2):
+		abs_diff_x = abs(pos_1.x-pos_2.x)
+		abs_diff_y = abs(pos_1.y-pos_2.y)
 		return (
 			(abs_diff_x, abs_diff_y) != (0, 0)
 			and abs_diff_x <= 1
 			and abs_diff_y <= 1
 		)
 
-	def adjacent_points(self, point):
+	def adjacent_poss(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
@@ -284,16 +284,16 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 			(0, +1), (-1, +1), (-1, 0), (-1, -1),
 		]
 		for offset in offsets:
-			x = point.x + offset[0]
-			y = point.y + offset[1]
+			x = pos.x + offset[0]
+			y = pos.y + offset[1]
 			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
 			if (0 <= x < self.board.w) and (0 <= y < self.board.h):
-				yield Point(x, y)
+				yield Pos(x, y)
 
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
-# TODO : tester les fonctions adjacent_points.
-# FUTURE : un itérateur qui renvoie des None sur les points pas valides. (je sais pas si on en aura besoin)
+# TODO : tester les fonctions adjacent_poss.
+# FUTURE : un itérateur qui renvoie des None sur les poss pas valides. (je sais pas si on en aura besoin)
 
 
 class_default_adjacency = AdjacencyEvaluatorCross
@@ -312,8 +312,8 @@ from enum import IntEnum
 
 
 class IterIndicator(IntEnum):
-	PREV_POINT = 0
-	PREV_PREV_POINT = 1
+	PREV_POS = 0
+	PREV_PREV_POS = 1
 	JUMPED = 2
 	CHANGED_DIRECTION = 3
 	BOTH_COORD_CHANGED = 4
@@ -328,15 +328,15 @@ ItInd = IterIndicator
 class Tile():
 
 	def __init__(self, x=None, y=None, board_father=None):
-		# TODO : il faut accepter le même bazar de param que pour l'objet Point. Ou pas.
+		# TODO : il faut accepter le même bazar de param que pour l'objet Pos. Ou pas.
 		# TODO : renommer board_father en board_owner.
 		self.x = x
 		self.y = y
 		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
 		try:
-			self.point = Point(x, y)
+			self.pos = Pos(x, y)
 		except:
-			self.point = None
+			self.pos = None
 		self.board_father = board_father
 		self.data = '.'
 		self.mobile_items = []
@@ -506,9 +506,9 @@ class BoardIteratorBase():
 		# Diagonale ou pas diagonale ? (mais on a la fonction dans le board)
 
 		self.board = board
-		self.current_point = None
-		self.prev_point = None
-		self.prev_prev_point = None
+		self.current_pos = None
+		self.prev_pos = None
+		self.prev_prev_pos = None
 		self.jumped = True
 		self.changed_direction = False
 		self.both_coord_changed = True
@@ -526,15 +526,15 @@ class BoardIteratorBase():
 		return self
 
 
-	def _update_indicators(self, new_point):
+	def _update_indicators(self, new_pos):
 
-		self.prev_prev_point = self.prev_point
-		self.prev_point = self.current_point
-		self.current_point = new_point
+		self.prev_prev_pos = self.prev_pos
+		self.prev_pos = self.current_pos
+		self.current_pos = new_pos
 
-		prev_prev_p = self.prev_prev_point
-		prev_p = self.prev_point
-		cur_p = self.current_point
+		prev_prev_p = self.prev_prev_pos
+		prev_p = self.prev_pos
+		cur_p = self.current_pos
 
 		if prev_p is not None:
 
@@ -551,8 +551,8 @@ class BoardIteratorBase():
 			)
 
 		self.iter_indicators = {
-			ItInd.PREV_POINT: self.prev_point,
-			ItInd.PREV_PREV_POINT: self.prev_prev_point,
+			ItInd.PREV_POS: self.prev_pos,
+			ItInd.PREV_PREV_POS: self.prev_prev_pos,
 			ItInd.JUMPED: self.jumped,
 			ItInd.CHANGED_DIRECTION: self.changed_direction,
 			ItInd.BOTH_COORD_CHANGED: self.both_coord_changed,
@@ -562,7 +562,7 @@ class BoardIteratorBase():
 
 	def __next__(self):
 		"""
-		Il faut définir le nouveau point, appeler self._update_indicators(),
+		Il faut définir le nouveau pos, appeler self._update_indicators(),
 		et renvoyer la tile correspondante.
 		"""
 		raise NotImplemented
@@ -597,9 +597,9 @@ class BoardIteratorPositions(BoardIteratorBase):
 		if self.current_posis_index >= len(self.posis):
 			raise StopIteration
 
-		new_point = Point(self.posis[self.current_posis_index])
-		self._update_indicators(new_point)
-		return self.board.get_tile(self.current_point)
+		new_pos = Pos(self.posis[self.current_posis_index])
+		self._update_indicators(new_pos)
+		return self.board.get_tile(self.current_pos)
 
 
 # TODO : dans un autre fichier ?
@@ -744,9 +744,9 @@ class BoardIteratorRect(BoardIteratorBase):
 			x = self.val_coord_sub
 			y = val_coord_main
 
-		new_point = Point(x, y)
-		self._update_indicators(new_point)
-		return self.board.get_tile(self.current_point)
+		new_pos = Pos(x, y)
+		self._update_indicators(new_pos)
+		return self.board.get_tile(self.current_pos)
 
 # -*- coding: UTF-8 -*-
 
@@ -765,11 +765,11 @@ class BoardIteratorPropagation(BoardIteratorBase):
 		super().__init__(board)
 		self.propag_condition = propag_condition
 		# Dict
-		#  - clé : le point propagé.
-		#  - valeur : la distance depuis le point de départ jusqu'au point propagé.
-		self.propagated_points = {}
-		# liste de tuple de 2 éléments : la distance et le point propagé.
-		self.to_propagate_points = [ (0, Point(pos_start)) ]
+		#  - clé : le pos propagé.
+		#  - valeur : la distance depuis le pos de départ jusqu'au pos propagé.
+		self.propagated_poss = {}
+		# liste de tuple de 2 éléments : la distance et le pos propagé.
+		self.to_propagate_poss = [ (0, Pos(pos_start)) ]
 
 
 	def __iter__(self):
@@ -778,28 +778,28 @@ class BoardIteratorPropagation(BoardIteratorBase):
 
 	def __next__(self):
 
-		if self.to_propagate_points:
+		if self.to_propagate_poss:
 
-			dist, new_point = self.to_propagate_points.pop(0)
-			self.propagated_points[new_point] = dist
+			dist, new_pos = self.to_propagate_poss.pop(0)
+			self.propagated_poss[new_pos] = dist
 
-			to_propagate_only_points = [
-				o_point for o_dist, o_point
-				in self.to_propagate_points
+			to_propagate_only_poss = [
+				o_pos for o_dist, o_pos
+				in self.to_propagate_poss
 			]
-			for adj_point in self.board.adjacency.adjacent_points(new_point):
+			for adj_pos in self.board.adjacency.adjacent_poss(new_pos):
 				# TODO : mise en forme
 				if all((
-					adj_point not in self.propagated_points,
-					adj_point not in to_propagate_only_points,
-					self.propag_condition(self.board.get_tile(new_point), self.board.get_tile(adj_point))
+					adj_pos not in self.propagated_poss,
+					adj_pos not in to_propagate_only_poss,
+					self.propag_condition(self.board.get_tile(new_pos), self.board.get_tile(adj_pos))
 				)):
 
-					self.to_propagate_points.append((dist+1, adj_point))
+					self.to_propagate_poss.append((dist+1, adj_pos))
 
 			self.propag_dist = dist
-			self._update_indicators(new_point)
-			return self.board.get_tile(new_point)
+			self._update_indicators(new_pos)
+			return self.board.get_tile(new_pos)
 
 		else:
 
@@ -818,8 +818,8 @@ class BoardIteratorFindPath(BoardIteratorBase):
 
 		super().__init__(board)
 		self.pass_through_condition = pass_through_condition
-		pos_start = Point(pos_start)
-		pos_end = Point(pos_end)
+		pos_start = Pos(pos_start)
+		pos_end = Pos(pos_end)
 		self.pos_start = pos_start
 		self.pos_end = pos_end
 
@@ -829,37 +829,37 @@ class BoardIteratorFindPath(BoardIteratorBase):
 			pass_through_condition)
 
 		try:
-			while pos_end not in iter_propag.propagated_points:
+			while pos_end not in iter_propag.propagated_poss:
 				next(iter_propag)
 		except StopIteration:
 			self.path = None
 			return
 
-		propagated_points = iter_propag.propagated_points
+		propagated_poss = iter_propag.propagated_poss
 
 		# Et maintenant, on parcourt la propagation à l'envers,
 		# pour retrouver le chemin.
 		pos_cur = pos_end
-		dist_cur = propagated_points[pos_cur]
+		dist_cur = propagated_poss[pos_cur]
 		self.path = [ pos_cur ]
 
 		while pos_cur != pos_start:
 
 			advanced = False
-			for adj_point in self.board.adjacency.adjacent_points(pos_cur):
+			for adj_pos in self.board.adjacency.adjacent_poss(pos_cur):
 				if (
-					(propagated_points.get(adj_point, -2) == dist_cur - 1) and
+					(propagated_poss.get(adj_pos, -2) == dist_cur - 1) and
 					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.
-					pass_through_condition(self.board.get_tile(adj_point), self.board.get_tile(pos_cur))
+					pass_through_condition(self.board.get_tile(adj_pos), self.board.get_tile(pos_cur))
 				):
-					pos_cur = adj_point
+					pos_cur = adj_pos
 					dist_cur -= 1
 					self.path.append(pos_cur)
 					advanced = True
 					break
 
 			if not advanced:
-				raise Exception("No adj point with dist-1. Not supposed to happen")
+				raise Exception("No adj pos with dist-1. Not supposed to happen")
 
 
 	def __iter__(self):
@@ -874,7 +874,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 		if self.path:
 			pos_path = self.path.pop()
 			self._update_indicators(pos_path)
-			# TODO : le __getitem__ doit pouvoir accepter des objets Point.
+			# TODO : le __getitem__ doit pouvoir accepter des objets Pos.
 			return self.board[pos_path.x, pos_path.y]
 		else:
 			raise StopIteration
@@ -944,8 +944,8 @@ ItInd = IterIndicator
 
 
 def _fetch_indicators(obj_source, obj_dest):
-	obj_dest.prev_point = obj_source.prev_point
-	obj_dest.prev_prev_point = obj_source.prev_prev_point
+	obj_dest.prev_pos = obj_source.prev_pos
+	obj_dest.prev_prev_pos = obj_source.prev_prev_pos
 	obj_dest.jumped = obj_source.jumped
 	obj_dest.changed_direction = obj_source.changed_direction
 	obj_dest.both_coord_changed = obj_source.both_coord_changed
@@ -1067,7 +1067,7 @@ class MobileItem():
 		Param prioritaire : tile_owner.
 		Sinon : les autres params.
 		"""
-		# FUTURE : j'ai plein de fonctions qui crée un point à partir de args et kwargs.
+		# FUTURE : j'ai plein de fonctions qui crée un pos à partir de args et kwargs.
 		# Y'aurait peut-être moyen de le factoriser avec un décorateur.
 
 		if self.tile_owner is not None:
@@ -1087,8 +1087,8 @@ class MobileItem():
 		# --- définition éventuelle de tile_owner, à partir de board_owner et des param de pos ---
 		if tile_owner is None and board_owner is not None:
 			try:
-				point = Point(*args, **kwargs)
-				tile_owner = board_owner[point]
+				pos = Pos(*args, **kwargs)
+				tile_owner = board_owner[pos]
 			except:
 				tile_owner = None
 
@@ -1157,8 +1157,8 @@ class Board():
 
 
 	def get_tile(self, *args, **kwargs):
-		point = Point(*args, **kwargs)
-		return self._get_tile(point.x, point.y)
+		pos = Pos(*args, **kwargs)
+		return self._get_tile(pos.x, pos.y)
 
 
 	def __getitem__(self, args):
@@ -1169,13 +1169,13 @@ class Board():
 			return BoardIteratorRect(self)
 
 		try:
-			point = Point(args)
+			pos = Pos(args)
 		except ValueError:
-			point = None
+			pos = None
 
-		if point is not None:
+		if pos is not None:
 			# Mode un seul élément
-			return self._get_tile(point.x, point.y)
+			return self._get_tile(pos.x, pos.y)
 
 		slice_x = None
 		slice_y = None
@@ -1287,7 +1287,7 @@ class Board():
 	# TODO : Il faut des itérateur de posis avec des ellipsis.
 	# Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
 
-	# Une posis est une liste de point. C'est tout. On peut itérer dessus. Et filtrer.
+	# Une posis est une liste de pos. C'est tout. On peut itérer dessus. Et filtrer.
 	# Avec la fonction built-in filter().
 
 
@@ -1356,7 +1356,7 @@ def main():
 	#log(b[11:18:2, 1:33:5])
 	#log(b[11:, :33])
 	#log(b[:, ::5])
-	#a=Point(3, 4)
+	#a=Pos(3, 4)
 	#b[a].data = 'Y'
 	log(b.render())
 	log('-' * 40)

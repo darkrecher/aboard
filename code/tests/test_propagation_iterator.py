@@ -31,9 +31,9 @@ def test_propagation_simple():
 		board.get_tile(pos).data = '*'
 	print(board.render())
 
-	for point in BoardIteratorPropagation(board, (4, 4)):
-		print(point)
-		board.get_tile(point).data = 'o'
+	for pos in BoardIteratorPropagation(board, (4, 4)):
+		print(pos)
+		board.get_tile(pos).data = 'o'
 	print(board.render())
 
 	render_result = """
@@ -69,9 +69,9 @@ def test_propagation_simple_2():
 		board.get_tile(pos).data = '*'
 	print(board.render())
 
-	for point in board.get_by_propagation((4, 4)):
-		print(point)
-		board.get_tile(point).data = 'o'
+	for pos in board.get_by_propagation((4, 4)):
+		print(pos)
+		board.get_tile(pos).data = 'o'
 	print(board.render())
 
 	render_result = """
@@ -104,8 +104,8 @@ def test_propagation_dist():
 
 	propag_iter = BoardIteratorPropagation(board, (4, 4), can_propag)
 
-	for point in propag_iter:
-		board.get_tile(point).data = propag_iter.propag_dist
+	for pos in propag_iter:
+		board.get_tile(pos).data = propag_iter.propag_dist
 
 	print(board.render())
 
@@ -137,8 +137,8 @@ def test_propagation_dist_with_iter():
 			dest.x == 2
 		))
 
-	for propag_dist, point in BoardIteratorPropagation(board, (1, 3), can_propag).tell_indicators((ItInd.PROPAG_DIST, )):
-		board.get_tile(point).data = propag_dist
+	for propag_dist, pos in BoardIteratorPropagation(board, (1, 3), can_propag).tell_indicators((ItInd.PROPAG_DIST, )):
+		board.get_tile(pos).data = propag_dist
 
 	print(board.render())
 

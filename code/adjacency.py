@@ -1,53 +1,53 @@
 # -*- coding: UTF-8 -*-
 
-from position import Point
+from position import Pos
 
 class AdjacencyEvaluator():
 
 	def __init__(self, board):
 		self.board = board
 
-	def is_adjacent(self, point_1, point_2):
+	def is_adjacent(self, pos_1, pos_2):
 		raise NotImplemented
 
-	def adjacent_tiles(self, point):
+	def adjacent_tiles(self, pos):
 		raise NotImplemented
 
 
 class AdjacencyEvaluatorCross(AdjacencyEvaluator):
 
-	def is_adjacent(self, point_1, point_2):
-		if point_1.x == point_2.x:
-			return point_1.y-point_2.y in (-1, 1)
-		if point_1.y == point_2.y:
-			return point_1.x-point_2.x in (-1, 1)
+	def is_adjacent(self, pos_1, pos_2):
+		if pos_1.x == pos_2.x:
+			return pos_1.y-pos_2.y in (-1, 1)
+		if pos_1.y == pos_2.y:
+			return pos_1.x-pos_2.x in (-1, 1)
 		return False
 
-	def adjacent_points(self, point):
+	def adjacent_poss(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
 		offsets = [ (0, -1), (+1, 0), (0, +1), (-1, 0) ]
 		for offset in offsets:
-			x = point.x + offset[0]
-			y = point.y + offset[1]
+			x = pos.x + offset[0]
+			y = pos.y + offset[1]
 			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
 			if (0 <= x < self.board.w) and (0 <= y < self.board.h):
-				yield Point(x, y)
+				yield Pos(x, y)
 
 
 class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 
-	def is_adjacent(self, point_1, point_2):
-		abs_diff_x = abs(point_1.x-point_2.x)
-		abs_diff_y = abs(point_1.y-point_2.y)
+	def is_adjacent(self, pos_1, pos_2):
+		abs_diff_x = abs(pos_1.x-pos_2.x)
+		abs_diff_y = abs(pos_1.y-pos_2.y)
 		return (
 			(abs_diff_x, abs_diff_y) != (0, 0)
 			and abs_diff_x <= 1
 			and abs_diff_y <= 1
 		)
 
-	def adjacent_points(self, point):
+	def adjacent_poss(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
@@ -56,16 +56,16 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 			(0, +1), (-1, +1), (-1, 0), (-1, -1),
 		]
 		for offset in offsets:
-			x = point.x + offset[0]
-			y = point.y + offset[1]
+			x = pos.x + offset[0]
+			y = pos.y + offset[1]
 			# TODO : le check de inbounds devrait être dans la classe board, tellement c'est un truc basique.
 			if (0 <= x < self.board.w) and (0 <= y < self.board.h):
-				yield Point(x, y)
+				yield Pos(x, y)
 
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
-# TODO : tester les fonctions adjacent_points.
-# FUTURE : un itérateur qui renvoie des None sur les points pas valides. (je sais pas si on en aura besoin)
+# TODO : tester les fonctions adjacent_poss.
+# FUTURE : un itérateur qui renvoie des None sur les poss pas valides. (je sais pas si on en aura besoin)
 
 
 class_default_adjacency = AdjacencyEvaluatorCross

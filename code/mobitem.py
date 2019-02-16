@@ -1,5 +1,5 @@
 
-from position import Point
+from position import Pos
 
 
 class MobileItem():
@@ -25,7 +25,7 @@ class MobileItem():
 		Param prioritaire : tile_owner.
 		Sinon : les autres params.
 		"""
-		# FUTURE : j'ai plein de fonctions qui crée un point à partir de args et kwargs.
+		# FUTURE : j'ai plein de fonctions qui crée une pos à partir de args et kwargs.
 		# Y'aurait peut-être moyen de le factoriser avec un décorateur.
 
 		if self.tile_owner is not None:
@@ -45,8 +45,8 @@ class MobileItem():
 		# --- définition éventuelle de tile_owner, à partir de board_owner et des param de pos ---
 		if tile_owner is None and board_owner is not None:
 			try:
-				point = Point(*args, **kwargs)
-				tile_owner = board_owner[point]
+				pos = Pos(*args, **kwargs)
+				tile_owner = board_owner[pos]
 			except:
 				tile_owner = None
 

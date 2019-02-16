@@ -4,8 +4,8 @@ ItInd = IterIndicator
 
 
 def _fetch_indicators(obj_source, obj_dest):
-	obj_dest.prev_point = obj_source.prev_point
-	obj_dest.prev_prev_point = obj_source.prev_prev_point
+	obj_dest.prev_pos = obj_source.prev_pos
+	obj_dest.prev_prev_pos = obj_source.prev_prev_pos
 	obj_dest.jumped = obj_source.jumped
 	obj_dest.changed_direction = obj_source.changed_direction
 	obj_dest.both_coord_changed = obj_source.both_coord_changed
