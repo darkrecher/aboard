@@ -1,11 +1,14 @@
 # -*- coding: UTF-8 -*-
 
-from position import Pos, Dir
+from position import Pos, Dir, compute_direction
 from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
-from positions_iterator import BoardIteratorRect, Coord
+from positions_iterator import BoardIteratorPositions, BoardIteratorRect, Coord
+from iter_indicators import IterIndicator
 from propagation_iterator import (propag_cond_default, BoardIteratorPropagation, BoardIteratorFindPath)
+
+ItInd = IterIndicator
 
 
 class BoardIndexError(IndexError):
@@ -122,6 +125,10 @@ class Board():
 		if renderer is None:
 			renderer = self._default_renderer
 		return renderer.render(self)
+
+
+	def iter_positions(self, positions):
+		return BoardIteratorPositions(self, positions)
 
 
 	def get_by_propagation(self, pos_start, propag_condition=propag_cond_default):

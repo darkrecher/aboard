@@ -23,7 +23,7 @@ class AdjacencyEvaluatorCross(AdjacencyEvaluator):
 			return pos_1.x-pos_2.x in (-1, 1)
 		return False
 
-	def adjacent_poss(self, pos):
+	def adjacent_positions(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
@@ -47,7 +47,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 			and abs_diff_y <= 1
 		)
 
-	def adjacent_poss(self, pos):
+	def adjacent_positions(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
@@ -64,7 +64,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
-# TODO : tester les fonctions adjacent_poss.
+# TODO : tester les fonctions adjacent_positions.
 # FUTURE : un itérateur qui renvoie des None sur les poss pas valides. (je sais pas si on en aura besoin)
 
 

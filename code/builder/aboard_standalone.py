@@ -251,7 +251,7 @@ class AdjacencyEvaluatorCross(AdjacencyEvaluator):
 			return pos_1.x-pos_2.x in (-1, 1)
 		return False
 
-	def adjacent_poss(self, pos):
+	def adjacent_positions(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
@@ -275,7 +275,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 			and abs_diff_y <= 1
 		)
 
-	def adjacent_poss(self, pos):
+	def adjacent_positions(self, pos):
 		# Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
 		# C'est à dire dans le sens des aiguilles d'une montre.
 		# (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
@@ -292,7 +292,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
-# TODO : tester les fonctions adjacent_poss.
+# TODO : tester les fonctions adjacent_positions.
 # FUTURE : un itérateur qui renvoie des None sur les poss pas valides. (je sais pas si on en aura besoin)
 
 
@@ -787,7 +787,7 @@ class BoardIteratorPropagation(BoardIteratorBase):
 				o_pos for o_dist, o_pos
 				in self.to_propagate_poss
 			]
-			for adj_pos in self.board.adjacency.adjacent_poss(new_pos):
+			for adj_pos in self.board.adjacency.adjacent_positions(new_pos):
 				# TODO : mise en forme
 				if all((
 					adj_pos not in self.propagated_poss,
@@ -846,7 +846,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 		while pos_cur != pos_start:
 
 			advanced = False
-			for adj_pos in self.board.adjacency.adjacent_poss(pos_cur):
+			for adj_pos in self.board.adjacency.adjacent_positions(pos_cur):
 				if (
 					(propagated_poss.get(adj_pos, -2) == dist_cur - 1) and
 					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.

@@ -39,7 +39,7 @@ class BoardIteratorPropagation(BoardIteratorBase):
 				o_pos for o_dist, o_pos
 				in self.to_propagate_poss
 			]
-			for adj_pos in self.board.adjacency.adjacent_poss(new_pos):
+			for adj_pos in self.board.adjacency.adjacent_positions(new_pos):
 				# TODO : mise en forme
 				if all((
 					adj_pos not in self.propagated_poss,
@@ -98,7 +98,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 		while pos_cur != pos_start:
 
 			advanced = False
-			for adj_pos in self.board.adjacency.adjacent_poss(pos_cur):
+			for adj_pos in self.board.adjacency.adjacent_positions(pos_cur):
 				if (
 					(propagated_poss.get(adj_pos, -2) == dist_cur - 1) and
 					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.

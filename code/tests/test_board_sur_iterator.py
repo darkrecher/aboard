@@ -23,6 +23,17 @@ def test_sur_iter_tell_both_coord_changed():
 			assert both_coord_changed == False
 
 
+def test_sur_iter_directly_from_board():
+
+	board = Board(3, 2)
+
+	for both_coord_changed, tile in board[:, :].tell_indicators():
+		if tile.x == 0:
+			assert both_coord_changed == True
+		else:
+			assert both_coord_changed == False
+
+
 def test_sur_iter_tell_everything():
 
 	itind_everything = (
@@ -127,5 +138,40 @@ def test_sur_iter_groub_by_dir_changes():
 	"""
 	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
+
+def test_sur_iter_groub_by_dir_changes_directly_from_board():
+
+	board = Board(10, 10)
+	positions = [
+		(1, 2), (1, 3), (1, 4), (1, 5),
+		(2, 5), (3, 5), (4, 5), (5, 5), (6, 5), (7, 5), (8, 5),
+		(7, 6), (6, 7), (5, 8), (4, 9),
+		(3, 8), (2, 7), (1, 6), (0, 5),
+	 ]
+
+	group_marker = 'a'
+
+	for tile_group in board.iter_positions(positions).group_by(lambda b:b.changed_direction):
+		print(*map(str, tile_group))
+		tile_group[0].data = group_marker.upper()
+		for tile in tile_group[1:]:
+			tile.data = group_marker
+		group_marker = chr(ord(group_marker) + 1)
+
+	render_result = """
+
+		..........
+		..........
+		.A........
+		.a........
+		.a........
+		daBbbbbbb.
+		.d.....C..
+		..d...c...
+		...D.c....
+		....c.....
+
+	"""
+	assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 # TODO : tester un cas où la fonction de séparation renvoie True sur la dernière tile.

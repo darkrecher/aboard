@@ -32,6 +32,22 @@ def test_simple_iteration_check_pos():
 	assert check_positions == []
 
 
+def test_simple_iteration_directly_from_board():
+
+	board = Board(20, 20)
+	positions = [ (1, 2), (3, 4), (5, 6), (7, 8) ]
+	check_positions = list(positions)
+
+	for tile in board.iter_positions(positions):
+		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
+		pos = Pos(tile.x, tile.y)
+		print(pos)
+		check_pos = check_positions.pop(0)
+		assert pos == check_pos
+
+	assert check_positions == []
+
+
 def test_simple_iteration_render():
 
 	positions = [
