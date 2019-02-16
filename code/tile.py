@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point
+from position import Point
 
 
 class Tile():

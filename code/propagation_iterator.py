@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 from positions_iterator import BoardIteratorBase
-from point import Point
+from position import Point
 
 
 # TODO : un sur-itérateur renvoyant la distance de propagation.

@@ -1,7 +1,7 @@
 
 ORDERED_CODE_FILENAMES = (
 	"my_log.py",
-	"point.py",
+	"position.py",
 	"adjacency.py",
 	"iter_indicators.py",
 	"tile.py",

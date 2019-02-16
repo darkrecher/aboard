@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point
+from position import Point
 
 
 def test_from_obj():

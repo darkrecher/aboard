@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 
-from point import Point
+from position import Point
 from tile import Tile
 from aboard import Board
 from board_renderer import BoardRenderer

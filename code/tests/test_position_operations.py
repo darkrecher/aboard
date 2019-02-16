@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point, Dir, dir_from_str, compute_direction
+from position import Point, Dir, dir_from_str, compute_direction
 
 from adjacency import (
 	AdjacencyEvaluatorCross, AdjacencyEvaluatorCrossDiag,

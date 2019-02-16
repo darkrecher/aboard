@@ -1,5 +1,5 @@
 
-from point import Point
+from position import Point
 
 
 class MobileItem():

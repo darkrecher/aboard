@@ -1,4 +1,4 @@
-from point import Point
+from position import Point
 from aboard import Board
 from positions_iterator import BoardIteratorRect, BoardIteratorPositions, ItInd
 

@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point, Direction, compute_direction
+from position import Point, Direction, compute_direction
 from iter_indicators import IterIndicator
 from sur_iterators import SurIteratorTellIndicators, SurIteratorGroupTiles
 

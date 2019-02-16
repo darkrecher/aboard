@@ -2,7 +2,7 @@
 
 
 from aboard import Board, BoardIndexError
-from point import Point
+from position import Point
 from board_renderer import BoardRenderer
 
 

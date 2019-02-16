@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 
-from point import Point, Dir
+from position import Point, Dir
 from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
