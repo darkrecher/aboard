@@ -14,4 +14,4 @@ ou bien
 
 Pour exécuter un seul fichier de test :
 
-`pytest -k tests/test_le_fichier.py`
+`pytest tests/test_le_fichier.py`

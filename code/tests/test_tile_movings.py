@@ -120,7 +120,7 @@ def test_push_cols_lines():
 
 	added_tile = Tile()
 	added_tile.data = '#'
-	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[board.w-1:-1:-1, 3] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[::-1, 3] ]
 
 	board.circular_permute_tiles(pos_to_permute)
 	removed_tile = board[0, 3]
@@ -184,7 +184,7 @@ def test_push_cols_lines():
 
 	added_tile = Tile()
 	added_tile.data = '#'
-	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[4, board.h-1:-1:-1] ]
+	pos_to_permute = [ Pos(tile.x, tile.y) for tile in board[4, ::-1] ]
 
 	board.circular_permute_tiles(pos_to_permute)
 	removed_tile = board[4, 0]

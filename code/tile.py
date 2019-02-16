@@ -24,6 +24,10 @@ class Tile():
 		return '<Tile (%s, %s): %s>' % (self.x, self.y, self.data)
 
 
+	def __repr__(self):
+		return str(self)
+
+
 	def render(self, w=1, h=1):
 		return str(self.data)[:w]
 
