@@ -560,14 +560,134 @@ Cette partie sera détaillé plus tard.
 exemple complet
 ===============
 
-Jeu de plateau "Labyrinthe".
+Exemple inspiré du challenge codingame "Xmas Rush", lui-même inspiré du jeu de plateau "Labyrinthe".
+
+Chaque Tile possède duex attributs spécifiques :
+
+ - ``mid_marker`` : une string (ou l'équivalent), dont seul le premier caractère est utilisé.
+ - ``roads`` : dictionnaire contenant 4 éléments, les clés étant les 4 directions. La valeur de chaque clé est un booléen, indiquant si la tile possède une ouverture dans la direction donnée.
+
+Une Tile est rendu sur un carré de 3*3 caractères, avec l'affichage des chemins, et le ``mid_marker`` écrit au milieu.
+
+La règle d'adjacence est celle par défaut : les 4 directions, mais pas de diagonale.
+
+L'initialisation du board est effectuée par un tableau de caractère, chacun d'eux permet de déduire le contenu du ``roads`` de la Tile concernée.
 
 
-"""
+```
 
+from aboard import Board, Tile, Dir, BoardRenderer
+# TODO : import from autre chose que aboard
+from point import compute_direction
+
+class XmasTile(Tile):
+
+	DICT_ROADFUL_DIRS_FROM_CHAR = {
+		'-': (Dir.LEFT, Dir.RIGHT),
+		'|': (Dir.UP, Dir.DOWN),
+		'L': (Dir.UP, Dir.RIGHT),
+		'F': (Dir.DOWN, Dir.RIGHT),
+		'7': (Dir.DOWN, Dir.LEFT),
+		'J': (Dir.UP, Dir.LEFT),
+		'+': (Dir.LEFT, Dir.RIGHT, Dir.UP, Dir.DOWN),
+		' ': (),
+	}
+
+
+	def __init__(self, x=None, y=None, board_father=None):
+		super().__init__(x, y, board_father)
+		self.roads = {
+			Dir.UP: False,
+			Dir.RIGHT: False,
+			Dir.DOWN: False,
+			Dir.LEFT: False,
+		}
+		self.mid_marker = ' '
+
+
+	def dirs_from_input(self, char_roadful):
+		for dir_ in XmasTile.DICT_ROADFUL_DIRS_FROM_CHAR[char_roadful]:
+			self.roads[dir_] = True
+
+
+	def render(self, w=3, h=3):
+
+		path_up = '|' if self.roads[Dir.UP] else ' '
+		path_left = '-' if self.roads[Dir.LEFT] else ' '
+		path_right = '-' if self.roads[Dir.RIGHT] else ' '
+		path_down = '|' if self.roads[Dir.DOWN] else ' '
+		template = " %s \n%s%s%s\n %s "
+
+		data = (
+			path_up,
+			path_left,
+			self.mid_marker[:1].rjust(1),
+			path_right,
+			path_down,
+		)
+
+		str_result = template % data
+		# Will return something weird if self.mid_marker contains a newline.
+		# Not supposed to happen.
+		return str_result.split('\n')
+
+renderer = BoardRenderer(
+	tile_w=3, tile_h=3,
+	tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding=' ')
+
+board = Board(
+	6, 5, class_tile=XmasTile,
+	default_renderer=renderer,
+)
+
+BOARD_MAP = """
  F---7
 F+7  |
 ||   |
 L----J
-
 """
+
+board_map = BOARD_MAP.replace('\n', '')
+
+for tile, char_roadful in zip(board, board_map):
+	tile.dirs_from_input(char_roadful)
+
+def pass_through_xmas(tile_source, tile_dest):
+	dir_ = compute_direction(tile_source, tile_dest)
+	roads_to_check = {
+		Dir.UP:(Dir.UP, Dir.DOWN),
+		Dir.DOWN:(Dir.DOWN, Dir.UP),
+		Dir.LEFT:(Dir.LEFT, Dir.RIGHT),
+		Dir.RIGHT:(Dir.RIGHT, Dir.LEFT),
+	}
+	road_to_check = roads_to_check.get(dir_)
+	if road_to_check is None:
+		# Not supposed to happen
+		return False
+	road_source, road_dest = road_to_check
+	return tile_source.roads[road_source] and tile_dest.roads[road_dest]
+
+
+for index, tile in enumerate(board.get_by_pathfinding((0, 3), (2, 0), pass_through_xmas)):
+	tile.mid_marker = str(index)
+
+
+print(board.render())
+
+     4- -5- - - - - -
+     |               |
+
+     |               |
+ 2- -3- -
+ |   |   |           |
+
+ |   |               |
+ 1
+ |   |               |
+
+ |                   |
+ 0- - - - - - - - - -
+
+
+```
+
