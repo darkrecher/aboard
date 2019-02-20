@@ -48,18 +48,18 @@ def generate_header():
 		yield header_line.strip()
 
 
-# TODO : ajouter des commentaires indiquant le nom du fichier à chaque fois.
-# TODO : et au début, le numéro de commit, la version, le repo git, ...
 with open('aboard_standalone.py', 'w', encoding='utf-8') as file_out:
+
+	for line in generate_header():
+		# OK pour le \n : https://docs.python.org/3/library/os.html#os.linesep
+		file_out.write(line + '\n')
 
 	for file_name in ORDERED_CODE_FILENAMES:
 		with open('..' + os.sep + file_name, 'r', encoding='utf-8') as file_code:
 
 			for code_line in file_code.readlines():
 				if not is_import_instruction(code_line):
-					#print(code_line)
 					file_out.write(code_line)
-	# TODO : y'avait pas un writeline quelque part ? (Connerie de \r\n / \n / ...)
 	file_out.write('\n')
 
 
