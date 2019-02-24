@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 
 
-from position import Dir, compute_direction
+from direction import Dir
+from position import compute_direction
 from tile import Tile
 from adjacency import AdjacencyEvaluatorCross, set_default_adjacency
 from board_renderer import BoardRenderer

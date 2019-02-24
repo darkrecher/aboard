@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
 
 
+from coord import Coord
 from position import Pos
 from aboard import Board
 from board_renderer import BoardRenderer
-from positions_iterator import BoardIteratorRect, Coord
+from positions_iterator import BoardIteratorRect
 
 
 def strip_multiline(multi_string):

@@ -1,6 +1,9 @@
 # -*- coding: UTF-8 -*-
 
-from position import Pos, Direction, compute_direction
+
+from coord import Coord
+from direction import Direction
+from position import Pos, compute_direction
 from iter_indicators import IterIndicator
 from sur_iterators import SurIteratorTellIndicators, SurIteratorGroupTiles
 
@@ -107,14 +110,6 @@ class BoardIteratorPositions(BoardIteratorBase):
 		new_pos = Pos(self.posis[self.current_posis_index])
 		self._update_indicators(new_pos)
 		return self.board.get_tile(self.current_pos)
-
-
-# TODO : dans un autre fichier ?
-from enum import Enum
-
-class Coord(Enum):
-	X = 0
-	Y = 1
 
 
 class BoardIteratorRect(BoardIteratorBase):

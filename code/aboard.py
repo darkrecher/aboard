@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
 
-from position import Pos, Dir, compute_direction
+
+from coord import Coord
+from direction import Dir
+from position import Pos, compute_direction
 from adjacency import get_default_adjacency
 from tile import Tile
 from board_renderer import BoardRenderer
-from positions_iterator import BoardIteratorPositions, BoardIteratorRect, Coord
+from positions_iterator import BoardIteratorPositions, BoardIteratorRect
 from iter_indicators import IterIndicator
 from propagation_iterator import (propag_cond_default, BoardIteratorPropagation, BoardIteratorFindPath)
 

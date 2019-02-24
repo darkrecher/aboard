@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 
-from position import Pos, Dir, dir_from_str, compute_direction
 
+from direction import Dir, dir_from_str
+from position import Pos, compute_direction
 from adjacency import (
 	AdjacencyEvaluatorCross, AdjacencyEvaluatorCrossDiag,
 	set_default_adjacency)
-
 from aboard import Board
 
 

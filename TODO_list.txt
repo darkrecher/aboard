@@ -20,18 +20,18 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - pour les sliding windows : https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator#6822773
  - il faut trouver un truc un peu générique avec les sur-itérateurs, qui puisse faire à la fois des sliding windows, des group_by et des sub-rects
  - sliding windows qui renvoie des itérateurs, au lieu de renvoyer des listes. et continuous_sliding_windows. Mais en fait tout ça est faisable avec un RectIterator sur-itéré avec des subrects.
- - classe Direction. Rajouter des noms dans `DICT_DIR_FROM_STR`. Mettre dans un fichier à part. Itérateur de direction, avec ou sans diag.
+ - classe Direction. Rajouter des noms dans `DICT_DIR_FROM_STR`. Itérateur de direction, avec ou sans diag.
  X Rendre la classe Direction ordonnable (up = 0, et ensuite dans le sens des aiguilles d'une montre).
  - init comme le `from_input`, mais avec une lambda qui prend le char en paramètre, et sur lequel on fait ce qu'on veut. Ou bien une Tile qu'on hérite et il y a l'équivalent de la lambda dedans (bof).
  - tous les TODO qui restent dans le code.
  - tout ce qui est exposé publiquement doit être importable depuis `aboard.py`.
  - finir le renderer.
  - pathfinding avec une fonction de coût pour aller d'une tile à une autre. La fonction peut renvoyer None pour indiquer un coût infini. Il faut ajouter une fonction renvoyant des tiles supplémentaires de passage d'une tile à une autre. Pour représenter des "téléporteurs".
- - itérateur sur des bords de rectangles.
+ - itérateur sur des rectangles pas pleins (on parcourt que les bords).
  - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les shortest paths possible, ou tous les paths possible. (ça avance mais c'est pas fini).
- - permutation de tiles. on a le droit de déplacer des tiles, mais on est obligé de toujours avoir un objet tile dans chaque case du board.
+ X permutation de tiles. on a le droit de déplacer des tiles, mais on est obligé de toujours avoir un objet tile dans chaque case du board.
  - un petit `Board.set_default_renderer` ne serait pas de trop.
- - `board.circular_permute_tiles(board[1:5, 1])` ne génère pas d'erreurs, mais ne fait pas du tout ce qu'il faut. Il faut pré-récupérer les positions, puis permuter. Même si c'est vilain et que ça bouffe de la mémoire.
+ X `board.circular_permute_tiles(board[1:5, 1])` ne génère pas d'erreurs, mais ne fait pas du tout ce qu'il faut. Il faut pré-récupérer les positions, puis permuter. Même si c'est vilain et que ça bouffe de la mémoire.
  - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
 
 
