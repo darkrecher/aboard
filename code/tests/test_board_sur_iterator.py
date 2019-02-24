@@ -64,9 +64,7 @@ def test_sur_iter_tell_everything():
 		assert prev_pos == check_prev_pos
 		assert prev_prev_pos == check_prev_prev_pos
 
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
-
+		pos = tile.pos
 		if pos == (1, 2):
 			assert jumped == True
 			assert changed_direction == False

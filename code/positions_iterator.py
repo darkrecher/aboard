@@ -28,13 +28,6 @@ class BoardIteratorBase():
 		self.both_coord_changed = True
 		self.propag_dist = None
 
-	# TODO crap.
-	#def pouet(
-	#	self, sense='┌ ┐ └ ┘', tell_main_coord_change=False,
-	#	skip_lines=None, rect=None, poses=None,
-	#	sliding_window=None, continuous_sliding_window=None
-	#):
-	#	pass
 
 	def __iter__(self):
 		return self
@@ -125,7 +118,7 @@ class Coord(Enum):
 
 
 class BoardIteratorRect(BoardIteratorBase):
-	# TODO : passer une liste de coord en param, à la place de slices.
+	# TODO : passer une liste de coord en param (un itérable), à la place de slices.
 
 	def __init__(
 		self, board,
@@ -197,7 +190,13 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 	def _update_col_line_modification(self, new_val):
-		# TODO : useless ??
+		"""
+		Ces trois attributs ne sont pas utilisés en interne.
+		C'est pour le code extérieur.
+		C'est la même valeur avec trois noms différents, pour pouvoir
+		faire du code plus expressif. Selon que le code extérieur itère par
+		ligne, par colonne, ou pas d'autres choses.
+		"""
 		self.changed_sub_coord = new_val
 		self.changed_line = new_val
 		self.changed_col = new_val

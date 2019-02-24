@@ -96,8 +96,6 @@ class SurIteratorGroupTiles():
 			return returned_group_tiles
 
 
-# autre sur_itérateur : emmagasiner toutes les tiles, jusqu'à répondre à une certaine condition.
-# Quand ça arrive, ressortir les tiles emmagasinées, et ainsi de suite.
-# (On les ressort sous forme d'un itérateur, ou d'une liste ? On va dire une liste)
-# TODO : sortir les groupes de tile sous forme d'itérateur. Sans pré-itérer au départ.
-# La "certaine condition", ce serait both_coord_changed. Mais on peut mettre autre chose, une lambda, etc.
+# TODO : Comme SurIteratorGroupTiles, mais il faut sortir les groupes de tile sous forme d'itérateur.
+#        Si possible, sans pré-itérer au départ.
+#        On garde le principe que la condition de grouping est une lambda, et par défaut, c'est both_coord_changed.

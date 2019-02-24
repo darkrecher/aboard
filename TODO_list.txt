@@ -16,20 +16,76 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - Ranger le code. Tous les tests dans un répertoire. Tout le code dans un répertoire `aboard`. Un main à la racine, un test à la racine. (En espérant que ce soit faisable).
  X Test des variables de flags sur le RectIterator.
  X un Iterator générique, et ensuite un PositionIterator puis un RectIterator. Et faut trouver un nom à cet iter générique, ou bien trouver un autre nom à PositionIterator.
- - un sur-itérateur qui renvoie des subrect. Par exemple un rectange de 3*2, en parcourant toutes les tiles. (On renvoie des rectangles qui se chevauchent).
+ - un sur-itérateur qui renvoie des subrect. Par exemple un rectange de 3*2, en parcourant toutes les tiles. (On renvoie des rectangles qui se chevauchent). Et un sur-itérateur qui renvoie les adjacency.
  - pour les sliding windows : https://stackoverflow.com/questions/6822725/rolling-or-sliding-window-iterator#6822773
  - il faut trouver un truc un peu générique avec les sur-itérateurs, qui puisse faire à la fois des sliding windows, des group_by et des sub-rects
- - sliding windows qui renvoie des itérateurs, au lieu de renvoyer des listes.
+ - sliding windows qui renvoie des itérateurs, au lieu de renvoyer des listes. et continuous_sliding_windows. Mais en fait tout ça est faisable avec un RectIterator sur-itéré avec des subrects.
  - classe Direction. Rajouter des noms dans `DICT_DIR_FROM_STR`. Mettre dans un fichier à part. Itérateur de direction, avec ou sans diag.
  X Rendre la classe Direction ordonnable (up = 0, et ensuite dans le sens des aiguilles d'une montre).
+ - init comme le `from_input`, mais avec une lambda qui prend le char en paramètre, et sur lequel on fait ce qu'on veut. Ou bien une Tile qu'on hérite et il y a l'équivalent de la lambda dedans (bof).
  - tous les TODO qui restent dans le code.
  - tout ce qui est exposé publiquement doit être importable depuis `aboard.py`.
  - finir le renderer.
  - pathfinding avec une fonction de coût pour aller d'une tile à une autre. La fonction peut renvoyer None pour indiquer un coût infini. Il faut ajouter une fonction renvoyant des tiles supplémentaires de passage d'une tile à une autre. Pour représenter des "téléporteurs".
- - itérateur sur des rectangles pas pleins.
+ - itérateur sur des bords de rectangles.
  - pathfinding. Avec re une injection de dépendance. Pathfinding en mode shortest, ou tous les shortest paths possible, ou tous les paths possible. (ça avance mais c'est pas fini).
  - permutation de tiles. on a le droit de déplacer des tiles, mais on est obligé de toujours avoir un objet tile dans chaque case du board.
  - un petit `Board.set_default_renderer` ne serait pas de trop.
  - `board.circular_permute_tiles(board[1:5, 1])` ne génère pas d'erreurs, mais ne fait pas du tout ce qu'il faut. Il faut pré-récupérer les positions, puis permuter. Même si c'est vilain et que ça bouffe de la mémoire.
  - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
 
+
+## Code en vrac
+
+C'était dans aboard.py.
+
+Je le laisse là, au cas où.
+
+    # ----------------- tests des trucs en cours ------------------
+    # TODO : (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
+
+    def main():
+
+        from my_log import log
+        from mobitem import MobileItem
+
+        log('Hellow')
+
+        # http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
+        from collections import deque
+        from itertools import islice
+
+        def window(iterable, size=2):
+            iterable = iter(iterable)
+            d = deque(islice(iterable, size), size)
+            yield d
+            for x in iterable:
+                d.append(x)
+                yield d
+
+        for x in window('azertyuiop', 3):
+            log(x)
+
+        b = Board(10, 10)
+        mob = MobileItem(b, None, None, (3, 5))
+        #log(b[11])
+        #b[11, 5].data = 'Z'
+        ##log(b[11, ...])
+        ##log(b[..., 5])
+        #log(b[11:18:2])
+        #log(b[11:18:2, 1:33:5])
+        #log(b[11:, :33])
+        #log(b[:, ::5])
+        #a=Pos(3, 4)
+        #b[a].data = 'Y'
+        log(b.render())
+        log('-' * 40)
+        print("before move")
+        mob.move(None, None, None, (7, 4))
+        log(b.render())
+
+        log('End')
+
+
+    if __name__ == '__main__':
+        main()

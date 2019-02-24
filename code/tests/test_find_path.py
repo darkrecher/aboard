@@ -20,8 +20,8 @@ def strip_multiline(multi_string):
 
 class XmasTile(Tile):
 
-	def __init__(self, x=None, y=None, board_father=None):
-		super().__init__(x, y, board_father)
+	def __init__(self, x=None, y=None, board_owner=None):
+		super().__init__(x, y, board_owner)
 		self.roads = {
 			Dir.UP: False,
 			Dir.RIGHT: False,

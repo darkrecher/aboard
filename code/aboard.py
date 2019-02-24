@@ -152,46 +152,8 @@ class Board():
 				tile.data = data_tile
 
 
-	# TODO : tout cela est un peu useless, mais je le laisse pour l'instant.
-	# Pour de la doc et des réflexions de conception-tralala.
-
-	#def iter_pos(
-	#	self, *args, **kwargs):
-	#
-	#	pos_iter = PositionsIterator(*args, **kwargs)
-	#		#posis, step,
-	#		#tell_jumps, tell_direction_changes,
-	#		#sliding_window, continuous_sliding_window, adjacency)
-	#	return BoardPosIterator(self, pos_iter)
-
-	# WIP : comment on va faire des itérateurs sur ce bazar ?
-	# https://www.ibm.com/developerworks/library/l-pycon/
-	# https://www.python.org/dev/peps/pep-0234/
-	# https://wiki.python.org/moin/Iterator
-
-	# On crée une autre classe qui va itérer (Positions).
-	# Certaines fonctions de Board renvoient un itérable, mais sur le board.
-	# Pas juste sur les positions.
-	# Donc faudra encore une autre classe BoardIterator ou un truc du genre.
-	# Et donc c'est elle qui itère, avec le Board, et une classe Positions.
-	# Et qui renvoie les tiles, et etc.
-	# Et juste pour le fun, la classe Board peut être itérable, mais avec une méthode
-	# par défaut (de gauche à droite et de haut en bas). Et ça utilise un BoardIterator
-	# interne.
-
-	def iter_vectors(self, sense='(┌ ┐),(└ ┘)', rect=None):
-		# ça va renvoyer des itérateurs, genre iter_one_vector.
-		pass
-
-	def sort_posis(self, posis, key):
-		pass
-
-	# TODO : Il faut des itérateur de posis avec des ellipsis.
+	# TODO : Il faut des itérateur de positions avec des ellipsis.
 	# Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
-
-	# Une posis est une liste de pos. C'est tout. On peut itérer dessus. Et filtrer.
-	# Avec la fonction built-in filter().
-
 
 	def replace_tile(self, new_tile, pos):
 		new_tile.x = pos.x
@@ -223,53 +185,3 @@ class Board():
 		first_tile.x = pos.x
 		first_tile.y = pos.y
 		self._tiles[pos.y][pos.x] = first_tile
-
-
-# ----------------- tests des trucs en cours ------------------
-# TODO : (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
-
-def main():
-
-	from my_log import log
-	from mobitem import MobileItem
-
-	log('Hellow')
-
-	# http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
-	from collections import deque
-	from itertools import islice
-
-	def window(iterable, size=2):
-		iterable = iter(iterable)
-		d = deque(islice(iterable, size), size)
-		yield d
-		for x in iterable:
-			d.append(x)
-			yield d
-
-	for x in window('azertyuiop', 3):
-		log(x)
-
-	b = Board(10, 10)
-	mob = MobileItem(b, None, None, (3, 5))
-	#log(b[11])
-	#b[11, 5].data = 'Z'
-	##log(b[11, ...])
-	##log(b[..., 5])
-	#log(b[11:18:2])
-	#log(b[11:18:2, 1:33:5])
-	#log(b[11:, :33])
-	#log(b[:, ::5])
-	#a=Pos(3, 4)
-	#b[a].data = 'Y'
-	log(b.render())
-	log('-' * 40)
-	print("before move")
-	mob.move(None, None, None, (7, 4))
-	log(b.render())
-
-	log('End')
-
-
-if __name__ == '__main__':
-	main()

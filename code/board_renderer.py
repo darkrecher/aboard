@@ -97,25 +97,21 @@ class BoardRenderer():
 
 
 	def render_iter_lines(self, board):
-		# TODO : utiliser un itérateur de Board
-		render_result = ''
+
 		interval_tile_w = self.chr_fill_tile_padding * self.tile_padding_w
 		interval_line_h = interval_tile_w.join((
 			[ self.chr_fill_tile_padding*self.tile_w ] * board.w
 		))
 
-		for y in range(board.h):
+		for y, line_tiles in enumerate(board[:].group_by_subcoord()):
 
-			rendered_tiles = [
-				self._render_tile(board.get_tile(x, y))
-				for x in range(board.w)
-			]
+			rendered_tiles = [ self._render_tile(tile) for tile in line_tiles ]
 
 			for index_line in range(self.tile_h):
 
 				yield interval_tile_w.join((
-					rendered_tiles[x][index_line]
-					for x in range(board.w)
+					rendered_tile[index_line]
+					for rendered_tile in rendered_tiles
 				))
 
 			if y < board.h-1:

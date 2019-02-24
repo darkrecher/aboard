@@ -30,11 +30,9 @@ def test_simple_iteration_main_x():
 	]
 
 	for tile in BoardIteratorRect(board, slice_x, slice_y):
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
-		print(pos)
+		print(tile.pos)
 		position_check = positions_check.pop(0)
-		assert pos == position_check
+		assert tile.pos == position_check
 
 	assert positions_check == []
 
@@ -53,11 +51,9 @@ def test_simple_iteration_main_y():
 	]
 
 	for tile in BoardIteratorRect(board, slice_x, slice_y, Coord.Y):
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
-		print(pos)
+		print(tile.pos)
 		position_check = positions_check.pop(0)
-		assert pos == position_check
+		assert tile.pos == position_check
 
 	assert positions_check == []
 
@@ -152,8 +148,7 @@ def test_jump_and_dir_change():
 	rect_iter = BoardIteratorRect(board, slice_x, slice_y)
 
 	for tile in rect_iter:
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
+		pos = tile.pos
 		print(pos)
 		if pos == (0, 0):
 			assert rect_iter.jumped == True

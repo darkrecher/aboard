@@ -180,14 +180,17 @@ class Pos():
 	def __hash__(self):
 		return hash((self.x, self.y))
 
+
 # Si on veut un nom de classe plus explicite et plus long.
 Position = Pos
+
 
 # --- Direction operations ---
 
 def cmp(a, b):
 	# https://stackoverflow.com/questions/15556813/python-why-cmp-is-useful
 	return (a > b) - (a < b)
+
 
 def compute_direction(pos_1, pos_2):
 	cmp_x = cmp(pos_2.x, pos_1.x)

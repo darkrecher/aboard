@@ -4,9 +4,6 @@ from positions_iterator import BoardIteratorBase
 from position import Pos
 
 
-# TODO : un sur-itérateur renvoyant la distance de propagation.
-
-
 propag_cond_default = lambda tile_source, tile_dest: tile_dest.data == '.'
 
 
@@ -40,7 +37,7 @@ class BoardIteratorPropagation(BoardIteratorBase):
 				in self.to_propagate_poss
 			]
 			for adj_pos in self.board.adjacency.adjacent_positions(new_pos):
-				# TODO : mise en forme
+				# TODO : mise en forme. (On verra bien ce que fera Black avec ce code moche)
 				if all((
 					adj_pos not in self.propagated_poss,
 					adj_pos not in to_propagate_only_poss,
@@ -101,8 +98,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 			for adj_pos in self.board.adjacency.adjacent_positions(pos_cur):
 				if (
 					(propagated_poss.get(adj_pos, -2) == dist_cur - 1) and
-					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.
-					pass_through_condition(self.board.get_tile(adj_pos), self.board.get_tile(pos_cur))
+					pass_through_condition(self.board[adj_pos], self.board[pos_cur])
 				):
 					pos_cur = adj_pos
 					dist_cur -= 1
@@ -126,8 +122,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 		if self.path:
 			pos_path = self.path.pop()
 			self._update_indicators(pos_path)
-			# TODO : le __getitem__ doit pouvoir accepter des objets Pos.
-			return self.board[pos_path.x, pos_path.y]
+			return self.board[pos_path]
 		else:
 			raise StopIteration
 

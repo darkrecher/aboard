@@ -5,9 +5,8 @@ from position import Pos
 
 class Tile():
 
-	def __init__(self, x=None, y=None, board_father=None):
+	def __init__(self, x=None, y=None, board_owner=None):
 		# TODO : il faut accepter le même bazar de param que pour l'objet Pos. Ou pas.
-		# TODO : renommer board_father en board_owner.
 		self.x = x
 		self.y = y
 		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
@@ -15,7 +14,7 @@ class Tile():
 			self.pos = Pos(x, y)
 		except:
 			self.pos = None
-		self.board_father = board_father
+		self.board_owner = board_owner
 		self.data = '.'
 		self.mobile_items = []
 
@@ -36,10 +35,10 @@ class Tile():
 		return self.data == other.data
 
 
-	# TODO WIP pas testé.
+	# TODO : pas testé.
 	def is_adjacent(self, other):
-		if self.board_father is None:
-			raise Exception("board_father must be defined.")
-		# Ça va raiser des exceptions si le board_father n'est pas comme il faut
+		if self.board_owner is None:
+			raise Exception("board_owner must be defined.")
+		# Ça va raiser des exceptions si le board_owner n'est pas comme il faut
 		# Osef, c'est ce qu'on veut.
-		return self.board_father.is_adjacent(self, other)
+		return self.board_owner.is_adjacent(self, other)

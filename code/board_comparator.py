@@ -12,8 +12,6 @@ class IteratorGetDifferences(BoardIteratorBase):
 		func_comparison=lambda tile_1,tile_2:tile_1 == tile_2,
 		check_disposition = True, check_quantity = True
 	):
-		# TODO : il faudrait qu'on puisse itérer directement sur les boards.
-		# Sans avoir besoin de mettre "[:]".
 		self.board_iterator_1 = board_iterator_1
 		self.board_iterator_2 = board_iterator_2
 		self.func_comparison = func_comparison

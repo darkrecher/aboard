@@ -36,11 +36,11 @@ class MobileItem():
 			del self.tile_owner.mobile_items[index_myself]
 			# --- définition éventuelle de board_owner, à partir de l'actuel board_owner ---
 			if board_owner is None:
-				board_owner = self.tile_owner.board_father
+				board_owner = self.tile_owner.board_owner
 
 		# --- définition éventuelle de board_owner, à partir du nouveau tile_owner ---
 		if tile_owner is not None:
-			board_owner = tile_owner.board_father
+			board_owner = tile_owner.board_owner
 
 		# --- définition éventuelle de tile_owner, à partir de board_owner et des param de pos ---
 		if tile_owner is None and board_owner is not None:

@@ -23,11 +23,9 @@ def test_simple_iteration_check_pos():
 	check_positions = list(positions)
 
 	for tile in BoardIteratorPositions(board, positions):
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
-		print(pos)
+		print(tile.pos)
 		check_pos = check_positions.pop(0)
-		assert pos == check_pos
+		assert tile.pos == check_pos
 
 	assert check_positions == []
 
@@ -39,11 +37,9 @@ def test_simple_iteration_directly_from_board():
 	check_positions = list(positions)
 
 	for tile in board.iter_positions(positions):
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
-		print(pos)
+		print(tile.pos)
 		check_pos = check_positions.pop(0)
-		assert pos == check_pos
+		assert tile.pos == check_pos
 
 	assert check_positions == []
 
@@ -125,8 +121,7 @@ def test_jump_and_dir_change_check_indic():
 	pos_iterator = BoardIteratorPositions(board, positions)
 
 	for tile in pos_iterator:
-		# TODO : choper direct le pos à partir de la tile, quand ce sera possible.
-		pos = Pos(tile.x, tile.y)
+		pos = tile.pos
 		if pos == (1, 2):
 			assert pos_iterator.jumped == True
 			assert pos_iterator.changed_direction == False

@@ -65,7 +65,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
 # TODO : tester les fonctions adjacent_positions.
-# FUTURE : un itérateur qui renvoie des None sur les poss pas valides. (je sais pas si on en aura besoin)
+# FUTURE : un itérateur qui renvoie des None sur les positions adjacentes pas valides. (je sais pas si on en aura besoin)
 
 
 class_default_adjacency = AdjacencyEvaluatorCross
