@@ -5,5 +5,5 @@ from enum import Enum
 
 
 class Coord(Enum):
-	X = 0
-	Y = 1
+    X = 0
+    Y = 1

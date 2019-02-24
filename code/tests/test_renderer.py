@@ -4,42 +4,38 @@ from aboard import Tile, Board, BoardRenderer
 
 
 def strip_multiline(multi_string):
-	# J'ai besoin de cette fonction juste pour pouvoir présenter
-	# plus lisiblement les strings des résultats attendus.
-	return '\n'.join([
-		line.strip()
-		for line in multi_string.strip().split('\n')
-	])
+    # J'ai besoin de cette fonction juste pour pouvoir présenter
+    # plus lisiblement les strings des résultats attendus.
+    return "\n".join([line.strip() for line in multi_string.strip().split("\n")])
 
 
 def test_multiline_stripper():
-	multi_string = """
+    multi_string = """
 	abcd
 	1234567
 	"""
-	assert strip_multiline(multi_string) == 'abcd\n1234567'
+    assert strip_multiline(multi_string) == "abcd\n1234567"
 
 
 def test_basic_board():
-	board = Board()
-	assert board.render() == '.'
+    board = Board()
+    assert board.render() == "."
 
 
 def test_sized_board():
-	board = Board(8, 2)
-	# 2 lignes, constituées de 8 points chacune.
-	# Un saut de ligne entre les deux, mais pas à la fin.
-	assert board.render() == '........\n........'
+    board = Board(8, 2)
+    # 2 lignes, constituées de 8 points chacune.
+    # Un saut de ligne entre les deux, mais pas à la fin.
+    assert board.render() == "........\n........"
 
 
 def test_basic_renderer():
+    class MyTileTellCoordsShort(Tile):
+        def render(self, w=1, h=1):
+            return hex(self.x * self.y)[2:].upper()
 
-	class MyTileTellCoordsShort(Tile):
-		def render(self, w=1, h=1):
-			return hex(self.x * self.y)[2:].upper()
-
-	board = Board(7, 4, MyTileTellCoordsShort)
-	render_result = """
+    board = Board(7, 4, MyTileTellCoordsShort)
+    render_result = """
 
 	0000000
 	0123456
@@ -47,28 +43,30 @@ def test_basic_renderer():
 	0369CF1
 
 	"""
-	assert board.render() == strip_multiline(render_result)
+    assert board.render() == strip_multiline(render_result)
 
 
 def test_padded_renderer():
+    class MyTileTellCoordsLong(Tile):
+        def render(self, w=1, h=1):
+            return [
+                "",
+                "_" + str(self.x) + "," + str(self.y),
+                # Attention, ici on ne met pas une string, mais un int.
+                # C'est fait exprès. Et ça doit quand même fonctionner.
+                self.x * self.y,
+            ]
 
-	class MyTileTellCoordsLong(Tile):
-		def render(self, w=1, h=1):
-			return [
-				'',
-				'_' + str(self.x) + ',' + str(self.y),
-				# Attention, ici on ne met pas une string, mais un int.
-				# C'est fait exprès. Et ça doit quand même fonctionner.
-				self.x * self.y
-			]
-
-	my_board_renderer = BoardRenderer(
-		tile_w=5, tile_h=4,
-		tile_padding_w=3, tile_padding_h=2,
-		chr_fill_tile='.', chr_fill_tile_padding='#',
-	)
-	board = Board(7, 4, MyTileTellCoordsLong)
-	render_result = """
+    my_board_renderer = BoardRenderer(
+        tile_w=5,
+        tile_h=4,
+        tile_padding_w=3,
+        tile_padding_h=2,
+        chr_fill_tile=".",
+        chr_fill_tile_padding="#",
+    )
+    board = Board(7, 4, MyTileTellCoordsLong)
+    render_result = """
 
 	.....###.....###.....###.....###.....###.....###.....
 	_0,0.###_1,0.###_2,0.###_3,0.###_4,0.###_5,0.###_6,0.
@@ -94,5 +92,4 @@ def test_padded_renderer():
 	.....###.....###.....###.....###.....###.....###.....
 
 	"""
-	assert board.render(my_board_renderer) == strip_multiline(render_result)
-
+    assert board.render(my_board_renderer) == strip_multiline(render_result)
