@@ -4,26 +4,29 @@
 # https://github.com/darkrecher/aboard
 # https://aboard.readthedocs.io/fr/latest/
 #
-# Date du build : 2019-01-02 10:12
-# commit git : cedfdc9fe5cc177f36177701c46b3a17de5cd0b5
-
-
-"""
-On va faire simple.
-C'est étonnant comme un truc aussi simple que le log peut devenir compliqué.
-Dans tout un tas de cas.
-Je veux juste écrire des conneries. C'est possible ou bien ?
-"""
-
+# Version : 1.0.1
+# Date du build : 2019-02-24
+# commit git : 21aa7579d0d8e70e18441a43f4fdd1e3785e2922
 import sys
 
 def log(*args):
+	"""
+	Simple log.
+	"""
 	print(*args, file=sys.stderr)
 
 
 # -*- coding: UTF-8 -*-
 
-# TODO : Les directions, dans un autre fichier
+
+from enum import Enum
+
+
+class Coord(Enum):
+	X = 0
+	Y = 1
+# -*- coding: UTF-8 -*-
+
 
 from enum import IntEnum
 
@@ -108,6 +111,9 @@ DICT_DIR_FROM_STR = {
 def dir_from_str(char):
 	# FUTURE : raiser une exception spécifique si y'a pas le char dans dict.
 	return DICT_DIR_FROM_STR[char]
+# -*- coding: UTF-8 -*-
+
+
 
 
 class Pos():
@@ -204,11 +210,16 @@ class Pos():
 		return hash((self.x, self.y))
 
 
+# Si on veut un nom de classe plus explicite et plus long.
+Position = Pos
+
+
 # --- Direction operations ---
 
 def cmp(a, b):
 	# https://stackoverflow.com/questions/15556813/python-why-cmp-is-useful
 	return (a > b) - (a < b)
+
 
 def compute_direction(pos_1, pos_2):
 	cmp_x = cmp(pos_2.x, pos_1.x)
@@ -293,7 +304,7 @@ class AdjacencyEvaluatorCrossDiag(AdjacencyEvaluator):
 
 # TODO : les adjacences toriques. Avec les tests qui vont bien.
 # TODO : tester les fonctions adjacent_positions.
-# FUTURE : un itérateur qui renvoie des None sur les poss pas valides. (je sais pas si on en aura besoin)
+# FUTURE : un itérateur qui renvoie des None sur les positions adjacentes pas valides. (je sais pas si on en aura besoin)
 
 
 class_default_adjacency = AdjacencyEvaluatorCross
@@ -327,9 +338,8 @@ ItInd = IterIndicator
 
 class Tile():
 
-	def __init__(self, x=None, y=None, board_father=None):
+	def __init__(self, x=None, y=None, board_owner=None):
 		# TODO : il faut accepter le même bazar de param que pour l'objet Pos. Ou pas.
-		# TODO : renommer board_father en board_owner.
 		self.x = x
 		self.y = y
 		# TODO : est-ce qu'on autorise des tiles sans coord, qui "flotte un peu dans les airs", ou pas ?
@@ -337,13 +347,17 @@ class Tile():
 			self.pos = Pos(x, y)
 		except:
 			self.pos = None
-		self.board_father = board_father
+		self.board_owner = board_owner
 		self.data = '.'
 		self.mobile_items = []
 
 
 	def __str__(self):
 		return '<Tile (%s, %s): %s>' % (self.x, self.y, self.data)
+
+
+	def __repr__(self):
+		return str(self)
 
 
 	def render(self, w=1, h=1):
@@ -354,13 +368,13 @@ class Tile():
 		return self.data == other.data
 
 
-	# TODO WIP pas testé.
+	# TODO : pas testé.
 	def is_adjacent(self, other):
-		if self.board_father is None:
-			raise Exception("board_father must be defined.")
-		# Ça va raiser des exceptions si le board_father n'est pas comme il faut
+		if self.board_owner is None:
+			raise Exception("board_owner must be defined.")
+		# Ça va raiser des exceptions si le board_owner n'est pas comme il faut
 		# Osef, c'est ce qu'on veut.
-		return self.board_father.is_adjacent(self, other)
+		return self.board_owner.is_adjacent(self, other)
 # -*- coding: UTF-8 -*-
 
 
@@ -459,25 +473,21 @@ class BoardRenderer():
 
 
 	def render_iter_lines(self, board):
-		# TODO : utiliser un itérateur de Board
-		render_result = ''
+
 		interval_tile_w = self.chr_fill_tile_padding * self.tile_padding_w
 		interval_line_h = interval_tile_w.join((
 			[ self.chr_fill_tile_padding*self.tile_w ] * board.w
 		))
 
-		for y in range(board.h):
+		for y, line_tiles in enumerate(board[:].group_by_subcoord()):
 
-			rendered_tiles = [
-				self._render_tile(board.get_tile(x, y))
-				for x in range(board.w)
-			]
+			rendered_tiles = [ self._render_tile(tile) for tile in line_tiles ]
 
 			for index_line in range(self.tile_h):
 
 				yield interval_tile_w.join((
-					rendered_tiles[x][index_line]
-					for x in range(board.w)
+					rendered_tile[index_line]
+					for rendered_tile in rendered_tiles
 				))
 
 			if y < board.h-1:
@@ -488,6 +498,7 @@ class BoardRenderer():
 	def render(self, board):
 		return '\n'.join(self.render_iter_lines(board))
 # -*- coding: UTF-8 -*-
+
 
 
 ItInd = IterIndicator
@@ -514,13 +525,6 @@ class BoardIteratorBase():
 		self.both_coord_changed = True
 		self.propag_dist = None
 
-	# TODO crap.
-	#def pouet(
-	#	self, sense='┌ ┐ └ ┘', tell_main_coord_change=False,
-	#	skip_lines=None, rect=None, poses=None,
-	#	sliding_window=None, continuous_sliding_window=None
-	#):
-	#	pass
 
 	def __iter__(self):
 		return self
@@ -562,7 +566,7 @@ class BoardIteratorBase():
 
 	def __next__(self):
 		"""
-		Il faut définir le nouveau pos, appeler self._update_indicators(),
+		Il faut définir la nouvelle pos, appeler self._update_indicators(),
 		et renvoyer la tile correspondante.
 		"""
 		raise NotImplemented
@@ -602,16 +606,8 @@ class BoardIteratorPositions(BoardIteratorBase):
 		return self.board.get_tile(self.current_pos)
 
 
-# TODO : dans un autre fichier ?
-from enum import Enum
-
-class Coord(Enum):
-	X = 0
-	Y = 1
-
-
 class BoardIteratorRect(BoardIteratorBase):
-	# TODO : passer une liste de coord en param, à la place de slices.
+	# TODO : passer une liste de coord en param (un itérable), à la place de slices.
 
 	def __init__(
 		self, board,
@@ -646,43 +642,16 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 	def _iter_from_slice_x(self):
-		# TODO : faut trouver le fonctionnement exact des slices.
-		# Et factoriser ça dans une fonction de base, générique tools et tout ça.
-		# Actuellement, un truc comme [1:-1] ne marchera pas.
+		# TODO : Dans les tests, ajouter un test avec un slice [1:-1].
+		# Normalement ça devrait marcher maintenant.
 		# Et y'a tellement de cas tordus qu'il faudra peut-être tester tous les cas possibles.
 		# (start, stop, step) X (pos, neg, 0, indéfini).
-		step = self.slice_x.step
-		if step is None: step = 1
-
-		start = self.slice_x.start
-		stop = self.slice_x.stop
-		if step > 0:
-			if start is None: start = 0
-			if stop is None: stop = self.board.w
-		else:
-			if start is None: start = self.board.w - 1
-			if stop is None: stop = -1
-
-		#print('TODO debug x', start, stop, step)
-		return iter(range(start, stop, step))
+		# pareil pour le slice_y.
+		return iter(range(self.board.w)[self.slice_x])
 
 
 	def _iter_from_slice_y(self):
-
-		step = self.slice_y.step
-		if step is None: step = 1
-
-		start = self.slice_y.start
-		stop = self.slice_y.stop
-		if step > 0:
-			if start is None: start = 0
-			if stop is None: stop = self.board.h
-		else:
-			if start is None: start = self.board.h - 1
-			if stop is None: stop = -1
-
-		#print('TODO debug y', start, stop, step)
-		return iter(range(start, stop, step))
+		return iter(range(self.board.h)[self.slice_y])
 
 
 	def skip_sub_coord(self):
@@ -710,7 +679,13 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 	def _update_col_line_modification(self, new_val):
-		# TODO : useless ??
+		"""
+		Ces trois attributs ne sont pas utilisés en interne.
+		C'est pour le code extérieur.
+		C'est la même valeur avec trois noms différents, pour pouvoir
+		faire du code plus expressif. Selon que le code extérieur itère par
+		ligne, par colonne, ou pas d'autres choses.
+		"""
 		self.changed_sub_coord = new_val
 		self.changed_line = new_val
 		self.changed_col = new_val
@@ -752,9 +727,6 @@ class BoardIteratorRect(BoardIteratorBase):
 
 
 
-# TODO : un sur-itérateur renvoyant la distance de propagation.
-
-
 propag_cond_default = lambda tile_source, tile_dest: tile_dest.data == '.'
 
 
@@ -765,10 +737,10 @@ class BoardIteratorPropagation(BoardIteratorBase):
 		super().__init__(board)
 		self.propag_condition = propag_condition
 		# Dict
-		#  - clé : le pos propagé.
-		#  - valeur : la distance depuis le pos de départ jusqu'au pos propagé.
+		#  - clé : la pos propagée.
+		#  - valeur : la distance depuis la pos de départ jusqu'à la pos propagée.
 		self.propagated_poss = {}
-		# liste de tuple de 2 éléments : la distance et le pos propagé.
+		# liste de tuple de 2 éléments : la distance et la pos propagée.
 		self.to_propagate_poss = [ (0, Pos(pos_start)) ]
 
 
@@ -788,7 +760,7 @@ class BoardIteratorPropagation(BoardIteratorBase):
 				in self.to_propagate_poss
 			]
 			for adj_pos in self.board.adjacency.adjacent_positions(new_pos):
-				# TODO : mise en forme
+				# TODO : mise en forme. (On verra bien ce que fera Black avec ce code moche)
 				if all((
 					adj_pos not in self.propagated_poss,
 					adj_pos not in to_propagate_only_poss,
@@ -849,8 +821,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 			for adj_pos in self.board.adjacency.adjacent_positions(pos_cur):
 				if (
 					(propagated_poss.get(adj_pos, -2) == dist_cur - 1) and
-					# TODO : faut vraiment s'affranchir de ce get_tile dégueulasse.
-					pass_through_condition(self.board.get_tile(adj_pos), self.board.get_tile(pos_cur))
+					pass_through_condition(self.board[adj_pos], self.board[pos_cur])
 				):
 					pos_cur = adj_pos
 					dist_cur -= 1
@@ -874,8 +845,7 @@ class BoardIteratorFindPath(BoardIteratorBase):
 		if self.path:
 			pos_path = self.path.pop()
 			self._update_indicators(pos_path)
-			# TODO : le __getitem__ doit pouvoir accepter des objets Pos.
-			return self.board[pos_path.x, pos_path.y]
+			return self.board[pos_path]
 		else:
 			raise StopIteration
 
@@ -894,8 +864,6 @@ class IteratorGetDifferences(BoardIteratorBase):
 		func_comparison=lambda tile_1,tile_2:tile_1 == tile_2,
 		check_disposition = True, check_quantity = True
 	):
-		# TODO : il faudrait qu'on puisse itérer directement sur les boards.
-		# Sans avoir besoin de mettre "[:]".
 		self.board_iterator_1 = board_iterator_1
 		self.board_iterator_2 = board_iterator_2
 		self.func_comparison = func_comparison
@@ -937,6 +905,9 @@ class IteratorGetDifferences(BoardIteratorBase):
 			if not self.func_comparison(tile_1, tile_2):
 				return (tile_1, tile_2)
 
+
+
+# -*- coding: UTF-8 -*-
 
 
 
@@ -1036,11 +1007,9 @@ class SurIteratorGroupTiles():
 			return returned_group_tiles
 
 
-# autre sur_itérateur : emmagasiner toutes les tiles, jusqu'à répondre à une certaine condition.
-# Quand ça arrive, ressortir les tiles emmagasinées, et ainsi de suite.
-# (On les ressort sous forme d'un itérateur, ou d'une liste ? On va dire une liste)
-# TODO : sortir les groupes de tile sous forme d'itérateur. Sans pré-itérer au départ.
-# La "certaine condition", ce serait both_coord_changed. Mais on peut mettre autre chose, une lambda, etc.
+# TODO : Comme SurIteratorGroupTiles, mais il faut sortir les groupes de tile sous forme d'itérateur.
+#        Si possible, sans pré-itérer au départ.
+#        On garde le principe que la condition de grouping est une lambda, et par défaut, c'est both_coord_changed.
 
 
 
@@ -1067,7 +1036,7 @@ class MobileItem():
 		Param prioritaire : tile_owner.
 		Sinon : les autres params.
 		"""
-		# FUTURE : j'ai plein de fonctions qui crée un pos à partir de args et kwargs.
+		# FUTURE : j'ai plein de fonctions qui crée une pos à partir de args et kwargs.
 		# Y'aurait peut-être moyen de le factoriser avec un décorateur.
 
 		if self.tile_owner is not None:
@@ -1078,11 +1047,11 @@ class MobileItem():
 			del self.tile_owner.mobile_items[index_myself]
 			# --- définition éventuelle de board_owner, à partir de l'actuel board_owner ---
 			if board_owner is None:
-				board_owner = self.tile_owner.board_father
+				board_owner = self.tile_owner.board_owner
 
 		# --- définition éventuelle de board_owner, à partir du nouveau tile_owner ---
 		if tile_owner is not None:
-			board_owner = tile_owner.board_father
+			board_owner = tile_owner.board_owner
 
 		# --- définition éventuelle de tile_owner, à partir de board_owner et des param de pos ---
 		if tile_owner is None and board_owner is not None:
@@ -1111,6 +1080,9 @@ class MobileItem():
 
 # -*- coding: UTF-8 -*-
 
+
+
+ItInd = IterIndicator
 
 
 class BoardIndexError(IndexError):
@@ -1229,6 +1201,10 @@ class Board():
 		return renderer.render(self)
 
 
+	def iter_positions(self, positions):
+		return BoardIteratorPositions(self, positions)
+
+
 	def get_by_propagation(self, pos_start, propag_condition=propag_cond_default):
 		return BoardIteratorPropagation(self, pos_start, propag_condition)
 
@@ -1250,46 +1226,8 @@ class Board():
 				tile.data = data_tile
 
 
-	# TODO : tout cela est un peu useless, mais je le laisse pour l'instant.
-	# Pour de la doc et des réflexions de conception-tralala.
-
-	#def iter_pos(
-	#	self, *args, **kwargs):
-	#
-	#	pos_iter = PositionsIterator(*args, **kwargs)
-	#		#posis, step,
-	#		#tell_jumps, tell_direction_changes,
-	#		#sliding_window, continuous_sliding_window, adjacency)
-	#	return BoardPosIterator(self, pos_iter)
-
-	# WIP : comment on va faire des itérateurs sur ce bazar ?
-	# https://www.ibm.com/developerworks/library/l-pycon/
-	# https://www.python.org/dev/peps/pep-0234/
-	# https://wiki.python.org/moin/Iterator
-
-	# On crée une autre classe qui va itérer (Positions).
-	# Certaines fonctions de Board renvoient un itérable, mais sur le board.
-	# Pas juste sur les positions.
-	# Donc faudra encore une autre classe BoardIterator ou un truc du genre.
-	# Et donc c'est elle qui itère, avec le Board, et une classe Positions.
-	# Et qui renvoie les tiles, et etc.
-	# Et juste pour le fun, la classe Board peut être itérable, mais avec une méthode
-	# par défaut (de gauche à droite et de haut en bas). Et ça utilise un BoardIterator
-	# interne.
-
-	def iter_vectors(self, sense='(┌ ┐),(└ ┘)', rect=None):
-		# ça va renvoyer des itérateurs, genre iter_one_vector.
-		pass
-
-	def sort_posis(self, posis, key):
-		pass
-
-	# TODO : Il faut des itérateur de posis avec des ellipsis.
+	# TODO : Il faut des itérateur de positions avec des ellipsis.
 	# Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
-
-	# Une posis est une liste de pos. C'est tout. On peut itérer dessus. Et filtrer.
-	# Avec la fonction built-in filter().
-
 
 	def replace_tile(self, new_tile, pos):
 		new_tile.x = pos.x
@@ -1321,52 +1259,4 @@ class Board():
 		first_tile.x = pos.x
 		first_tile.y = pos.y
 		self._tiles[pos.y][pos.x] = first_tile
-
-
-# ----------------- tests des trucs en cours ------------------
-# TODO : (à mettre dans des fichiers test_xxx.py au fur et à mesure que ça marche)
-
-def main():
-
-
-	log('Hellow')
-
-	# http://sametmax.com/implementer-une-fenetre-glissante-en-python-avec-un-deque/
-	from collections import deque
-	from itertools import islice
-
-	def window(iterable, size=2):
-		iterable = iter(iterable)
-		d = deque(islice(iterable, size), size)
-		yield d
-		for x in iterable:
-			d.append(x)
-			yield d
-
-	for x in window('azertyuiop', 3):
-		log(x)
-
-	b = Board(10, 10)
-	mob = MobileItem(b, None, None, (3, 5))
-	#log(b[11])
-	#b[11, 5].data = 'Z'
-	##log(b[11, ...])
-	##log(b[..., 5])
-	#log(b[11:18:2])
-	#log(b[11:18:2, 1:33:5])
-	#log(b[11:, :33])
-	#log(b[:, ::5])
-	#a=Pos(3, 4)
-	#b[a].data = 'Y'
-	log(b.render())
-	log('-' * 40)
-	print("before move")
-	mob.move(None, None, None, (7, 4))
-	log(b.render())
-
-	log('End')
-
-
-if __name__ == '__main__':
-	main()
 
