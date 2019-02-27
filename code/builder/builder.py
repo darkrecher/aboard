@@ -10,8 +10,8 @@ import_instructions = ["from " + file_name[:-3] for file_name in ORDERED_CODE_FI
 def is_import_instruction(code_line):
     for import_instruction in import_instructions:
         if import_instruction in code_line:
-            return True
-    return False
+            return (True, '(' in code_line)
+    return (False, False)
 
 
 def generate_header():
@@ -46,6 +46,8 @@ def generate_header():
     for header_line in text_header.split("\n"):
         yield header_line.strip()
 
+    yield("")
+
 
 with open("aboard_standalone.py", "w", encoding="utf-8") as file_out:
 
@@ -56,9 +58,17 @@ with open("aboard_standalone.py", "w", encoding="utf-8") as file_out:
     for file_name in ORDERED_CODE_FILENAMES:
         with open(".." + os.sep + file_name, "r", encoding="utf-8") as file_code:
 
+            import_multi_line = False
+
             for code_line in file_code.readlines():
-                if not is_import_instruction(code_line):
-                    file_out.write(code_line)
+                if import_multi_line:
+                    if ')' in code_line:
+                        import_multi_line = False
+                else:
+                    import_line, import_multi_line = is_import_instruction(code_line)
+                    if not import_line:
+                        file_out.write(code_line)
+
     file_out.write("\n")
 
 
