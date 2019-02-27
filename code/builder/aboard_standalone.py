@@ -5,8 +5,9 @@
 # https://aboard.readthedocs.io/fr/latest/
 #
 # Version : 1.1.0
-# Date du build : 2019-02-24
-# commit git : f3f5e7791ca0642212e754f05de0da202a51c686
+# Date du build : 2019-02-27
+# commit git : d759796c2c5e46bcf9114928198e89eea267b69b
+
 import sys
 
 
@@ -1032,10 +1033,6 @@ class MobileItem:
 # -*- coding: UTF-8 -*-
 
 
-    propag_cond_default,
-    BoardIteratorPropagation,
-    BoardIteratorFindPath,
-)
 
 ItInd = IterIndicator
 
