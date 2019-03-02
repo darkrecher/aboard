@@ -24,7 +24,7 @@ class Tile:
         return str(self)
 
     def render(self, w=1, h=1):
-        return str(self.data)[:w]
+        return self.data
 
     def __eq__(self, other):
         return self.data == other.data
