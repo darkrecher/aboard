@@ -4,7 +4,13 @@
 from coord import Coord
 from direction import Dir
 from position import Pos, compute_direction
-from adjacency import get_default_adjacency
+from adjacency import (
+    get_default_adjacency,
+    set_default_adjacency,
+    AdjacencyEvaluator,
+    AdjacencyEvaluatorCross,
+    AdjacencyEvaluatorCrossDiag,
+)
 from tile import Tile
 from board_renderer import BoardRenderer
 from positions_iterator import BoardIteratorPositions, BoardIteratorRect
