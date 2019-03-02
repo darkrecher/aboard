@@ -80,7 +80,7 @@ Exemple :
 
 Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caractère "y" en troisième paramètre.
 
->>> for index, tile in enumerate(board[::, ::, 'y']):
+>>> for index, tile in enumerate(board[:, :, 'y']):
 ...     tile.data = index if index < 10 else "."
 >>> print(board.render())
 048...
@@ -90,9 +90,9 @@ Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caract
 
 Les slices renvoient un itérable, mais pas un indexable. On ne peut donc pas accéder directement à un élément en particulier. Mais on peut dérouler l'itérable dans une liste ou un tuple.
 
->>> board[2, ::]
+>>> board[2, :]
 <positions_iterator.BoardIteratorRect object at 0x00BA6590>
->>> list(board[2, ::])
+>>> list(board[2, :])
 [<Tile (2, 0): 8>, <Tile (2, 1): 9>, <Tile (2, 2): .>, <Tile (2, 3): .>]
 
 
@@ -116,9 +116,21 @@ Les itérateurs de board possèdent des indicateurs mis à jour automatiquement 
 
 Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet de savoir si on vient de changer de ligne.
 
->>> iter_board = board[:3, ::]
+>>> iter_board = board[:3, :]
 >>> for tile in iter_board:
 ...     print("pos:", tile.x, tile.y, "newline: ", iter_board.both_coord_changed)
+pos: 0 0 newline:  True
+pos: 1 0 newline:  False
+pos: 2 0 newline:  False
+pos: 0 1 newline:  True
+pos: 1 1 newline:  False
+pos: 2 1 newline:  False
+pos: 0 2 newline:  True
+pos: 1 2 newline:  False
+pos: 2 2 newline:  False
+pos: 0 3 newline:  True
+pos: 1 3 newline:  False
+pos: 2 3 newline:  False
 
 >>> positions = [ (0, 0), (1, 0), (2, 0), (4, 0), (4, 1), (3, 3) ]
 >>> iter_pos = board.iter_positions(positions)
@@ -152,15 +164,15 @@ Il permet de renvoyer directement des indicateurs, durant l'itération.
 
 Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``ItInd.*``.
 
-from aboard import ItInd
-indics = (ItInd.PREV_POS, ItInd.JUMPED)
+>>> from aboard import ItInd
+>>> indics = (ItInd.PREV_POS, ItInd.JUMPED)
 >>> for prev_pos, jumped, tile in board.iter_positions(positions).tell_indicators(indics):
 ...    print(
 ...        "pos:", tile.pos,
 ...        "prev:", prev_pos,
 ...        "jumped:", jumped,
 ...    )
-pos: <Pos 0, 0 > prev: None          jumped: True
+pos: <Pos 0, 0 > prev: None        jumped: True
 pos: <Pos 1, 0 > prev: <Pos 0, 0 > jumped: False
 pos: <Pos 2, 0 > prev: <Pos 1, 0 > jumped: False
 pos: <Pos 4, 0 > prev: <Pos 2, 0 > jumped: True
@@ -194,13 +206,13 @@ La fonction a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaq
 Sur-itérateur de type ``group_by```, dont la fonction de groupement se base sur ``both_coord_changed``. Il permet de récupérer les tiles par groupe de lignes ou de colonnes, à partir d'un itérateur par rectangle.
 
 >>> for tile_group_column in board[:, :, 'y'].group_by_subcoord():
-...     print(*map(str, tile_group_column))
-<Tile (0, 0): .> <Tile (0, 1): .> <Tile (0, 2): .> <Tile (0, 3): .>
-<Tile (1, 0): .> <Tile (1, 1): .> <Tile (1, 2): .> <Tile (1, 3): .>
-<Tile (2, 0): .> <Tile (2, 1): .> <Tile (2, 2): .> <Tile (2, 3): .>
-<Tile (3, 0): .> <Tile (3, 1): .> <Tile (3, 2): .> <Tile (3, 3): .>
-<Tile (4, 0): .> <Tile (4, 1): .> <Tile (4, 2): .> <Tile (4, 3): .>
-<Tile (5, 0): .> <Tile (5, 1): .> <Tile (5, 2): .> <Tile (5, 3): .>
+...     print(tile_group_column)
+[<Tile (0, 0): 0>, <Tile (0, 1): 1>, <Tile (0, 2): 2>, <Tile (0, 3): 3>]
+[<Tile (1, 0): 4>, <Tile (1, 1): 5>, <Tile (1, 2): 6>, <Tile (1, 3): 7>]
+[<Tile (2, 0): 8>, <Tile (2, 1): 9>, <Tile (2, 2): .>, <Tile (2, 3): .>]
+[<Tile (3, 0): .>, <Tile (3, 1): .>, <Tile (3, 2): .>, <Tile (3, 3): .>]
+[<Tile (4, 0): .>, <Tile (4, 1): .>, <Tile (4, 2): .>, <Tile (4, 3): .>]
+[<Tile (5, 0): .>, <Tile (5, 1): .>, <Tile (5, 2): .>, <Tile (5, 3): .>]
 
 Il n'est pas possible d'enchaîner les sur-itérateurs. ``board[:].tell_indicators(x).group_by(y)`` ne fonctionne pas.
 
@@ -211,7 +223,8 @@ Héritage de la classe Tile
 Il est possible de créer des classes héritées de la classe Tile, et de s'en servir pour créer un board.
 
 >>> from aboard import Tile
->>> class MyTile(Tile)
+>>> class MyTile(Tile):
+...     pass
 >>> board_with_my_tiles = Board(6, 4, class_tile=MyTile)
 
 Les classes héritées peuvent utiliser d'autres attributs de données, en plus de tile.data.
@@ -297,20 +310,14 @@ Pour utiliser une autre règle d'adjacence, il faut la spécifier lors de la cr�
 
 La classe ``AdjacencyEvaluatorCrossDiag`` considère que deux tiles sont adjacente si elles sont côte à côte ou en diagonale.
 
->>> print([
-...    str(tile)
-...    for tile in board.get_by_pathfinding((0, 1), (1, 2))
-... ])
+>>> print(list(board.get_by_pathfinding((0, 1), (1, 2))))
 ['<Tile (0, 1): .>', '<Tile (1, 1): .>', '<Tile (1, 2): .>']
->>> print([
-...    str(tile)
-...    for tile in board_adj_diag.get_by_pathfinding((0, 1), (1, 2))
-... ])
+>>> print(list(board_adj_diag.get_by_pathfinding((0, 1), (1, 2))))
 ['<Tile (0, 1): .>', '<Tile (1, 2): .>']
 
 Il est également possible de redéfinir l'adjacence par défaut, qui sera utilisée lors de la création de tous les prochains Boards.
 
->>> from adjacency import set_default_adjacency
+>>> from aboard import set_default_adjacency, AdjacencyEvaluatorCrossDiag
 >>> set_default_adjacency(AdjacencyEvaluatorCrossDiag)
 
 
@@ -326,7 +333,7 @@ La classe héritée possède un paramètre ``board``, correspondant au Board d'a
 
 Exemple de création d'une règle d'adjacence "torique". Cette règle considère que le Board est un tore. Lorsqu'on se déplace sur un bord, on est téléporté de l'autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.
 
->>> from aboard import Pos
+>>> from aboard import Pos, AdjacencyEvaluator
 >>> class AdjacencyEvaluatorCrossTore(AdjacencyEvaluator):
 ...     def is_adjacent(self, pos_1, pos_2):
 ...         if pos_1.x == pos_2.x:
@@ -362,8 +369,10 @@ Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de d�
 
 >>> def to_right_and_last_column(tile_source, tile_dest):
 ...     if tile_dest.x > tile_source.x:return True
-...     if tile_dest.x == tile_dest.board_father.w-1:return True
+...     if tile_dest.x == tile_dest.board_owner.w-1:return True
 ...     return False
+>>> from aboard import AdjacencyEvaluatorCross
+>>> set_default_adjacency(AdjacencyEvaluatorCross)
 >>> board = Board(6, 5)
 >>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
 ...     tile.data = 'X'
@@ -428,10 +437,14 @@ La fonction ``pass_through_condition`` fonctionne de la même manière que ``pro
 Le path-finding déclenche une exception ``ValueError`` si il n'existe aucun chemin possible.
 
 >>> board = Board(9, 7)
->>> for tile in board[2:7, 2]:tile.data = '#'
->>> for tile in board[2, 3:6]:tile.data = '#'
->>> for tile in board[6, 3:6]:tile.data = '>'
->>> for tile in board[2:7, 5]:tile.data = '#'
+>>> for tile in board[2:7, 2]:
+...     tile.data = '#'
+>>> for tile in board[2, 3:6]:
+...     tile.data = '#'
+>>> for tile in board[6, 3:6]:
+...     tile.data = '>'
+>>> for tile in board[2:7, 5]:
+...     tile.data = '#'
 >>> print(board.render())
 .........
 .........
@@ -451,13 +464,15 @@ ValueError: Impossible de trouver un chemin
 
 >>> def my_pass_through_condition(tile_source, tile_dest):
 ...     tile_datas = (tile_source.data, tile_dest.data)
-...     if tile_datas == ('.', '.'):return True
+...     if tile_datas == ('.', '.'):
+...         return True
 ...     if tile_datas in (('.', '>'), ('>', '.')):
 ...         return tile_source.x <= tile_dest.x
 ...     return False
-
+...
 >>> for tile in board.get_by_pathfinding((3, 4), (0, 0), my_pass_through_condition):
-...     if tile.data != '>': tile.data = '*'
+...     if tile.data != '>':
+...         tile.data = '*'
 >>> print(board.render())
 ********.
 .......*.
@@ -523,8 +538,8 @@ Cette partie sera détaillé plus tard.
 >>> board = Board(2, 2)
 >>> mobitem = MobileItem(tile_owner=board[0, 0])
 >>> print(board.render())
+#.
 ..
-.#
 >>> mobitem.move(x=1, y=0)
 >>> mobitem.data = 'M'
 >>> print(board.render())
@@ -606,7 +621,7 @@ class XmasTile(Tile):
 
 renderer = BoardRenderer(
 	tile_w=3, tile_h=3,
-	tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding=' ')
+	tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding='.')
 
 board = Board(
 	6, 5, class_tile=XmasTile,
@@ -646,21 +661,25 @@ for index, tile in enumerate(board.get_by_pathfinding((0, 3), (2, 0), pass_throu
 
 
 print(board.render())
-
-     4- -5- - - - - -
-     |               |
-
-     |               |
- 2- -3- -
- |   |   |           |
-
- |   |               |
- 1
- |   |               |
-
- |                   |
- 0- - - - - - - - - -
-
+   .   .   .   .   .
+   . 4-.-5-.- -.- -.-
+   . | .   .   .   . |
+.......................
+   . | .   .   .   . |
+ 2-.-3-.-  .   .   .
+ | . | . | .   .   . |
+.......................
+ | . | .   .   .   . |
+ 1 .   .   .   .   .
+ | . | .   .   .   . |
+.......................
+ | .   .   .   .   . |
+ 0-.- -.- -.- -.- -.-
+   .   .   .   .   .
+.......................
+   .   .   .   .   .
+   .   .   .   .   .
+   .   .   .   .   .
 
 ```
 
