@@ -70,7 +70,7 @@ Exemple :
 ......
 ......
 
->>> for index, tile in enumerate(board[4::-1, :-1:-2]):
+>>> for index, tile in enumerate(board[4::-1, ::-2]):
 ...     tile.data = index
 >>> print(board.render())
 ......
@@ -78,36 +78,30 @@ Exemple :
 ......
 43210.
 
-Attention. Pour l'instant : board[1:-1] ne fonctione pas. TODO : Dans le code, il suffit de faire range(self.w)[param_slice], et tout marche tout seul.
-
 Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caractère "y" en troisième paramètre.
 
 >>> for index, tile in enumerate(board[::, ::, 'y']):
-...     tile.data = index if index < 10 else "A"
+...     tile.data = index if index < 10 else "."
 >>> print(board.render())
-048AAA
-159AAA
-26AAAA
-37AAAA
+048...
+159...
+26....
+37....
 
 Les slices renvoient un itérable, mais pas un indexable. On ne peut donc pas accéder directement à un élément en particulier. Mais on peut dérouler l'itérable dans une liste ou un tuple.
 
 >>> board[2, ::]
 <positions_iterator.BoardIteratorRect object at 0x00BA6590>
 >>> list(board[2, ::])
-[<tile.Tile object at 0x00BE6DD0>, <tile.Tile object at 0x00BF1050>, <tile.Tile object at 0x00BF11D0>, <tile.Tile object at 0x00BF1350>]
-
-TODO : et faut que je rajoute un "repr" propre pour les Tile.
+[<Tile (2, 0): 8>, <Tile (2, 1): 9>, <Tile (2, 2): .>, <Tile (2, 3): .>]
 
 
 Itérateurs par liste de positions
 ---------------------------------
 
-TODO. Bon c'est moche. Faut pouvoir appeler cet itérateur directement depuis le board.
-
 Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de coordonnées : ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
 
-L'itérateur ``BoardIteratorPositions`` permet la même chose, mais renvoie directement les Tiles. Voir chapitre suivant pour un exemple.
+La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. Voir chapitre suivant pour un exemple.
 
 
 Indicateurs d'itérations
@@ -127,7 +121,7 @@ Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet d
 ...     print("pos:", tile.x, tile.y, "newline: ", iter_board.both_coord_changed)
 
 >>> positions = [ (0, 0), (1, 0), (2, 0), (4, 0), (4, 1), (3, 3) ]
->>> iter_pos = BoardIteratorPositions(board, positions)
+>>> iter_pos = board.iter_positions(positions)
 >>> for tile in iter_pos:
 ...    print(
 ...        "pos:", Pos(tile.pos),
@@ -159,11 +153,10 @@ Il permet de renvoyer directement des indicateurs, durant l'itération.
 Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``ItInd.*``.
 
 TODO : ItInd doit être accessible depuis aboard.
-Re TODO. Bon c'est moche. Faut pouvoir appeler l'itérateur de pos directement depuis le board.
 
 from positions_iterator import ItInd
 indics = (ItInd.PREV_POS, ItInd.JUMPED)
->>> for prev_pos, jumped, tile in BoardIteratorPositions(board, positions).tell_indicators(indics):
+>>> for prev_pos, jumped, tile in board.iter_positions(positions).tell_indicators(indics):
 ...    print(
 ...        "pos:", Pos(tile.x, tile.y),
 ...        "prev:", prev_pos,
