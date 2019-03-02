@@ -124,7 +124,7 @@ Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet d
 >>> iter_pos = board.iter_positions(positions)
 >>> for tile in iter_pos:
 ...    print(
-...        "pos:", Pos(tile.pos),
+...        "pos:", tile.pos,
 ...        "prev:", iter_pos.prev_pos,
 ...        "indics:",
 ...        "jumped" * iter_pos.jumped,
@@ -152,13 +152,11 @@ Il permet de renvoyer directement des indicateurs, durant l'itération.
 
 Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``ItInd.*``.
 
-TODO : ItInd doit être accessible depuis aboard.
-
-from positions_iterator import ItInd
+from aboard import ItInd
 indics = (ItInd.PREV_POS, ItInd.JUMPED)
 >>> for prev_pos, jumped, tile in board.iter_positions(positions).tell_indicators(indics):
 ...    print(
-...        "pos:", Pos(tile.x, tile.y),
+...        "pos:", tile.pos,
 ...        "prev:", prev_pos,
 ...        "jumped:", jumped,
 ...    )
@@ -212,15 +210,17 @@ Héritage de la classe Tile
 
 Il est possible de créer des classes héritées de la classe Tile, et de s'en servir pour créer un board.
 
+>>> from aboard import Tile
 >>> class MyTile(Tile)
 >>> board_with_my_tiles = Board(6, 4, class_tile=MyTile)
-
-TODO : virer le __eq__ de la class Tile, car on ne sait pas ce que ça devrait faire.
 
 Les classes héritées peuvent utiliser d'autres attributs de données, en plus de tile.data.
 
 Il est conseillé d'overrider les fonctions ``__str__`` et ``__repr__``. Les versions de base affichent uniquement tile.data.
 
+La fonction ``__eq__`` peut être overridée. Elle devrait l'être si on utilise la classe ``IteratorGetDifferences`` (qui n'est pas encore documentée ici).
+
+La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position (Tile.data, et non pas Tile.pos).
 
 Fonction ``Tile.render``
 ------------------------
@@ -259,8 +259,6 @@ __ __ __ __
 __ CD __ __
 ._ ._ ._ ._
 __ __ __ __
-
-# TODO : faut corriger le renderer de la tile par défaut. return self.data. Tout simplement.
 
 Il est également possible de définir le renderer dès l'instanciation du board.
 
@@ -328,6 +326,7 @@ La classe héritée possède un paramètre ``board``, correspondant au Board d'a
 
 Exemple de création d'une règle d'adjacence "torique". Cette règle considère que le Board est un tore. Lorsqu'on se déplace sur un bord, on est téléporté de l'autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.
 
+>>> from aboard import Pos
 >>> class AdjacencyEvaluatorCrossTore(AdjacencyEvaluator):
 ...     def is_adjacent(self, pos_1, pos_2):
 ...         if pos_1.x == pos_2.x:
@@ -403,10 +402,9 @@ Le changement de règle d'adjacence peut avoir des conséquences sur la propagat
 
 L'itérateur par propagation possède un indicateur spécifique : ``PROPAG_DIST``, indiquant la distance parcourue depuis la tile initiale jusqu'à la case courante.
 
-TODO : line too long.
-
 >>> board = Board(6, 5)
->>> for dist, tile in board.get_by_propagation((1, 2), to_right_and_last_column).tell_indicators((ItInd.PROPAG_DIST, )):
+>>> board_it = board.get_by_propagation((1, 2), to_right_and_last_column)
+>>> for dist, tile in board_it.tell_indicators((ItInd.PROPAG_DIST, )):
 ...     tile.data = dist
 >>> print(board.render())
 .....6
@@ -479,10 +477,6 @@ Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, p
 
 Cependant, comme cette fonctionnalité pourrait être utile, et que les ``MobileItem`` ne sont pas terminés, il est possible d'utiliser la fonction ``board.replace_tile``. Celle-ci met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
 
->>> from aboard import Board, Tile, Pos
-
-TODO : a-t-on besoin de cette ligne d'import ?
-
 >>> board = Board(3, 2)
 >>> new_t = Tile()
 >>> new_t.data = 'A'
@@ -516,10 +510,6 @@ La librairie aboard est compilée en un seul fichier de code : ``code/builder/ab
 Le début du fichier stand-alone indique la version et le commit git qui ont été utilisés pour le générer.
 
 Le script ``code/builder/builder.py`` permet de regénérer manuellement ce fichier à partir du code actuel.
-
-TODO : faire tous les TODO de builder.py. (Ha ha ha, un TODO à propos des TODO ... )
-
-TODO : et refaire un build, bien sûr.
 
 
 Mobile Items (en construction)
@@ -561,9 +551,7 @@ L'initialisation du board est effectuée par un tableau de caractère, chacun d'
 
 ```
 
-from aboard import Board, Tile, Dir, BoardRenderer
-# TODO : import from autre chose que aboard
-from point import compute_direction
+from aboard import Board, Tile, Dir, BoardRenderer, compute_direction
 
 class XmasTile(Tile):
 
