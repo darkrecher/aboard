@@ -40,8 +40,6 @@ Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem
 
 L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``. (Voir plus loin).
 
-TODO : et donc on va renommer la classe Point en Pos, car c'est plus clair comme ça.
-
 La fonction `Board.render()` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
 
 Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l'attribut data.
@@ -117,7 +115,7 @@ Indicateurs d'itérations
 
 Les itérateurs de board possèdent des indicateurs mis à jour automatiquement :
 
- - prev_point : position précédente (vaut None à la première itération).
+ - prev_pos : position précédente (vaut None à la première itération).
  - jumped : vaut True si la position précédente et la position courante ne sont pas adjacentes.
  - changed_direction : vaut True si la direction de déplacement a changé lors de l'itération qui vient d'être effectuée.
  - both_coord_changed : vaut True si les deux coordonnées x et y de la position précédente et de la position courante sont différentes.
@@ -128,25 +126,23 @@ Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet d
 >>> for tile in iter_board:
 ...     print("pos:", tile.x, tile.y, "newline: ", iter_board.both_coord_changed)
 
-TODO : ce sera prev_pos. Et aussi tile.pos, et non pas Point(tile.x et tile.y).
-
 >>> positions = [ (0, 0), (1, 0), (2, 0), (4, 0), (4, 1), (3, 3) ]
 >>> iter_pos = BoardIteratorPositions(board, positions)
 >>> for tile in iter_pos:
 ...    print(
-...        "pos:", Point(tile.x, tile.y),
-...        "prev:", iter_pos.prev_point,
+...        "pos:", Pos(tile.pos),
+...        "prev:", iter_pos.prev_pos,
 ...        "indics:",
 ...        "jumped" * iter_pos.jumped,
 ...        "changed_dir" * iter_pos.changed_direction,
 ...        "both_changed" * iter_pos.both_coord_changed
 ...    )
-pos: <Point 0, 0 > prev: None          indics: jumped  both_changed
-pos: <Point 1, 0 > prev: <Point 0, 0 > indics:
-pos: <Point 2, 0 > prev: <Point 1, 0 > indics:
-pos: <Point 4, 0 > prev: <Point 2, 0 > indics: jumped
-pos: <Point 4, 1 > prev: <Point 4, 0 > indics:  changed_dir
-pos: <Point 3, 3 > prev: <Point 4, 1 > indics: jumped changed_dir both_changed
+pos: <Pos 0, 0 > prev: None        indics: jumped  both_changed
+pos: <Pos 1, 0 > prev: <Pos 0, 0 > indics:
+pos: <Pos 2, 0 > prev: <Pos 1, 0 > indics:
+pos: <Pos 4, 0 > prev: <Pos 2, 0 > indics: jumped
+pos: <Pos 4, 1 > prev: <Pos 4, 0 > indics:  changed_dir
+pos: <Pos 3, 3 > prev: <Pos 4, 1 > indics: jumped changed_dir both_changed
 
 
 Sur_iterators
@@ -166,19 +162,19 @@ TODO : ItInd doit être accessible depuis aboard.
 Re TODO. Bon c'est moche. Faut pouvoir appeler l'itérateur de pos directement depuis le board.
 
 from positions_iterator import ItInd
-indics = (ItInd.PREV_POINT, ItInd.JUMPED)
->>> for prev_point, jumped, tile in BoardIteratorPositions(board, positions).tell_indicators(indics):
+indics = (ItInd.PREV_POS, ItInd.JUMPED)
+>>> for prev_pos, jumped, tile in BoardIteratorPositions(board, positions).tell_indicators(indics):
 ...    print(
-...        "pos:", Point(tile.x, tile.y),
-...        "prev:", prev_point,
+...        "pos:", Pos(tile.x, tile.y),
+...        "prev:", prev_pos,
 ...        "jumped:", jumped,
 ...    )
-pos: <Point 0, 0 > prev: None          jumped: True
-pos: <Point 1, 0 > prev: <Point 0, 0 > jumped: False
-pos: <Point 2, 0 > prev: <Point 1, 0 > jumped: False
-pos: <Point 4, 0 > prev: <Point 2, 0 > jumped: True
-pos: <Point 4, 1 > prev: <Point 4, 0 > jumped: False
-pos: <Point 3, 3 > prev: <Point 4, 1 > jumped: True
+pos: <Pos 0, 0 > prev: None          jumped: True
+pos: <Pos 1, 0 > prev: <Pos 0, 0 > jumped: False
+pos: <Pos 2, 0 > prev: <Pos 1, 0 > jumped: False
+pos: <Pos 4, 0 > prev: <Pos 2, 0 > jumped: True
+pos: <Pos 4, 1 > prev: <Pos 4, 0 > jumped: False
+pos: <Pos 3, 3 > prev: <Pos 4, 1 > jumped: True
 
 
 ``group_by``
@@ -188,9 +184,7 @@ Il permet de renvoyer les tiles par groupe, selon une fonction de groupement, à
 
 La fonction a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaque fois qu'elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.
 
-TODO : or donc, current_pos, n'est-ce pas ?
-
->>> grouping_function = lambda iterator: (iterator.current_point.x % 3) == 0
+>>> grouping_function = lambda iterator: (iterator.current_pos.x % 3) == 0
 >>> for tile_group in board[:].group_by(grouping_function):
 ...     print([(tile.x, tile.y) for tile in tile_group])
 [(0, 0), (1, 0), (2, 0)]
@@ -332,32 +326,30 @@ Il est également possible de redéfinir l'adjacence par défaut, qui sera utili
 Création d'une règle d'adjacence customisée
 -------------------------------------------
 
-TODO : à nouveau, c'est pos et pas points. Et il y a une erreur dans les noms de fonction : adjacent_tiles au lieu de adjacent_posis.
-
 Pour créer une autre règle d'adjacence, il faut hériter la classe ``AdjacencyEvaluator``, et surcharger deux de ses fonctions :
 
  - ``is_adjacent(self, pos_1, pos_2)`` : renvoie un booléen, indiquant si les deux positions passées en paramètre sont adjacentes.
- - ``adjacent_posis(self, pos):`` : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.
+ - ``adjacent_positions(self, pos):`` : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.
 
 La classe héritée possède un paramètre ``board``, correspondant au Board d'appartenance, sur lequel la règle d'adjacence doit s'appliquer.
 
 Exemple de création d'une règle d'adjacence "torique". Cette règle considère que le Board est un tore. Lorsqu'on se déplace sur un bord, on est téléporté de l'autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.
 
 >>> class AdjacencyEvaluatorCrossTore(AdjacencyEvaluator):
-...     def is_adjacent(self, point_1, point_2):
-...         if point_1.x == point_2.x:
-...             if (point_1.y + 1) % self.board.h == point_2.y:return True
-...             if (point_2.y + 1) % self.board.h == point_1.y:return True
-...         if point_1.y == point_2.y:
-...             if (point_1.x + 1) % self.board.w == point_2.x:return True
-...             if (point_2.x + 1) % self.board.w == point_1.x:return True
+...     def is_adjacent(self, pos_1, pos_2):
+...         if pos_1.x == pos_2.x:
+...             if (pos_1.y + 1) % self.board.h == pos_2.y:return True
+...             if (pos_2.y + 1) % self.board.h == pos_1.y:return True
+...         if pos_1.y == pos_2.y:
+...             if (pos_1.x + 1) % self.board.w == pos_2.x:return True
+...             if (pos_2.x + 1) % self.board.w == pos_1.x:return True
 ...         return False
-...     def adjacent_points(self, point):
+...     def adjacent_positions(self, pos):
 ...         offsets = [ (0, -1), (+1, 0), (0, +1), (-1, 0) ]
 ...         for offset_x, offset_y in offsets:
-...             x = (point.x + offset_x + self.board.w) % self.board.w
-...             y = (point.y + offset_y + self.board.h) % self.board.h
-...             yield Point(x, y)
+...             x = (pos.x + offset_x + self.board.w) % self.board.w
+...             y = (pos.y + offset_y + self.board.h) % self.board.h
+...             yield Pos(x, y)
 >>> board_adj_tore = Board(11, 3, class_adjacency=AdjacencyEvaluatorCrossTore)
 >>> for tile in board_adj_tore.get_by_pathfinding((2, 1), (9, 1)):
 ...     tile.data = 'X'
@@ -372,7 +364,7 @@ Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est 
 Fonction de remplissage par propagation
 =======================================
 
-La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut un point. Il est possible de la redéfinir via le paramètre ``propag_condition``.
+La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``propag_condition``.
 
 Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Cette fonction doit renvoyer un booléen, indiquant si la propagation est possible ou non.
 
@@ -390,7 +382,7 @@ Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de d�
 .....X
 .....X
 
-La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'itération dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_points``.
+La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'itération dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
 >>> board = Board(6, 5)
 >>> for index, tile in enumerate(
@@ -438,7 +430,7 @@ La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre
 
 Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
 
-Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_points``.
+Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
 La fonction ``pass_through_condition`` fonctionne de la même manière que ``propag_condition``. Elle possède deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se déplacer), et doit renvoyer un booléen, indiquant si le déplacement est possible ou non.
 
@@ -494,7 +486,7 @@ Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, p
 
 Cependant, comme cette fonctionnalité pourrait être utile, et que les ``MobileItem`` ne sont pas terminés, il est possible d'utiliser la fonction ``board.replace_tile``. Celle-ci met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
 
->>> from aboard import Board, Tile, Point
+>>> from aboard import Board, Tile, Pos
 
 TODO : a-t-on besoin de cette ligne d'import ?
 
@@ -503,7 +495,7 @@ TODO : a-t-on besoin de cette ligne d'import ?
 >>> new_t.data = 'A'
 >>> print(new_t)
 <Tile (None, None): A>
->>> board.replace_tile(new_t, Point(0, 1))
+>>> board.replace_tile(new_t, Pos(0, 1))
 >>> print(board.render())
 ...
 A..
@@ -515,7 +507,7 @@ Pour déplacer plusieurs tiles en une seule opération de permutation circulaire
 >>> board = Board(6, 3)
 >>> for index, tile in enumerate(board[:, 1]):
 ...     tile.data = index
->>> positions = [ Point(tile) for tile in board[1:5, 1] ]
+>>> positions = [ Pos(tile) for tile in board[1:5, 1] ]
 >>> board.circular_permute_tiles(positions)
 >>> print(board.render())
 ......

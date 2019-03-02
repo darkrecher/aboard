@@ -23,6 +23,8 @@ class AdjacencyEvaluatorCross(AdjacencyEvaluator):
         return False
 
     def adjacent_positions(self, pos):
+        # TODO : faudrait renvoyer des tiles ou des positions ?
+
         # Il est conseillé de mettre dans le même ordre que l'ordre des Direction.
         # C'est à dire dans le sens des aiguilles d'une montre.
         # (Mais ce n'est pas tout le temps possible avec des fonctions d'adjacences tordues)
