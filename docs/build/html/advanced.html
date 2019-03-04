@@ -74,7 +74,6 @@
 </pre></div>
 </div>
 <p>L’opérateur «&nbsp;[]&nbsp;» accepte également les tuples <code class="docutils literal notranslate"><span class="pre">board[(3,</span> <span class="pre">2)]</span></code>, ainsi que les objets <code class="docutils literal notranslate"><span class="pre">Pos</span></code>. (Voir plus loin).</p>
-<p>TODO : et donc on va renommer la classe Point en Pos, car c’est plus clair comme ça.</p>
 <p>La fonction <cite>Board.render()</cite> renvoie une string multi-ligne (séparateur : «&nbsp;\n&nbsp;»), représentant le Board.</p>
 <p>Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l’attribut data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
@@ -101,7 +100,7 @@
 <span class="go">......</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="mi">4</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="mi">4</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">2</span><span class="p">]):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">index</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 <span class="go">......</span>
@@ -110,67 +109,75 @@
 <span class="go">43210.</span>
 </pre></div>
 </div>
-<p>Attention. Pour l’instant :&nbsp;board[1:-1] ne fonctione pas. TODO : Dans le code, il suffit de faire range(self.w)[param_slice], et tout marche tout seul.</p>
 <p>Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caractère «&nbsp;y&nbsp;» en troisième paramètre.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">board</span><span class="p">[::,</span> <span class="p">::,</span> <span class="s1">&#39;y&#39;</span><span class="p">]):</span>
-<span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">index</span> <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="s2">&quot;A&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">board</span><span class="p">[:,</span> <span class="p">:,</span> <span class="s1">&#39;y&#39;</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">index</span> <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="s2">&quot;.&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
-<span class="go">048AAA</span>
-<span class="go">159AAA</span>
-<span class="go">26AAAA</span>
-<span class="go">37AAAA</span>
+<span class="go">048...</span>
+<span class="go">159...</span>
+<span class="go">26....</span>
+<span class="go">37....</span>
 </pre></div>
 </div>
 <p>Les slices renvoient un itérable, mais pas un indexable. On ne peut donc pas accéder directement à un élément en particulier. Mais on peut dérouler l’itérable dans une liste ou un tuple.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">::]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
 <span class="go">&lt;positions_iterator.BoardIteratorRect object at 0x00BA6590&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">::])</span>
-<span class="go">[&lt;tile.Tile object at 0x00BE6DD0&gt;, &lt;tile.Tile object at 0x00BF1050&gt;, &lt;tile.Tile object at 0x00BF11D0&gt;, &lt;tile.Tile object at 0x00BF1350&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:])</span>
+<span class="go">[&lt;Tile (2, 0): 8&gt;, &lt;Tile (2, 1): 9&gt;, &lt;Tile (2, 2): .&gt;, &lt;Tile (2, 3): .&gt;]</span>
 </pre></div>
 </div>
-<p>TODO : et faut que je rajoute un «&nbsp;repr&nbsp;» propre pour les Tile.</p>
 </div>
 <div class="section" id="iterateurs-par-liste-de-positions">
 <h3>Itérateurs par liste de positions<a class="headerlink" href="#iterateurs-par-liste-de-positions" title="Lien permanent vers ce titre">¶</a></h3>
-<p>TODO. Bon c’est moche. Faut pouvoir appeler cet itérateur directement depuis le board.</p>
 <p>Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d’itérer à partir d’une liste de coordonnées : <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">coord</span> <span class="pre">in</span> <span class="pre">[(0,</span> <span class="pre">0),</span> <span class="pre">(2,</span> <span class="pre">0),</span> <span class="pre">(3,</span> <span class="pre">1)]:</span> <span class="pre">current_tile</span> <span class="pre">=</span> <span class="pre">board[coord]</span></code>.</p>
-<p>L’itérateur <code class="docutils literal notranslate"><span class="pre">BoardIteratorPositions</span></code> permet la même chose, mais renvoie directement les Tiles. Voir chapitre suivant pour un exemple.</p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.iter_positions</span></code> permet la même chose, mais en itérant directement sur les Tiles. Voir chapitre suivant pour un exemple.</p>
 </div>
 <div class="section" id="indicateurs-d-iterations">
 <h3>Indicateurs d’itérations<a class="headerlink" href="#indicateurs-d-iterations" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Les itérateurs de board possèdent des indicateurs mis à jour automatiquement :</p>
 <blockquote>
 <div><ul class="simple">
-<li>prev_point : position précédente (vaut None à la première itération).</li>
+<li>prev_pos : position précédente (vaut None à la première itération).</li>
 <li>jumped : vaut True si la position précédente et la position courante ne sont pas adjacentes.</li>
 <li>changed_direction : vaut True si la direction de déplacement a changé lors de l’itération qui vient d’être effectuée.</li>
 <li>both_coord_changed : vaut True si les deux coordonnées x et y de la position précédente et de la position courante sont différentes.</li>
 </ul>
 </div></blockquote>
 <p>Pour les itérateurs par rectangle, l’indicateur <code class="docutils literal notranslate"><span class="pre">both_coord_changed</span></code> permet de savoir si on vient de changer de ligne.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">iter_board</span> <span class="o">=</span> <span class="n">board</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">::]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">iter_board</span> <span class="o">=</span> <span class="n">board</span><span class="p">[:</span><span class="mi">3</span><span class="p">,</span> <span class="p">:]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">iter_board</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pos:&quot;</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s2">&quot;newline: &quot;</span><span class="p">,</span> <span class="n">iter_board</span><span class="o">.</span><span class="n">both_coord_changed</span><span class="p">)</span>
+<span class="go">pos: 0 0 newline:  True</span>
+<span class="go">pos: 1 0 newline:  False</span>
+<span class="go">pos: 2 0 newline:  False</span>
+<span class="go">pos: 0 1 newline:  True</span>
+<span class="go">pos: 1 1 newline:  False</span>
+<span class="go">pos: 2 1 newline:  False</span>
+<span class="go">pos: 0 2 newline:  True</span>
+<span class="go">pos: 1 2 newline:  False</span>
+<span class="go">pos: 2 2 newline:  False</span>
+<span class="go">pos: 0 3 newline:  True</span>
+<span class="go">pos: 1 3 newline:  False</span>
+<span class="go">pos: 2 3 newline:  False</span>
 </pre></div>
 </div>
-<p>TODO : ce sera prev_pos. Et aussi tile.pos, et non pas Point(tile.x et tile.y).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">positions</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iter_pos</span> <span class="o">=</span> <span class="n">BoardIteratorPositions</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">positions</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iter_pos</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">iter_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">iter_pos</span><span class="p">:</span>
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span>
-<span class="gp">... </span>       <span class="s2">&quot;pos:&quot;</span><span class="p">,</span> <span class="n">Point</span><span class="p">(</span><span class="n">tile</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">y</span><span class="p">),</span>
-<span class="gp">... </span>       <span class="s2">&quot;prev:&quot;</span><span class="p">,</span> <span class="n">iter_pos</span><span class="o">.</span><span class="n">prev_point</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s2">&quot;pos:&quot;</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s2">&quot;prev:&quot;</span><span class="p">,</span> <span class="n">iter_pos</span><span class="o">.</span><span class="n">prev_pos</span><span class="p">,</span>
 <span class="gp">... </span>       <span class="s2">&quot;indics:&quot;</span><span class="p">,</span>
 <span class="gp">... </span>       <span class="s2">&quot;jumped&quot;</span> <span class="o">*</span> <span class="n">iter_pos</span><span class="o">.</span><span class="n">jumped</span><span class="p">,</span>
 <span class="gp">... </span>       <span class="s2">&quot;changed_dir&quot;</span> <span class="o">*</span> <span class="n">iter_pos</span><span class="o">.</span><span class="n">changed_direction</span><span class="p">,</span>
 <span class="gp">... </span>       <span class="s2">&quot;both_changed&quot;</span> <span class="o">*</span> <span class="n">iter_pos</span><span class="o">.</span><span class="n">both_coord_changed</span>
 <span class="gp">... </span>   <span class="p">)</span>
-<span class="go">pos: &lt;Point 0, 0 &gt; prev: None          indics: jumped  both_changed</span>
-<span class="go">pos: &lt;Point 1, 0 &gt; prev: &lt;Point 0, 0 &gt; indics:</span>
-<span class="go">pos: &lt;Point 2, 0 &gt; prev: &lt;Point 1, 0 &gt; indics:</span>
-<span class="go">pos: &lt;Point 4, 0 &gt; prev: &lt;Point 2, 0 &gt; indics: jumped</span>
-<span class="go">pos: &lt;Point 4, 1 &gt; prev: &lt;Point 4, 0 &gt; indics:  changed_dir</span>
-<span class="go">pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; indics: jumped changed_dir both_changed</span>
+<span class="go">pos: &lt;Pos 0, 0 &gt; prev: None        indics: jumped  both_changed</span>
+<span class="go">pos: &lt;Pos 1, 0 &gt; prev: &lt;Pos 0, 0 &gt; indics:</span>
+<span class="go">pos: &lt;Pos 2, 0 &gt; prev: &lt;Pos 1, 0 &gt; indics:</span>
+<span class="go">pos: &lt;Pos 4, 0 &gt; prev: &lt;Pos 2, 0 &gt; indics: jumped</span>
+<span class="go">pos: &lt;Pos 4, 1 &gt; prev: &lt;Pos 4, 0 &gt; indics:  changed_dir</span>
+<span class="go">pos: &lt;Pos 3, 3 &gt; prev: &lt;Pos 4, 1 &gt; indics: jumped changed_dir both_changed</span>
 </pre></div>
 </div>
 </div>
@@ -182,29 +189,28 @@
 <h3><code class="docutils literal notranslate"><span class="pre">tell_indicators</span></code><a class="headerlink" href="#tell-indicators" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Il permet de renvoyer directement des indicateurs, durant l’itération.</p>
 <p>Les types d’indicateurs renvoyés doivent être spécifiés via des valeurs <code class="docutils literal notranslate"><span class="pre">ItInd.*</span></code>.</p>
-<p>TODO : ItInd doit être accessible depuis aboard.
-Re TODO. Bon c’est moche. Faut pouvoir appeler l’itérateur de pos directement depuis le board.</p>
-<p>from positions_iterator import ItInd
-indics = (ItInd.PREV_POINT, ItInd.JUMPED)
-&gt;&gt;&gt; for prev_point, jumped, tile in BoardIteratorPositions(board, positions).tell_indicators(indics):
-…    print(
-…        «&nbsp;pos:&nbsp;», Point(tile.x, tile.y),
-…        «&nbsp;prev:&nbsp;», prev_point,
-…        «&nbsp;jumped:&nbsp;», jumped,
-…    )
-pos: &lt;Point 0, 0 &gt; prev: None          jumped: True
-pos: &lt;Point 1, 0 &gt; prev: &lt;Point 0, 0 &gt; jumped: False
-pos: &lt;Point 2, 0 &gt; prev: &lt;Point 1, 0 &gt; jumped: False
-pos: &lt;Point 4, 0 &gt; prev: &lt;Point 2, 0 &gt; jumped: True
-pos: &lt;Point 4, 1 &gt; prev: &lt;Point 4, 0 &gt; jumped: False
-pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">ItInd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">indics</span> <span class="o">=</span> <span class="p">(</span><span class="n">ItInd</span><span class="o">.</span><span class="n">PREV_POS</span><span class="p">,</span> <span class="n">ItInd</span><span class="o">.</span><span class="n">JUMPED</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">prev_pos</span><span class="p">,</span> <span class="n">jumped</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">iter_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="o">.</span><span class="n">tell_indicators</span><span class="p">(</span><span class="n">indics</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span>
+<span class="gp">... </span>       <span class="s2">&quot;pos:&quot;</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s2">&quot;prev:&quot;</span><span class="p">,</span> <span class="n">prev_pos</span><span class="p">,</span>
+<span class="gp">... </span>       <span class="s2">&quot;jumped:&quot;</span><span class="p">,</span> <span class="n">jumped</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="p">)</span>
+<span class="go">pos: &lt;Pos 0, 0 &gt; prev: None        jumped: True</span>
+<span class="go">pos: &lt;Pos 1, 0 &gt; prev: &lt;Pos 0, 0 &gt; jumped: False</span>
+<span class="go">pos: &lt;Pos 2, 0 &gt; prev: &lt;Pos 1, 0 &gt; jumped: False</span>
+<span class="go">pos: &lt;Pos 4, 0 &gt; prev: &lt;Pos 2, 0 &gt; jumped: True</span>
+<span class="go">pos: &lt;Pos 4, 1 &gt; prev: &lt;Pos 4, 0 &gt; jumped: False</span>
+<span class="go">pos: &lt;Pos 3, 3 &gt; prev: &lt;Pos 4, 1 &gt; jumped: True</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="group-by">
 <h3><code class="docutils literal notranslate"><span class="pre">group_by</span></code><a class="headerlink" href="#group-by" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Il permet de renvoyer les tiles par groupe, selon une fonction de groupement, à indiquer en paramètre.</p>
 <p>La fonction a pour paramètre l’itérateur, elle doit renvoyer un booléen. Chaque fois qu’elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.</p>
-<p>TODO : or donc, current_pos, n’est-ce pas ?</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grouping_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">iterator</span><span class="p">:</span> <span class="p">(</span><span class="n">iterator</span><span class="o">.</span><span class="n">current_point</span><span class="o">.</span><span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grouping_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">iterator</span><span class="p">:</span> <span class="p">(</span><span class="n">iterator</span><span class="o">.</span><span class="n">current_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile_group</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[:]</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">grouping_function</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">([(</span><span class="n">tile</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">tile_group</span><span class="p">])</span>
 <span class="go">[(0, 0), (1, 0), (2, 0)]</span>
@@ -222,13 +228,13 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <h3><code class="docutils literal notranslate"><span class="pre">group_by_subcoord</span></code><a class="headerlink" href="#group-by-subcoord" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Sur-itérateur de type <code class="docutils literal notranslate"><span class="pre">group_by`</span></code>, dont la fonction de groupement se base sur <code class="docutils literal notranslate"><span class="pre">both_coord_changed</span></code>. Il permet de récupérer les tiles par groupe de lignes ou de colonnes, à partir d’un itérateur par rectangle.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile_group_column</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[:,</span> <span class="p">:,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">group_by_subcoord</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">tile_group_column</span><span class="p">))</span>
-<span class="go">&lt;Tile (0, 0): .&gt; &lt;Tile (0, 1): .&gt; &lt;Tile (0, 2): .&gt; &lt;Tile (0, 3): .&gt;</span>
-<span class="go">&lt;Tile (1, 0): .&gt; &lt;Tile (1, 1): .&gt; &lt;Tile (1, 2): .&gt; &lt;Tile (1, 3): .&gt;</span>
-<span class="go">&lt;Tile (2, 0): .&gt; &lt;Tile (2, 1): .&gt; &lt;Tile (2, 2): .&gt; &lt;Tile (2, 3): .&gt;</span>
-<span class="go">&lt;Tile (3, 0): .&gt; &lt;Tile (3, 1): .&gt; &lt;Tile (3, 2): .&gt; &lt;Tile (3, 3): .&gt;</span>
-<span class="go">&lt;Tile (4, 0): .&gt; &lt;Tile (4, 1): .&gt; &lt;Tile (4, 2): .&gt; &lt;Tile (4, 3): .&gt;</span>
-<span class="go">&lt;Tile (5, 0): .&gt; &lt;Tile (5, 1): .&gt; &lt;Tile (5, 2): .&gt; &lt;Tile (5, 3): .&gt;</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tile_group_column</span><span class="p">)</span>
+<span class="go">[&lt;Tile (0, 0): 0&gt;, &lt;Tile (0, 1): 1&gt;, &lt;Tile (0, 2): 2&gt;, &lt;Tile (0, 3): 3&gt;]</span>
+<span class="go">[&lt;Tile (1, 0): 4&gt;, &lt;Tile (1, 1): 5&gt;, &lt;Tile (1, 2): 6&gt;, &lt;Tile (1, 3): 7&gt;]</span>
+<span class="go">[&lt;Tile (2, 0): 8&gt;, &lt;Tile (2, 1): 9&gt;, &lt;Tile (2, 2): .&gt;, &lt;Tile (2, 3): .&gt;]</span>
+<span class="go">[&lt;Tile (3, 0): .&gt;, &lt;Tile (3, 1): .&gt;, &lt;Tile (3, 2): .&gt;, &lt;Tile (3, 3): .&gt;]</span>
+<span class="go">[&lt;Tile (4, 0): .&gt;, &lt;Tile (4, 1): .&gt;, &lt;Tile (4, 2): .&gt;, &lt;Tile (4, 3): .&gt;]</span>
+<span class="go">[&lt;Tile (5, 0): .&gt;, &lt;Tile (5, 1): .&gt;, &lt;Tile (5, 2): .&gt;, &lt;Tile (5, 3): .&gt;]</span>
 </pre></div>
 </div>
 <p>Il n’est pas possible d’enchaîner les sur-itérateurs. <code class="docutils literal notranslate"><span class="pre">board[:].tell_indicators(x).group_by(y)</span></code> ne fonctionne pas.</p>
@@ -237,13 +243,16 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <div class="section" id="heritage-de-la-classe-tile">
 <h2>Héritage de la classe Tile<a class="headerlink" href="#heritage-de-la-classe-tile" title="Lien permanent vers ce titre">¶</a></h2>
 <p>Il est possible de créer des classes héritées de la classe Tile, et de s’en servir pour créer un board.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyTile</span><span class="p">(</span><span class="n">Tile</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">Tile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyTile</span><span class="p">(</span><span class="n">Tile</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">pass</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board_with_my_tiles</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">class_tile</span><span class="o">=</span><span class="n">MyTile</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>TODO&nbsp;:&nbsp;virer le __eq__ de la class Tile, car on ne sait pas ce que ça devrait faire.</p>
 <p>Les classes héritées peuvent utiliser d’autres attributs de données, en plus de tile.data.</p>
 <p>Il est conseillé d’overrider les fonctions <code class="docutils literal notranslate"><span class="pre">__str__</span></code> et <code class="docutils literal notranslate"><span class="pre">__repr__</span></code>. Les versions de base affichent uniquement tile.data.</p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> peut être overridée. Elle devrait l’être si on utilise la classe <code class="docutils literal notranslate"><span class="pre">IteratorGetDifferences</span></code> (qui n’est pas encore documentée ici).</p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> est supposée comparer uniquement les données à l’intérieur de la Tile, et non pas sa position (Tile.data, et non pas Tile.pos).</p>
 <div class="section" id="fonction-tile-render">
 <h3>Fonction <code class="docutils literal notranslate"><span class="pre">Tile.render</span></code><a class="headerlink" href="#fonction-tile-render" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction <code class="docutils literal notranslate"><span class="pre">board.render</span></code>.</p>
@@ -274,7 +283,6 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <span class="go">__ __ __ __</span>
 </pre></div>
 </div>
-<p># TODO : faut corriger le renderer de la tile par défaut. return self.data. Tout simplement.</p>
 <p>Il est également possible de définir le renderer dès l’instanciation du board.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">my_renderer</span> <span class="o">=</span> <span class="n">BoardRenderer</span><span class="p">(</span><span class="n">tile_w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tile_h</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">default_renderer</span><span class="o">=</span><span class="n">my_renderer</span><span class="p">)</span>
@@ -307,51 +315,45 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 </pre></div>
 </div>
 <p>La classe <code class="docutils literal notranslate"><span class="pre">AdjacencyEvaluatorCrossDiag</span></code> considère que deux tiles sont adjacente si elles sont côte à côte ou en diagonale.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">([</span>
-<span class="gp">... </span>   <span class="nb">str</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span>
-<span class="gp">... </span>   <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="gp">... </span><span class="p">])</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))))</span>
 <span class="go">[&#39;&lt;Tile (0, 1): .&gt;&#39;, &#39;&lt;Tile (1, 1): .&gt;&#39;, &#39;&lt;Tile (1, 2): .&gt;&#39;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">([</span>
-<span class="gp">... </span>   <span class="nb">str</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span>
-<span class="gp">... </span>   <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board_adj_diag</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">board_adj_diag</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))))</span>
 <span class="go">[&#39;&lt;Tile (0, 1): .&gt;&#39;, &#39;&lt;Tile (1, 2): .&gt;&#39;]</span>
 </pre></div>
 </div>
 <p>Il est également possible de redéfinir l’adjacence par défaut, qui sera utilisée lors de la création de tous les prochains Boards.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">adjacency</span> <span class="k">import</span> <span class="n">set_default_adjacency</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">set_default_adjacency</span><span class="p">,</span> <span class="n">AdjacencyEvaluatorCrossDiag</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">set_default_adjacency</span><span class="p">(</span><span class="n">AdjacencyEvaluatorCrossDiag</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="creation-d-une-regle-d-adjacence-customisee">
 <h3>Création d’une règle d’adjacence customisée<a class="headerlink" href="#creation-d-une-regle-d-adjacence-customisee" title="Lien permanent vers ce titre">¶</a></h3>
-<p>TODO : à nouveau, c’est pos et pas points. Et il y a une erreur dans les noms de fonction : adjacent_tiles au lieu de adjacent_posis.</p>
 <p>Pour créer une autre règle d’adjacence, il faut hériter la classe <code class="docutils literal notranslate"><span class="pre">AdjacencyEvaluator</span></code>, et surcharger deux de ses fonctions :</p>
 <blockquote>
 <div><ul class="simple">
 <li><code class="docutils literal notranslate"><span class="pre">is_adjacent(self,</span> <span class="pre">pos_1,</span> <span class="pre">pos_2)</span></code> : renvoie un booléen, indiquant si les deux positions passées en paramètre sont adjacentes.</li>
-<li><code class="docutils literal notranslate"><span class="pre">adjacent_posis(self,</span> <span class="pre">pos):</span></code> : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.</li>
+<li><code class="docutils literal notranslate"><span class="pre">adjacent_positions(self,</span> <span class="pre">pos):</span></code> : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.</li>
 </ul>
 </div></blockquote>
 <p>La classe héritée possède un paramètre <code class="docutils literal notranslate"><span class="pre">board</span></code>, correspondant au Board d’appartenance, sur lequel la règle d’adjacence doit s’appliquer.</p>
 <p>Exemple de création d’une règle d’adjacence «&nbsp;torique&nbsp;». Cette règle considère que le Board est un tore. Lorsqu’on se déplace sur un bord, on est téléporté de l’autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">AdjacencyEvaluatorCrossTore</span><span class="p">(</span><span class="n">AdjacencyEvaluator</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">is_adjacent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point_1</span><span class="p">,</span> <span class="n">point_2</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">if</span> <span class="n">point_1</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">point_2</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
-<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">point_1</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">point_2</span><span class="o">.</span><span class="n">y</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
-<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">point_2</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">point_1</span><span class="o">.</span><span class="n">y</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
-<span class="gp">... </span>        <span class="k">if</span> <span class="n">point_1</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">point_2</span><span class="o">.</span><span class="n">y</span><span class="p">:</span>
-<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">point_1</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span> <span class="o">==</span> <span class="n">point_2</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
-<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">point_2</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span> <span class="o">==</span> <span class="n">point_1</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">AdjacencyEvaluator</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">AdjacencyEvaluatorCrossTore</span><span class="p">(</span><span class="n">AdjacencyEvaluator</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">is_adjacent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_1</span><span class="p">,</span> <span class="n">pos_2</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">pos_1</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">pos_2</span><span class="o">.</span><span class="n">x</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">pos_1</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">pos_2</span><span class="o">.</span><span class="n">y</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
+<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">pos_2</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">pos_1</span><span class="o">.</span><span class="n">y</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
+<span class="gp">... </span>        <span class="k">if</span> <span class="n">pos_1</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">pos_2</span><span class="o">.</span><span class="n">y</span><span class="p">:</span>
+<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">pos_1</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span> <span class="o">==</span> <span class="n">pos_2</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
+<span class="gp">... </span>            <span class="k">if</span> <span class="p">(</span><span class="n">pos_2</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span> <span class="o">==</span> <span class="n">pos_1</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="kc">False</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">adjacent_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">adjacent_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="n">offsets</span> <span class="o">=</span> <span class="p">[</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">]</span>
 <span class="gp">... </span>        <span class="k">for</span> <span class="n">offset_x</span><span class="p">,</span> <span class="n">offset_y</span> <span class="ow">in</span> <span class="n">offsets</span><span class="p">:</span>
-<span class="gp">... </span>            <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">offset_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span>
-<span class="gp">... </span>            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">offset_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span>
-<span class="gp">... </span>            <span class="k">yield</span> <span class="n">Point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">... </span>            <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">offset_x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">w</span>
+<span class="gp">... </span>            <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">offset_y</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">board</span><span class="o">.</span><span class="n">h</span>
+<span class="gp">... </span>            <span class="k">yield</span> <span class="n">Pos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board_adj_tore</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">class_adjacency</span><span class="o">=</span><span class="n">AdjacencyEvaluatorCrossTore</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board_adj_tore</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
@@ -366,12 +368,14 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 </div>
 <div class="section" id="fonction-de-remplissage-par-propagation">
 <h2>Fonction de remplissage par propagation<a class="headerlink" href="#fonction-de-remplissage-par-propagation" title="Lien permanent vers ce titre">¶</a></h2>
-<p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.get_by_propagation</span></code> effectue une itération à partir d’une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la «&nbsp;condition de propagation&nbsp;». Par défaut, cette condition est vraie si la <code class="docutils literal notranslate"><span class="pre">data</span></code> de la tile vers laquelle on se propage vaut un point. Il est possible de la redéfinir via le paramètre <code class="docutils literal notranslate"><span class="pre">propag_condition</span></code>.</p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.get_by_propagation</span></code> effectue une itération à partir d’une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la «&nbsp;condition de propagation&nbsp;». Par défaut, cette condition est vraie si la <code class="docutils literal notranslate"><span class="pre">data</span></code> de la tile vers laquelle on se propage vaut le caractère “.”. Il est possible de la redéfinir via le paramètre <code class="docutils literal notranslate"><span class="pre">propag_condition</span></code>.</p>
 <p>Il s’agit d’une fonction ayant deux paramètres : <code class="docutils literal notranslate"><span class="pre">tile_source</span></code> (la tile de départ actuelle), <code class="docutils literal notranslate"><span class="pre">tile_dest</span></code> (la tile vers laquelle on tente de se propager). Cette fonction doit renvoyer un booléen, indiquant si la propagation est possible ou non.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">to_right_and_last_column</span><span class="p">(</span><span class="n">tile_source</span><span class="p">,</span> <span class="n">tile_dest</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">tile_source</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">board_father</span><span class="o">.</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">board_owner</span><span class="o">.</span><span class="n">w</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">AdjacencyEvaluatorCross</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">set_default_adjacency</span><span class="p">(</span><span class="n">AdjacencyEvaluatorCross</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">to_right_and_last_column</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
@@ -383,7 +387,7 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <span class="go">.....X</span>
 </pre></div>
 </div>
-<p>La propagation utilise la règle d’adjacence par défaut du board. L’ordre d’itération dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_points</span></code>.</p>
+<p>La propagation utilise la règle d’adjacence par défaut du board. L’ordre d’itération dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_positions</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
 <span class="gp">... </span>   <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">to_right_and_last_column</span><span class="p">)</span>
@@ -410,9 +414,9 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 </pre></div>
 </div>
 <p>L’itérateur par propagation possède un indicateur spécifique : <code class="docutils literal notranslate"><span class="pre">PROPAG_DIST</span></code>, indiquant la distance parcourue depuis la tile initiale jusqu’à la case courante.</p>
-<p>TODO : line too long.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dist</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">to_right_and_last_column</span><span class="p">)</span><span class="o">.</span><span class="n">tell_indicators</span><span class="p">((</span><span class="n">ItInd</span><span class="o">.</span><span class="n">PROPAG_DIST</span><span class="p">,</span> <span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">board_it</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">to_right_and_last_column</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">dist</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board_it</span><span class="o">.</span><span class="n">tell_indicators</span><span class="p">((</span><span class="n">ItInd</span><span class="o">.</span><span class="n">PROPAG_DIST</span><span class="p">,</span> <span class="p">)):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dist</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 <span class="go">.....6</span>
@@ -427,14 +431,18 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <h2>Path-finding<a class="headerlink" href="#path-finding" title="Lien permanent vers ce titre">¶</a></h2>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.get_by_pathfinding</span></code> recherche un chemin le plus court entre deux positions, et effectue une itération dessus, à partir de la tile de départ vers la tile d’arrivée.</p>
 <p>Cette fonction utilise une «&nbsp;condition de déplacement&nbsp;», similaire à la condition de propagation. Par défaut, le déplacement est possible si la <code class="docutils literal notranslate"><span class="pre">data</span></code> de la tile vers laquelle on se propage vaut le caractère “.”. Il est possible de la redéfinir via le paramètre <code class="docutils literal notranslate"><span class="pre">pass_through_condition</span></code>.</p>
-<p>Le path-finding utilise les règles d’adjacence par défaut du board. Lorsqu’il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_points</span></code>.</p>
+<p>Le path-finding utilise les règles d’adjacence par défaut du board. Lorsqu’il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_positions</span></code>.</p>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">pass_through_condition</span></code> fonctionne de la même manière que <code class="docutils literal notranslate"><span class="pre">propag_condition</span></code>. Elle possède deux paramètres : <code class="docutils literal notranslate"><span class="pre">tile_source</span></code> (la tile de départ actuelle), <code class="docutils literal notranslate"><span class="pre">tile_dest</span></code> (la tile vers laquelle on tente de se déplacer), et doit renvoyer un booléen, indiquant si le déplacement est possible ou non.</p>
 <p>Le path-finding déclenche une exception <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> si il n’existe aucun chemin possible.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span><span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]:</span><span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]:</span><span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;&gt;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span><span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;&gt;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;#&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 <span class="go">.........</span>
 <span class="go">.........</span>
@@ -456,14 +464,15 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">my_pass_through_condition</span><span class="p">(</span><span class="n">tile_source</span><span class="p">,</span> <span class="n">tile_dest</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">tile_datas</span> <span class="o">=</span> <span class="p">(</span><span class="n">tile_source</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_datas</span> <span class="o">==</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span><span class="k">return</span> <span class="kc">True</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_datas</span> <span class="o">==</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="kc">True</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_datas</span> <span class="ow">in</span> <span class="p">((</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">tile_source</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">x</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="kc">False</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">my_pass_through_condition</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">if</span> <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span> <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">my_pass_through_condition</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 <span class="go">********.</span>
 <span class="go">.......*.</span>
@@ -480,16 +489,12 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <h2>Échanges et permutations circulaires de tiles<a class="headerlink" href="#echanges-et-permutations-circulaires-de-tiles" title="Lien permanent vers ce titre">¶</a></h2>
 <p>Chaque case d’un Board ne doit contenir rien d’autre qu’une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d’une case à l’autre, il faut modifier la variable <code class="docutils literal notranslate"><span class="pre">tile.data</span></code>, ou utiliser des <code class="docutils literal notranslate"><span class="pre">MobileItems</span></code> (voir plus loin).</p>
 <p>Cependant, comme cette fonctionnalité pourrait être utile, et que les <code class="docutils literal notranslate"><span class="pre">MobileItem</span></code> ne sont pas terminés, il est possible d’utiliser la fonction <code class="docutils literal notranslate"><span class="pre">board.replace_tile</span></code>. Celle-ci met à jour automatiquement les variables <code class="docutils literal notranslate"><span class="pre">tile.x</span></code> et <code class="docutils literal notranslate"><span class="pre">tile.y</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">Board</span><span class="p">,</span> <span class="n">Tile</span><span class="p">,</span> <span class="n">Point</span>
-</pre></div>
-</div>
-<p>TODO : a-t-on besoin de cette ligne d’import ?</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_t</span> <span class="o">=</span> <span class="n">Tile</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_t</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new_t</span><span class="p">)</span>
 <span class="go">&lt;Tile (None, None): A&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="o">.</span><span class="n">replace_tile</span><span class="p">(</span><span class="n">new_t</span><span class="p">,</span> <span class="n">Point</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="o">.</span><span class="n">replace_tile</span><span class="p">(</span><span class="n">new_t</span><span class="p">,</span> <span class="n">Pos</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 <span class="gp">...</span>
 <span class="go">A..</span>
@@ -501,7 +506,7 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">board</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">index</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">positions</span> <span class="o">=</span> <span class="p">[</span> <span class="n">Point</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span> <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">positions</span> <span class="o">=</span> <span class="p">[</span> <span class="n">Pos</span><span class="p">(</span><span class="n">tile</span><span class="p">)</span> <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="o">.</span><span class="n">circular_permute_tiles</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 <span class="go">......</span>
@@ -515,8 +520,6 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <p>La librairie aboard est compilée en un seul fichier de code : <code class="docutils literal notranslate"><span class="pre">code/builder/aboard_standalone.py</span></code>. Ce fichier permet une utilisation de la librairie dans des contextes spécifiques. Par exemple, il est possible de copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.</p>
 <p>Le début du fichier stand-alone indique la version et le commit git qui ont été utilisés pour le générer.</p>
 <p>Le script <code class="docutils literal notranslate"><span class="pre">code/builder/builder.py</span></code> permet de regénérer manuellement ce fichier à partir du code actuel.</p>
-<p>TODO : faire tous les TODO de builder.py. (Ha ha ha, un TODO à propos des TODO … )</p>
-<p>TODO : et refaire un build, bien sûr.</p>
 </div>
 <div class="section" id="mobile-items-en-construction">
 <h2>Mobile Items (en construction)<a class="headerlink" href="#mobile-items-en-construction" title="Lien permanent vers ce titre">¶</a></h2>
@@ -526,8 +529,8 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mobitem</span> <span class="o">=</span> <span class="n">MobileItem</span><span class="p">(</span><span class="n">tile_owner</span><span class="o">=</span><span class="n">board</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
+<span class="go">#.</span>
 <span class="go">..</span>
-<span class="go">.#</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mobitem</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mobitem</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
@@ -550,9 +553,7 @@ pos: &lt;Point 3, 3 &gt; prev: &lt;Point 4, 1 &gt; jumped: True</p>
 <p>La règle d’adjacence est celle par défaut :&nbsp;les 4 directions, mais pas de diagonale.</p>
 <p>L’initialisation du board est effectuée par un tableau de caractère, chacun d’eux permet de déduire le contenu du <code class="docutils literal notranslate"><span class="pre">roads</span></code> de la Tile concernée.</p>
 <p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a></p>
-<p>from aboard import Board, Tile, Dir, BoardRenderer
-# TODO : import from autre chose que aboard
-from point import compute_direction</p>
+<p>from aboard import Board, Tile, Dir, BoardRenderer, compute_direction</p>
 <p>class XmasTile(Tile):</p>
 <blockquote>
 <div><dl class="docutils">
@@ -581,8 +582,8 @@ self.mid_marker = “ “</p>
 </dd>
 <dt>def dirs_from_input(self, char_roadful):</dt>
 <dd><dl class="first last docutils">
-<dt>for <a href="#id13"><span class="problematic" id="id14">dir_</span></a> in XmasTile.DICT_ROADFUL_DIRS_FROM_CHAR[char_roadful]:</dt>
-<dd>self.roads[<a href="#id15"><span class="problematic" id="id16">dir_</span></a>] = True</dd>
+<dt>for <a href="#id9"><span class="problematic" id="id10">dir_</span></a> in XmasTile.DICT_ROADFUL_DIRS_FROM_CHAR[char_roadful]:</dt>
+<dd>self.roads[<a href="#id11"><span class="problematic" id="id12">dir_</span></a>] = True</dd>
 </dl>
 </dd>
 </dl>
@@ -611,7 +612,7 @@ return str_result.split(“n”)</p>
 <dl class="docutils">
 <dt>renderer = BoardRenderer(</dt>
 <dd>tile_w=3, tile_h=3,
-tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding=” “)</dd>
+tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding=”.”)</dd>
 <dt>board = Board(</dt>
 <dd>6, 5, class_tile=XmasTile,
 default_renderer=renderer,</dd>
@@ -630,7 +631,7 @@ L—-J
 <dt>for tile, char_roadful in zip(board, board_map):</dt>
 <dd>tile.dirs_from_input(char_roadful)</dd>
 <dt>def pass_through_xmas(tile_source, tile_dest):</dt>
-<dd><p class="first"><a href="#id17"><span class="problematic" id="id18">dir_</span></a> = compute_direction(tile_source, tile_dest)
+<dd><p class="first"><a href="#id13"><span class="problematic" id="id14">dir_</span></a> = compute_direction(tile_source, tile_dest)
 roads_to_check = {</p>
 <blockquote>
 <div>Dir.UP:(Dir.UP, Dir.DOWN),
@@ -638,7 +639,7 @@ Dir.DOWN:(Dir.DOWN, Dir.UP),
 Dir.LEFT:(Dir.LEFT, Dir.RIGHT),
 Dir.RIGHT:(Dir.RIGHT, Dir.LEFT),</div></blockquote>
 <p>}
-road_to_check = roads_to_check.get(<a href="#id19"><span class="problematic" id="id20">dir_</span></a>)
+road_to_check = roads_to_check.get(<a href="#id15"><span class="problematic" id="id16">dir_</span></a>)
 if road_to_check is None:</p>
 <blockquote>
 <div># Not supposed to happen
@@ -648,29 +649,26 @@ return tile_source.roads[road_source] and tile_dest.roads[road_dest]</p>
 </dd>
 <dt>for index, tile in enumerate(board.get_by_pathfinding((0, 3), (2, 0), pass_through_xmas)):</dt>
 <dd>tile.mid_marker = str(index)</dd>
+<dt>print(board.render())</dt>
+<dd>.   .   .   .   .
+. 4-.-5-.- -.- -.-
+. | .   .   .   . |</dd>
 </dl>
-<p>print(board.render())</p>
 <blockquote>
-<div><blockquote>
-<div><p>4- -5- - - - - -
-|               |</p>
-<div class="line-block">
-<div class="line"><a href="#id5"><span class="problematic" id="id6">|</span></a></div>
+<div><div class="line-block">
+<div class="line">. | . | .   .   . |</div>
 </div>
 </div></blockquote>
-<p>2- -3- -
-|   |   |           |</p>
-<div class="line-block">
-<div class="line">|               |</div>
+<blockquote>
+<div><div class="line-block">
+<div class="line">. | .   .   .   . |</div>
 </div>
-<p>1
-|   |               |</p>
-<div class="line-block">
-<div class="line"><a href="#id7"><span class="problematic" id="id8">|</span></a></div>
-</div>
-<p>0- - - - - - - - - -</p>
 </div></blockquote>
-<p><a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a></p>
+<blockquote>
+<div>.   .   .   .   .</div></blockquote>
+<blockquote>
+<div>.   .   .   .   .</div></blockquote>
+<p><a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
 </div>
 </div>
 
