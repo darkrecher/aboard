@@ -19,31 +19,32 @@ La taille (largeur, hauteur) est à spécifier à la création.
 
 Une Tile possède les attributs suivants :
 
- - board_father : référence vers l'objet Board contenant la Tile.
+ - board_owner : référence vers l'objet Board contenant la Tile.
  - x, y : position de la Tile dans le Board conteneur.
+ - pos : position, sous forme d'un objet Pos.
  - data : string. Donnée quelconque. Initialisée au caractère "." (un point).
 
-``board_father``, ``x`` et ``y`` peuvent être lus, mais ne devraient jamais être directement modifiés.
+``board_owner``, ``x``, ``y`` et ``pos`` peuvent être lus, mais ne devraient jamais être directement modifiés.
 
 ``data`` peut être lu et modifié.
 
 Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem__``), en spécifiant les coordonnées x et y.
 
 >>> tile = board[3, 2]
->>> print(tile.x)
+>>> tile.x
 3
->>> print(tile.y)
+>>> tile.y
 2
->>> print(tile.data)
-.
->>> tile.data = "ABCD"
+>>> tile.data
+'.'
 
 L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``. (Voir plus loin).
 
-La fonction `Board.render()` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
+La fonction ``Board.render()`` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
 
 Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l'attribut data.
 
+>>> tile.data = "ABCD"
 >>> print(board.render())
 .......
 .......
@@ -57,7 +58,7 @@ Itérateurs
 Itérateurs par rectangle
 ------------------------
 
-Avec l'opérateur "[]", remplacez l'une ou les deux coordonnées par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
+Avec l'opérateur "[ ]", remplacez l'une ou les deux coordonnées par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
 
 Exemple :
 
@@ -88,20 +89,26 @@ Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caract
 26....
 37....
 
-Les slices renvoient un itérable, mais pas un indexable. On ne peut donc pas accéder directement à un élément en particulier. Mais on peut dérouler l'itérable dans une liste ou un tuple.
+Les slices renvoient un itérable, mais pas un indexable. Les éléments ne sont donc pas directement accessible (``board[1, :][2]`` ne fonctionne pas). Mais l'itérable peut être déroulé dans une liste ou un tuple.
 
 >>> board[2, :]
 <positions_iterator.BoardIteratorRect object at 0x00BA6590>
 >>> list(board[2, :])
 [<Tile (2, 0): 8>, <Tile (2, 1): 9>, <Tile (2, 2): .>, <Tile (2, 3): .>]
 
+Le second paramètre peut être omis, il sera remplacé par un slice complet : ``::``. Dans l'exemple précédent, on aurait pu remplacer ``board[2, :]`` par ``board[2]``. Cela permet de récupérer directement une colonne.
+
+Le board en lui-même peut-être itéré, pour parcourir toutes les tiles, de haut en bas et de gauche à droite : ``for tile in board:print(tile)``.
+
 
 Itérateurs par liste de positions
 ---------------------------------
 
-Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de coordonnées : ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
+Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de coordonnées :
 
-La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. Voir chapitre suivant pour un exemple.
+``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
+
+La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. (Voir chapitre suivant).
 
 
 Indicateurs d'itérations
@@ -109,6 +116,7 @@ Indicateurs d'itérations
 
 Les itérateurs de board possèdent des indicateurs mis à jour automatiquement :
 
+ - current_pos : position courante.
  - prev_pos : position précédente (vaut None à la première itération).
  - jumped : vaut True si la position précédente et la position courante ne sont pas adjacentes.
  - changed_direction : vaut True si la direction de déplacement a changé lors de l'itération qui vient d'être effectuée.
@@ -118,7 +126,10 @@ Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet d
 
 >>> iter_board = board[:3, :]
 >>> for tile in iter_board:
-...     print("pos:", tile.x, tile.y, "newline: ", iter_board.both_coord_changed)
+...     print(
+...         "pos:", tile.x, tile.y,
+...         "newline: ", iter_board.both_coord_changed
+...     )
 pos: 0 0 newline:  True
 pos: 1 0 newline:  False
 pos: 2 0 newline:  False
@@ -166,7 +177,8 @@ Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``It
 
 >>> from aboard import ItInd
 >>> indics = (ItInd.PREV_POS, ItInd.JUMPED)
->>> for prev_pos, jumped, tile in board.iter_positions(positions).tell_indicators(indics):
+>>> bo_iter = board.iter_positions(positions).tell_indicators(indics)
+>>> for prev_pos, jumped, tile in bo_iter:
 ...    print(
 ...        "pos:", tile.pos,
 ...        "prev:", prev_pos,
@@ -183,9 +195,9 @@ pos: <Pos 3, 3 > prev: <Pos 4, 1 > jumped: True
 ``group_by``
 ------------
 
-Il permet de renvoyer les tiles par groupe, selon une fonction de groupement, à indiquer en paramètre.
+Il permet de renvoyer les tiles par groupe, selon une fonction de groupement à spécifier.
 
-La fonction a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaque fois qu'elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.
+La fonction de groupement a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaque fois qu'elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.
 
 >>> grouping_function = lambda iterator: (iterator.current_pos.x % 3) == 0
 >>> for tile_group in board[:].group_by(grouping_function):
@@ -214,7 +226,9 @@ Sur-itérateur de type ``group_by```, dont la fonction de groupement se base sur
 [<Tile (4, 0): .>, <Tile (4, 1): .>, <Tile (4, 2): .>, <Tile (4, 3): .>]
 [<Tile (5, 0): .>, <Tile (5, 1): .>, <Tile (5, 2): .>, <Tile (5, 3): .>]
 
-Il n'est pas possible d'enchaîner les sur-itérateurs. ``board[:].tell_indicators(x).group_by(y)`` ne fonctionne pas.
+Il n'est pas possible d'enchaîner les sur-itérateurs. ``board[:].tell_indicators(indics).group_by(grouping)`` ne fonctionne pas. (Peut-être dans une prochaine version).
+
+Il faut explicitement convertir le board en itérateur pour pouvoir y ajouter un sur-itérateur. ``board.group_by_subcoord()`` ne fonctionne pas. Mais ``board[:].group_by_subcoord()`` fonctionne.
 
 
 Héritage de la classe Tile
@@ -233,14 +247,14 @@ Il est conseillé d'overrider les fonctions ``__str__`` et ``__repr__``. Les ver
 
 La fonction ``__eq__`` peut être overridée. Elle devrait l'être si on utilise la classe ``IteratorGetDifferences`` (qui n'est pas encore documentée ici).
 
-La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position (Tile.data, et non pas Tile.pos).
+La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position. C'est à dire ``Tile.data``, et non pas ``Tile.pos``.
 
 Fonction ``Tile.render``
 ------------------------
 
 Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction ``board.render``.
 
-Par défaut, chaque tile est rendue sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Il est possible de configurer un renderer pour le faire afficher des tiles sur des rectangles de caractères (voir plus loin).
+Par défaut, chaque tile est rendue sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir plus loin).
 
 Lorsque la fonction ``tile.render`` est appelée, deux paramètres ``w`` et ``h`` lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de ``h`` éléments, chacun d'eux devant être une string de ``w`` caractères.
 
@@ -253,11 +267,11 @@ Objet BoardRenderer
 Utilisation
 -----------
 
-Il s'agit d'un objet utilisant les données d'un Board, pour générer la string de rendu.
+Il s'agit d'un objet utilisant les données d'un Board, pour générer une string de rendu.
 
 Tous les objets Board possèdent en variable membre un objet BoardRenderer par défaut, qui est utilisé lors de l'appel à ``Board.render()``.
 
-Il est possible de créer un autre BoardRenderer doté d'une configuration spécifique, et de les utiliser pour générer des strings de rendu différentes.
+Il est possible de créer un autre BoardRenderer doté d'une configuration spécifique, afin de générer des strings différentes.
 
 >>> from aboard import BoardRenderer
 >>> board = Board(4, 3)
@@ -273,7 +287,7 @@ __ CD __ __
 ._ ._ ._ ._
 __ __ __ __
 
-Il est également possible de définir le renderer dès l'instanciation du board.
+Le renderer par défaut d'un Board peut être défini lors de l'instanciation du Board.
 
 >>> my_renderer = BoardRenderer(tile_w=2, tile_h=2)
 >>> board = Board(4, 3, default_renderer=my_renderer)
@@ -282,7 +296,7 @@ Il est également possible de définir le renderer dès l'instanciation du board
 Paramètres du renderer
 ----------------------
 
-Les paramètres sont à indiquer lors de l'instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
+Ils sont à indiquer à l'instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
 
  - tile_w, tile_h : largeur et hauteur des tiles
  - chr_fill_tile : caractère utilisé pour compléter les rectangles des Tiles, lorsque la fonction ``Tile.render`` ne renvoie pas suffisamment de caractères.
@@ -301,14 +315,17 @@ Elle est utilisée dans les fonctions de pathfinding, de remplissage par propaga
 Sélection de la règle
 ----------------------
 
-Un board possède dans ses variables membres une instance d'une classe ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, un board utilise ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont côte à côte, sur la même ligne ou la même colonne, mais pas en diagonale.
+Un board possède un objet ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, il s'agit de ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont côte à côte, sur la même ligne ou la même colonne, mais pas en diagonale.
 
 Pour utiliser une autre règle d'adjacence, il faut la spécifier lors de la création du board.
 
 >>> from adjacency import AdjacencyEvaluatorCrossDiag
->>> board_adj_diag = Board(4, 3, class_adjacency=AdjacencyEvaluatorCrossDiag)
+>>> board_adj_diag = Board(
+...     4, 3,
+...     class_adjacency=AdjacencyEvaluatorCrossDiag
+... )
 
-La classe ``AdjacencyEvaluatorCrossDiag`` considère que deux tiles sont adjacente si elles sont côte à côte ou en diagonale.
+La classe ``AdjacencyEvaluatorCrossDiag`` considère que deux tiles sont adjacentes si elles sont côte à côte ou en diagonale.
 
 >>> print(list(board.get_by_pathfinding((0, 1), (1, 2))))
 ['<Tile (0, 1): .>', '<Tile (1, 1): .>', '<Tile (1, 2): .>']
@@ -324,14 +341,14 @@ Il est également possible de redéfinir l'adjacence par défaut, qui sera utili
 Création d'une règle d'adjacence customisée
 -------------------------------------------
 
-Pour créer une autre règle d'adjacence, il faut hériter la classe ``AdjacencyEvaluator``, et surcharger deux de ses fonctions :
+Pour créer une autre règle d'adjacence, il faut hériter la classe ``AdjacencyEvaluator`` et surcharger deux fonctions :
 
  - ``is_adjacent(self, pos_1, pos_2)`` : renvoie un booléen, indiquant si les deux positions passées en paramètre sont adjacentes.
- - ``adjacent_positions(self, pos):`` : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.
+ - ``adjacent_positions(self, pos)`` : renvoie un itérateur listant toutes les positions adjacentes à celle passée en paramètre.
 
 La classe héritée possède un paramètre ``board``, correspondant au Board d'appartenance, sur lequel la règle d'adjacence doit s'appliquer.
 
-Exemple de création d'une règle d'adjacence "torique". Cette règle considère que le Board est un tore. Lorsqu'on se déplace sur un bord, on est téléporté de l'autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.
+Exemple de création d'une règle d'adjacence "torique". Cette règle considère que lorsqu'on sort du plateau, on est téléporté de l'autre côté. Les tiles du bord droit sont adjacentes avec celles du bord gauche, celles du bord inférieur sont adjacentes avec celles du bord supérieur.
 
 >>> from aboard import Pos, AdjacencyEvaluator
 >>> class AdjacencyEvaluatorCrossTore(AdjacencyEvaluator):
@@ -349,7 +366,10 @@ Exemple de création d'une règle d'adjacence "torique". Cette règle considère
 ...             x = (pos.x + offset_x + self.board.w) % self.board.w
 ...             y = (pos.y + offset_y + self.board.h) % self.board.h
 ...             yield Pos(x, y)
->>> board_adj_tore = Board(11, 3, class_adjacency=AdjacencyEvaluatorCrossTore)
+>>> board_adj_tore = Board(
+...     11, 3,
+...     class_adjacency=AdjacencyEvaluatorCrossTore
+... )
 >>> for tile in board_adj_tore.get_by_pathfinding((2, 1), (9, 1)):
 ...     tile.data = 'X'
 >>> print(board_adj_tore.render())
@@ -528,7 +548,7 @@ Le script ``code/builder/builder.py`` permet de regénérer manuellement ce fich
 
 
 Mobile Items (en construction)
-=============================
+==============================
 
 Ça fonctionne mais ce n'est vraiment pas pratique et il n'y a pas beaucoup de fonctions pour les manipuler, les déplacer, etc.
 
@@ -564,122 +584,7 @@ La règle d'adjacence est celle par défaut : les 4 directions, mais pas de dia
 L'initialisation du board est effectuée par un tableau de caractère, chacun d'eux permet de déduire le contenu du ``roads`` de la Tile concernée.
 
 
-```
+.. literalinclude:: full_example.py
+    :language: python
 
-from aboard import Board, Tile, Dir, BoardRenderer, compute_direction
-
-class XmasTile(Tile):
-
-	DICT_ROADFUL_DIRS_FROM_CHAR = {
-		'-': (Dir.LEFT, Dir.RIGHT),
-		'|': (Dir.UP, Dir.DOWN),
-		'L': (Dir.UP, Dir.RIGHT),
-		'F': (Dir.DOWN, Dir.RIGHT),
-		'7': (Dir.DOWN, Dir.LEFT),
-		'J': (Dir.UP, Dir.LEFT),
-		'+': (Dir.LEFT, Dir.RIGHT, Dir.UP, Dir.DOWN),
-		' ': (),
-	}
-
-
-	def __init__(self, x=None, y=None, board_father=None):
-		super().__init__(x, y, board_father)
-		self.roads = {
-			Dir.UP: False,
-			Dir.RIGHT: False,
-			Dir.DOWN: False,
-			Dir.LEFT: False,
-		}
-		self.mid_marker = ' '
-
-
-	def dirs_from_input(self, char_roadful):
-		for dir_ in XmasTile.DICT_ROADFUL_DIRS_FROM_CHAR[char_roadful]:
-			self.roads[dir_] = True
-
-
-	def render(self, w=3, h=3):
-
-		path_up = '|' if self.roads[Dir.UP] else ' '
-		path_left = '-' if self.roads[Dir.LEFT] else ' '
-		path_right = '-' if self.roads[Dir.RIGHT] else ' '
-		path_down = '|' if self.roads[Dir.DOWN] else ' '
-		template = " %s \n%s%s%s\n %s "
-
-		data = (
-			path_up,
-			path_left,
-			self.mid_marker[:1].rjust(1),
-			path_right,
-			path_down,
-		)
-
-		str_result = template % data
-		# Will return something weird if self.mid_marker contains a newline.
-		# Not supposed to happen.
-		return str_result.split('\n')
-
-renderer = BoardRenderer(
-	tile_w=3, tile_h=3,
-	tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding='.')
-
-board = Board(
-	6, 5, class_tile=XmasTile,
-	default_renderer=renderer,
-)
-
-BOARD_MAP = """
- F---7
-F+7  |
-||   |
-L----J
-"""
-
-board_map = BOARD_MAP.replace('\n', '')
-
-for tile, char_roadful in zip(board, board_map):
-	tile.dirs_from_input(char_roadful)
-
-def pass_through_xmas(tile_source, tile_dest):
-	dir_ = compute_direction(tile_source, tile_dest)
-	roads_to_check = {
-		Dir.UP:(Dir.UP, Dir.DOWN),
-		Dir.DOWN:(Dir.DOWN, Dir.UP),
-		Dir.LEFT:(Dir.LEFT, Dir.RIGHT),
-		Dir.RIGHT:(Dir.RIGHT, Dir.LEFT),
-	}
-	road_to_check = roads_to_check.get(dir_)
-	if road_to_check is None:
-		# Not supposed to happen
-		return False
-	road_source, road_dest = road_to_check
-	return tile_source.roads[road_source] and tile_dest.roads[road_dest]
-
-
-for index, tile in enumerate(board.get_by_pathfinding((0, 3), (2, 0), pass_through_xmas)):
-	tile.mid_marker = str(index)
-
-
-print(board.render())
-   .   .   .   .   .
-   . 4-.-5-.- -.- -.-
-   . | .   .   .   . |
-.......................
-   . | .   .   .   . |
- 2-.-3-.-  .   .   .
- | . | . | .   .   . |
-.......................
- | . | .   .   .   . |
- 1 .   .   .   .   .
- | . | .   .   .   . |
-.......................
- | .   .   .   .   . |
- 0-.- -.- -.- -.- -.-
-   .   .   .   .   .
-.......................
-   .   .   .   .   .
-   .   .   .   .   .
-   .   .   .   .   .
-
-```
 

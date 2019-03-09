@@ -247,14 +247,14 @@ Il est conseillé d'overrider les fonctions ``__str__`` et ``__repr__``. Les ver
 
 La fonction ``__eq__`` peut être overridée. Elle devrait l'être si on utilise la classe ``IteratorGetDifferences`` (qui n'est pas encore documentée ici).
 
-La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position (Tile.data, et non pas Tile.pos).
+La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position. C'est à dire ``Tile.data``, et non pas ``Tile.pos``.
 
 Fonction ``Tile.render``
 ------------------------
 
 Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction ``board.render``.
 
-Par défaut, chaque tile est rendue sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Il est possible de configurer un renderer pour le faire afficher des tiles sur des rectangles de caractères (voir plus loin).
+Par défaut, chaque tile est rendue sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir plus loin).
 
 Lorsque la fonction ``tile.render`` est appelée, deux paramètres ``w`` et ``h`` lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de ``h`` éléments, chacun d'eux devant être une string de ``w`` caractères.
 
@@ -267,11 +267,11 @@ Objet BoardRenderer
 Utilisation
 -----------
 
-Il s'agit d'un objet utilisant les données d'un Board, pour générer la string de rendu.
+Il s'agit d'un objet utilisant les données d'un Board, pour générer une string de rendu.
 
 Tous les objets Board possèdent en variable membre un objet BoardRenderer par défaut, qui est utilisé lors de l'appel à ``Board.render()``.
 
-Il est possible de créer un autre BoardRenderer doté d'une configuration spécifique, et de les utiliser pour générer des strings de rendu différentes.
+Il est possible de créer un autre BoardRenderer doté d'une configuration spécifique, afin de générer des strings différentes.
 
 >>> from aboard import BoardRenderer
 >>> board = Board(4, 3)
@@ -287,7 +287,7 @@ __ CD __ __
 ._ ._ ._ ._
 __ __ __ __
 
-Il est également possible de définir le renderer dès l'instanciation du board.
+Le renderer par défaut d'un Board peut être défini lors de l'instanciation du Board.
 
 >>> my_renderer = BoardRenderer(tile_w=2, tile_h=2)
 >>> board = Board(4, 3, default_renderer=my_renderer)
@@ -296,7 +296,7 @@ Il est également possible de définir le renderer dès l'instanciation du board
 Paramètres du renderer
 ----------------------
 
-Les paramètres sont à indiquer lors de l'instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
+Ils sont à indiquer à l'instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
 
  - tile_w, tile_h : largeur et hauteur des tiles
  - chr_fill_tile : caractère utilisé pour compléter les rectangles des Tiles, lorsque la fonction ``Tile.render`` ne renvoie pas suffisamment de caractères.
@@ -315,14 +315,17 @@ Elle est utilisée dans les fonctions de pathfinding, de remplissage par propaga
 Sélection de la règle
 ----------------------
 
-Un board possède dans ses variables membres une instance d'une classe ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, un board utilise ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont côte à côte, sur la même ligne ou la même colonne, mais pas en diagonale.
+Un board possède un objet ``AdjacencyEvaluator``, définissant sa règle d'adjacence. Par défaut, il s'agit de ``AdjacencyEvaluatorCross``, qui considère que deux tiles sont adjacentes si elles sont côte à côte, sur la même ligne ou la même colonne, mais pas en diagonale.
 
 Pour utiliser une autre règle d'adjacence, il faut la spécifier lors de la création du board.
 
 >>> from adjacency import AdjacencyEvaluatorCrossDiag
->>> board_adj_diag = Board(4, 3, class_adjacency=AdjacencyEvaluatorCrossDiag)
+>>> board_adj_diag = Board(
+...     4, 3,
+...     class_adjacency=AdjacencyEvaluatorCrossDiag
+... )
 
-La classe ``AdjacencyEvaluatorCrossDiag`` considère que deux tiles sont adjacente si elles sont côte à côte ou en diagonale.
+La classe ``AdjacencyEvaluatorCrossDiag`` considère que deux tiles sont adjacentes si elles sont côte à côte ou en diagonale.
 
 >>> print(list(board.get_by_pathfinding((0, 1), (1, 2))))
 ['<Tile (0, 1): .>', '<Tile (1, 1): .>', '<Tile (1, 2): .>']
@@ -338,14 +341,14 @@ Il est également possible de redéfinir l'adjacence par défaut, qui sera utili
 Création d'une règle d'adjacence customisée
 -------------------------------------------
 
-Pour créer une autre règle d'adjacence, il faut hériter la classe ``AdjacencyEvaluator``, et surcharger deux de ses fonctions :
+Pour créer une autre règle d'adjacence, il faut hériter la classe ``AdjacencyEvaluator`` et surcharger deux fonctions :
 
  - ``is_adjacent(self, pos_1, pos_2)`` : renvoie un booléen, indiquant si les deux positions passées en paramètre sont adjacentes.
- - ``adjacent_positions(self, pos):`` : renvoie un itérateur qui liste toutes les positions adjacentes à celle passée en paramètre.
+ - ``adjacent_positions(self, pos)`` : renvoie un itérateur listant toutes les positions adjacentes à celle passée en paramètre.
 
 La classe héritée possède un paramètre ``board``, correspondant au Board d'appartenance, sur lequel la règle d'adjacence doit s'appliquer.
 
-Exemple de création d'une règle d'adjacence "torique". Cette règle considère que le Board est un tore. Lorsqu'on se déplace sur un bord, on est téléporté de l'autre côté. Les tiles tout à droite sont adjacentes avec celles tout à gauche, et les tiles tout en bas sont adjacentes avec celles tout en haut.
+Exemple de création d'une règle d'adjacence "torique". Cette règle considère que lorsqu'on sort du plateau, on est téléporté de l'autre côté. Les tiles du bord droit sont adjacentes avec celles du bord gauche, celles du bord inférieur sont adjacentes avec celles du bord supérieur.
 
 >>> from aboard import Pos, AdjacencyEvaluator
 >>> class AdjacencyEvaluatorCrossTore(AdjacencyEvaluator):
@@ -363,7 +366,10 @@ Exemple de création d'une règle d'adjacence "torique". Cette règle considère
 ...             x = (pos.x + offset_x + self.board.w) % self.board.w
 ...             y = (pos.y + offset_y + self.board.h) % self.board.h
 ...             yield Pos(x, y)
->>> board_adj_tore = Board(11, 3, class_adjacency=AdjacencyEvaluatorCrossTore)
+>>> board_adj_tore = Board(
+...     11, 3,
+...     class_adjacency=AdjacencyEvaluatorCrossTore
+... )
 >>> for tile in board_adj_tore.get_by_pathfinding((2, 1), (9, 1)):
 ...     tile.data = 'X'
 >>> print(board_adj_tore.render())
@@ -377,18 +383,18 @@ Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est 
 Fonction de remplissage par propagation
 =======================================
 
-La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``propag_condition``.
+La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation" (paramètre ``propag_condition``). Par défaut, cette condition est vraie si la tile de destination a ``data == '.'``.
 
-Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Cette fonction doit renvoyer un booléen, indiquant si la propagation est possible ou non.
+La condition de propagation est une fonction avec deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Elle doit renvoyer un booléen indiquant si la propagation est possible ou non.
 
->>> def to_right_and_last_column(tile_source, tile_dest):
+>>> def go_to_rightmost_column(tile_source, tile_dest):
 ...     if tile_dest.x > tile_source.x:return True
 ...     if tile_dest.x == tile_dest.board_owner.w-1:return True
 ...     return False
 >>> from aboard import AdjacencyEvaluatorCross
 >>> set_default_adjacency(AdjacencyEvaluatorCross)
 >>> board = Board(6, 5)
->>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
+>>> for tile in board.get_by_propagation((1, 2), go_to_rightmost_column):
 ...     tile.data = 'X'
 >>> print(board.render())
 .....X
@@ -401,7 +407,7 @@ La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'it�
 
 >>> board = Board(6, 5)
 >>> for index, tile in enumerate(
-...    board.get_by_propagation((1, 2), to_right_and_last_column)
+...    board.get_by_propagation((1, 2), go_to_rightmost_column)
 ... ):
 ...     tile.data = index
 >>> print(board.render())
@@ -414,7 +420,7 @@ La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'it�
 Le changement de règle d'adjacence peut avoir des conséquences sur la propagation.
 
 >>> board = Board(6, 5, class_adjacency=AdjacencyEvaluatorCrossDiag)
->>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
+>>> for tile in board.get_by_propagation((1, 2), go_to_rightmost_column):
 ...     tile.data = 'X'
 >>> print(board.render())
 ...XXX
@@ -426,7 +432,7 @@ Le changement de règle d'adjacence peut avoir des conséquences sur la propagat
 L'itérateur par propagation possède un indicateur spécifique : ``PROPAG_DIST``, indiquant la distance parcourue depuis la tile initiale jusqu'à la case courante.
 
 >>> board = Board(6, 5)
->>> board_it = board.get_by_propagation((1, 2), to_right_and_last_column)
+>>> board_it = board.get_by_propagation((1, 2), go_to_rightmost_column)
 >>> for dist, tile in board_it.tell_indicators((ItInd.PROPAG_DIST, )):
 ...     tile.data = dist
 >>> print(board.render())
@@ -442,7 +448,7 @@ Path-finding
 
 La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre deux positions, et effectue une itération dessus, à partir de la tile de départ vers la tile d'arrivée.
 
-Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
+Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile de destination vaut '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
 
 Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
@@ -542,7 +548,7 @@ Le script ``code/builder/builder.py`` permet de regénérer manuellement ce fich
 
 
 Mobile Items (en construction)
-=============================
+==============================
 
 Ça fonctionne mais ce n'est vraiment pas pratique et il n'y a pas beaucoup de fonctions pour les manipuler, les déplacer, etc.
 
@@ -578,122 +584,7 @@ La règle d'adjacence est celle par défaut : les 4 directions, mais pas de dia
 L'initialisation du board est effectuée par un tableau de caractère, chacun d'eux permet de déduire le contenu du ``roads`` de la Tile concernée.
 
 
-```
+.. literalinclude:: full_example.py
+    :language: python
 
-from aboard import Board, Tile, Dir, BoardRenderer, compute_direction
-
-class XmasTile(Tile):
-
-	DICT_ROADFUL_DIRS_FROM_CHAR = {
-		'-': (Dir.LEFT, Dir.RIGHT),
-		'|': (Dir.UP, Dir.DOWN),
-		'L': (Dir.UP, Dir.RIGHT),
-		'F': (Dir.DOWN, Dir.RIGHT),
-		'7': (Dir.DOWN, Dir.LEFT),
-		'J': (Dir.UP, Dir.LEFT),
-		'+': (Dir.LEFT, Dir.RIGHT, Dir.UP, Dir.DOWN),
-		' ': (),
-	}
-
-
-	def __init__(self, x=None, y=None, board_owner=None):
-		super().__init__(x, y, board_owner)
-		self.roads = {
-			Dir.UP: False,
-			Dir.RIGHT: False,
-			Dir.DOWN: False,
-			Dir.LEFT: False,
-		}
-		self.mid_marker = ' '
-
-
-	def dirs_from_input(self, char_roadful):
-		for dir_ in XmasTile.DICT_ROADFUL_DIRS_FROM_CHAR[char_roadful]:
-			self.roads[dir_] = True
-
-
-	def render(self, w=3, h=3):
-
-		path_up = '|' if self.roads[Dir.UP] else ' '
-		path_left = '-' if self.roads[Dir.LEFT] else ' '
-		path_right = '-' if self.roads[Dir.RIGHT] else ' '
-		path_down = '|' if self.roads[Dir.DOWN] else ' '
-		template = " %s \n%s%s%s\n %s "
-
-		data = (
-			path_up,
-			path_left,
-			self.mid_marker[:1].rjust(1),
-			path_right,
-			path_down,
-		)
-
-		str_result = template % data
-		# Will return something weird if self.mid_marker contains a newline.
-		# Not supposed to happen.
-		return str_result.split('\n')
-
-renderer = BoardRenderer(
-	tile_w=3, tile_h=3,
-	tile_padding_w=1, tile_padding_h=1, chr_fill_tile_padding='.')
-
-board = Board(
-	6, 5, class_tile=XmasTile,
-	default_renderer=renderer,
-)
-
-BOARD_MAP = """
- F---7
-F+7  |
-||   |
-L----J
-"""
-
-board_map = BOARD_MAP.replace('\n', '')
-
-for tile, char_roadful in zip(board, board_map):
-	tile.dirs_from_input(char_roadful)
-
-def pass_through_xmas(tile_source, tile_dest):
-	dir_ = compute_direction(tile_source, tile_dest)
-	roads_to_check = {
-		Dir.UP:(Dir.UP, Dir.DOWN),
-		Dir.DOWN:(Dir.DOWN, Dir.UP),
-		Dir.LEFT:(Dir.LEFT, Dir.RIGHT),
-		Dir.RIGHT:(Dir.RIGHT, Dir.LEFT),
-	}
-	road_to_check = roads_to_check.get(dir_)
-	if road_to_check is None:
-		# Not supposed to happen
-		return False
-	road_source, road_dest = road_to_check
-	return tile_source.roads[road_source] and tile_dest.roads[road_dest]
-
-
-for index, tile in enumerate(board.get_by_pathfinding((0, 3), (2, 0), pass_through_xmas)):
-	tile.mid_marker = str(index)
-
-
-print(board.render())
-   .   .   .   .   .
-   . 4-.-5-.- -.- -.-
-   . | .   .   .   . |
-.......................
-   . | .   .   .   . |
- 2-.-3-.-  .   .   .
- | . | . | .   .   . |
-.......................
- | . | .   .   .   . |
- 1 .   .   .   .   .
- | . | .   .   .   . |
-.......................
- | .   .   .   .   . |
- 0-.- -.- -.- -.- -.-
-   .   .   .   .   .
-.......................
-   .   .   .   .   .
-   .   .   .   .   .
-   .   .   .   .   .
-
-```
 

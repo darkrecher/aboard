@@ -34,6 +34,7 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  X `board.circular_permute_tiles(board[1:5, 1])` ne génère pas d'erreurs, mais ne fait pas du tout ce qu'il faut. Il faut pré-récupérer les positions, puis permuter. Même si c'est vilain et que ça bouffe de la mémoire.
  - dans la classe Adjacency, on devrait pouvoir aussi overrider board._get_tile. Par exemple pour les adjacences toriques. b=Board(10, 10, Toric) ;assert b[14, 5] == b[4, 5]
  - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
+ - lorsque le renderer sera fini, il faudra mettre une petite image-schéma dans la doc. Indiquant où est tile_h, tile_w, tile_padding_w, ...
 
 
 ## Code en vrac

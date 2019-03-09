@@ -37,8 +37,8 @@
   <div class="section" id="aboard">
 <h1>aboard<a class="headerlink" href="#aboard" title="Lien permanent vers ce titre">¶</a></h1>
 <p>Lib Python 3 de gestion de quadrillages en 2D, avec des opérations de base permettant d’implémenter une game logic ou des bots pour des jeux de plateaux.</p>
-<p>Pas de «&nbsp;pip install&nbsp;» pour l’instant. Il faut copier manuellement les fichiers de code dans votre projet, et éventuellement modifier votre PYTHONPATH.</p>
-<p>Le fichier «&nbsp;aboard_standalone.py&nbsp;» est généré avec tout le code de la lib. Il est possible de copier-coller son contenu, pour l’utiliser dans n’importe quel contexte (par exemple, un puzzle ou un challenge du site codingame).</p>
+<p>Pas de «&nbsp;pip install&nbsp;» pour l’instant. Il faut copier manuellement les fichiers de code dans votre projet.</p>
+<p>Le fichier «&nbsp;aboard_standalone.py&nbsp;» est généré avec tout le code de la lib. Son contenu peut être copié-collé dans n’importe quel contexte (par exemple, un puzzle ou un challenge du site codingame).</p>
 </div>
 <div class="section" id="sommaire">
 <h1>Sommaire<a class="headerlink" href="#sommaire" title="Lien permanent vers ce titre">¶</a></h1>
@@ -108,7 +108,7 @@
 <span class="go">..|#####.</span>
 </pre></div>
 </div>
-<p>Remplissage par propagation.</p>
+<p>Remplissage par propagation, à partir d’une position donnée.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">)):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
