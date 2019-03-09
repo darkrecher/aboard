@@ -8,9 +8,9 @@ aboard
 
 Lib Python 3 de gestion de quadrillages en 2D, avec des opérations de base permettant d'implémenter une game logic ou des bots pour des jeux de plateaux.
 
-Pas de "pip install" pour l'instant. Il faut copier manuellement les fichiers de code dans votre projet, et éventuellement modifier votre PYTHONPATH.
+Pas de "pip install" pour l'instant. Il faut copier manuellement les fichiers de code dans votre projet.
 
-Le fichier "aboard_standalone.py" est généré avec tout le code de la lib. Il est possible de copier-coller son contenu, pour l'utiliser dans n'importe quel contexte (par exemple, un puzzle ou un challenge du site codingame).
+Le fichier "aboard_standalone.py" est généré avec tout le code de la lib. Son contenu peut être copié-collé dans n'importe quel contexte (par exemple, un puzzle ou un challenge du site codingame).
 
 
 Sommaire
@@ -68,7 +68,7 @@ Accès à partir du coin inférieur droit, avec des coordonnées négatives.
 ..|####..
 ..|#####.
 
-Remplissage par propagation.
+Remplissage par propagation, à partir d'une position donnée.
 
 >>> for tile in board.get_by_propagation((6, 3)):
 ...     tile.data = '/'

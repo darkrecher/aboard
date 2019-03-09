@@ -19,31 +19,32 @@ La taille (largeur, hauteur) est à spécifier à la création.
 
 Une Tile possède les attributs suivants :
 
- - board_father : référence vers l'objet Board contenant la Tile.
+ - board_owner : référence vers l'objet Board contenant la Tile.
  - x, y : position de la Tile dans le Board conteneur.
+ - pos : position, sous forme d'un objet Pos.
  - data : string. Donnée quelconque. Initialisée au caractère "." (un point).
 
-``board_father``, ``x`` et ``y`` peuvent être lus, mais ne devraient jamais être directement modifiés.
+``board_owner``, ``x``, ``y`` et ``pos`` peuvent être lus, mais ne devraient jamais être directement modifiés.
 
 ``data`` peut être lu et modifié.
 
 Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem__``), en spécifiant les coordonnées x et y.
 
 >>> tile = board[3, 2]
->>> print(tile.x)
+>>> tile.x
 3
->>> print(tile.y)
+>>> tile.y
 2
->>> print(tile.data)
-.
->>> tile.data = "ABCD"
+>>> tile.data
+'.'
 
 L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``. (Voir plus loin).
 
-La fonction `Board.render()` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
+La fonction ``Board.render()`` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
 
 Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l'attribut data.
 
+>>> tile.data = "ABCD"
 >>> print(board.render())
 .......
 .......
@@ -57,7 +58,7 @@ Itérateurs
 Itérateurs par rectangle
 ------------------------
 
-Avec l'opérateur "[]", remplacez l'une ou les deux coordonnées par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
+Avec l'opérateur "[ ]", remplacez l'une ou les deux coordonnées par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
 
 Exemple :
 
@@ -88,20 +89,26 @@ Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caract
 26....
 37....
 
-Les slices renvoient un itérable, mais pas un indexable. On ne peut donc pas accéder directement à un élément en particulier. Mais on peut dérouler l'itérable dans une liste ou un tuple.
+Les slices renvoient un itérable, mais pas un indexable. Les éléments ne sont donc pas directement accessible (``board[1, :][2]`` ne fonctionne pas). Mais l'itérable peut être déroulé dans une liste ou un tuple.
 
 >>> board[2, :]
 <positions_iterator.BoardIteratorRect object at 0x00BA6590>
 >>> list(board[2, :])
 [<Tile (2, 0): 8>, <Tile (2, 1): 9>, <Tile (2, 2): .>, <Tile (2, 3): .>]
 
+Le second paramètre peut être omis, il sera remplacé par un slice complet : ``::``. Dans l'exemple précédent, on aurait pu remplacer ``board[2, :]`` par ``board[2]``. Cela permet de récupérer directement une colonne.
+
+Le board en lui-même peut-être itéré, pour parcourir toutes les tiles, de haut en bas et de gauche à droite : ``for tile in board:print(tile)``.
+
 
 Itérateurs par liste de positions
 ---------------------------------
 
-Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de coordonnées : ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
+Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de coordonnées :
 
-La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. Voir chapitre suivant pour un exemple.
+``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
+
+La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. (Voir chapitre suivant).
 
 
 Indicateurs d'itérations
@@ -109,6 +116,7 @@ Indicateurs d'itérations
 
 Les itérateurs de board possèdent des indicateurs mis à jour automatiquement :
 
+ - current_pos : position courante.
  - prev_pos : position précédente (vaut None à la première itération).
  - jumped : vaut True si la position précédente et la position courante ne sont pas adjacentes.
  - changed_direction : vaut True si la direction de déplacement a changé lors de l'itération qui vient d'être effectuée.
@@ -118,7 +126,10 @@ Pour les itérateurs par rectangle, l'indicateur ``both_coord_changed`` permet d
 
 >>> iter_board = board[:3, :]
 >>> for tile in iter_board:
-...     print("pos:", tile.x, tile.y, "newline: ", iter_board.both_coord_changed)
+...     print(
+...         "pos:", tile.x, tile.y,
+...         "newline: ", iter_board.both_coord_changed
+...     )
 pos: 0 0 newline:  True
 pos: 1 0 newline:  False
 pos: 2 0 newline:  False
@@ -166,7 +177,8 @@ Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``It
 
 >>> from aboard import ItInd
 >>> indics = (ItInd.PREV_POS, ItInd.JUMPED)
->>> for prev_pos, jumped, tile in board.iter_positions(positions).tell_indicators(indics):
+>>> bo_iter = board.iter_positions(positions).tell_indicators(indics)
+>>> for prev_pos, jumped, tile in bo_iter:
 ...    print(
 ...        "pos:", tile.pos,
 ...        "prev:", prev_pos,
@@ -183,9 +195,9 @@ pos: <Pos 3, 3 > prev: <Pos 4, 1 > jumped: True
 ``group_by``
 ------------
 
-Il permet de renvoyer les tiles par groupe, selon une fonction de groupement, à indiquer en paramètre.
+Il permet de renvoyer les tiles par groupe, selon une fonction de groupement à spécifier.
 
-La fonction a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaque fois qu'elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.
+La fonction de groupement a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaque fois qu'elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.
 
 >>> grouping_function = lambda iterator: (iterator.current_pos.x % 3) == 0
 >>> for tile_group in board[:].group_by(grouping_function):
@@ -214,7 +226,9 @@ Sur-itérateur de type ``group_by```, dont la fonction de groupement se base sur
 [<Tile (4, 0): .>, <Tile (4, 1): .>, <Tile (4, 2): .>, <Tile (4, 3): .>]
 [<Tile (5, 0): .>, <Tile (5, 1): .>, <Tile (5, 2): .>, <Tile (5, 3): .>]
 
-Il n'est pas possible d'enchaîner les sur-itérateurs. ``board[:].tell_indicators(x).group_by(y)`` ne fonctionne pas.
+Il n'est pas possible d'enchaîner les sur-itérateurs. ``board[:].tell_indicators(indics).group_by(grouping)`` ne fonctionne pas. (Peut-être dans une prochaine version).
+
+Il faut explicitement convertir le board en itérateur pour pouvoir y ajouter un sur-itérateur. ``board.group_by_subcoord()`` ne fonctionne pas. Mais ``board[:].group_by_subcoord()`` fonctionne.
 
 
 Héritage de la classe Tile
@@ -582,8 +596,8 @@ class XmasTile(Tile):
 	}
 
 
-	def __init__(self, x=None, y=None, board_father=None):
-		super().__init__(x, y, board_father)
+	def __init__(self, x=None, y=None, board_owner=None):
+		super().__init__(x, y, board_owner)
 		self.roads = {
 			Dir.UP: False,
 			Dir.RIGHT: False,
