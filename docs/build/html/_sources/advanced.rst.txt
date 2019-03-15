@@ -383,18 +383,18 @@ Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est 
 Fonction de remplissage par propagation
 =======================================
 
-La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation". Par défaut, cette condition est vraie si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``propag_condition``.
+La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation" (paramètre ``propag_condition``). Par défaut, cette condition est vraie si la tile de destination a ``data == '.'``.
 
-Il s'agit d'une fonction ayant deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Cette fonction doit renvoyer un booléen, indiquant si la propagation est possible ou non.
+La condition de propagation est une fonction avec deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Elle doit renvoyer un booléen indiquant si la propagation est possible ou non.
 
->>> def to_right_and_last_column(tile_source, tile_dest):
+>>> def go_to_rightmost_column(tile_source, tile_dest):
 ...     if tile_dest.x > tile_source.x:return True
 ...     if tile_dest.x == tile_dest.board_owner.w-1:return True
 ...     return False
 >>> from aboard import AdjacencyEvaluatorCross
 >>> set_default_adjacency(AdjacencyEvaluatorCross)
 >>> board = Board(6, 5)
->>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
+>>> for tile in board.get_by_propagation((1, 2), go_to_rightmost_column):
 ...     tile.data = 'X'
 >>> print(board.render())
 .....X
@@ -407,7 +407,7 @@ La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'it�
 
 >>> board = Board(6, 5)
 >>> for index, tile in enumerate(
-...    board.get_by_propagation((1, 2), to_right_and_last_column)
+...    board.get_by_propagation((1, 2), go_to_rightmost_column)
 ... ):
 ...     tile.data = index
 >>> print(board.render())
@@ -420,7 +420,7 @@ La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'it�
 Le changement de règle d'adjacence peut avoir des conséquences sur la propagation.
 
 >>> board = Board(6, 5, class_adjacency=AdjacencyEvaluatorCrossDiag)
->>> for tile in board.get_by_propagation((1, 2), to_right_and_last_column):
+>>> for tile in board.get_by_propagation((1, 2), go_to_rightmost_column):
 ...     tile.data = 'X'
 >>> print(board.render())
 ...XXX
@@ -432,7 +432,7 @@ Le changement de règle d'adjacence peut avoir des conséquences sur la propagat
 L'itérateur par propagation possède un indicateur spécifique : ``PROPAG_DIST``, indiquant la distance parcourue depuis la tile initiale jusqu'à la case courante.
 
 >>> board = Board(6, 5)
->>> board_it = board.get_by_propagation((1, 2), to_right_and_last_column)
+>>> board_it = board.get_by_propagation((1, 2), go_to_rightmost_column)
 >>> for dist, tile in board_it.tell_indicators((ItInd.PROPAG_DIST, )):
 ...     tile.data = dist
 >>> print(board.render())
@@ -448,7 +448,7 @@ Path-finding
 
 La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre deux positions, et effectue une itération dessus, à partir de la tile de départ vers la tile d'arrivée.
 
-Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile vers laquelle on se propage vaut le caractère '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
+Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile de destination vaut '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
 
 Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
