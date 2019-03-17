@@ -38,7 +38,7 @@ Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem
 >>> tile.data
 '.'
 
-L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``. (Voir plus loin).
+L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``.
 
 La fonction ``Board.render()`` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
 
@@ -108,7 +108,7 @@ Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d
 
 ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
 
-La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. (Voir chapitre suivant).
+La fonction ``Board.iter_positions`` permet la même chose, mais en itérant directement sur les Tiles. (Voir `Indicateurs d'itérations`_).
 
 
 Indicateurs d'itérations
@@ -254,7 +254,7 @@ Fonction ``Tile.render``
 
 Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction ``board.render``.
 
-Par défaut, chaque tile est affichée sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir plus loin).
+Par défaut, chaque tile est affichée sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir `Objet BoardRenderer`_).
 
 Lorsque la fonction ``tile.render`` est appelée, deux paramètres ``w`` et ``h`` lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de ``h`` éléments, chacun d'eux devant être une string de ``w`` caractères.
 
@@ -511,7 +511,7 @@ Le chemin aurait été un peu différent avec une règle d'adjacence autorisant 
 Échanges et permutations circulaires de tiles
 =============================================
 
-Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItems`` (voir plus loin).
+Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItems`` (voir `Mobile Items (en construction)`_).
 
 Cependant, comme les ``MobileItem`` ne sont pas terminés, la fonction ``board.replace_tile`` a été ajoutée. Elle permet de remplacer la tile d'un board par une autre tile créée en-dehors du board.
 
@@ -576,7 +576,7 @@ Cette partie sera détaillé plus tard.
 ..
 
 
-exemple complet
+Exemple complet
 ===============
 
 Exemple inspiré du challenge codingame "Xmas Rush", lui-même inspiré du jeu de plateau "Labyrinthe".
