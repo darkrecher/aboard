@@ -247,18 +247,18 @@ Il est conseillé d'overrider les fonctions ``__str__`` et ``__repr__``. Les ver
 
 La fonction ``__eq__`` peut être overridée. Elle devrait l'être si on utilise la classe ``IteratorGetDifferences`` (qui n'est pas encore documentée ici).
 
-La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position. C'est à dire ``Tile.data``, et non pas ``Tile.pos``.
+La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position. C'est à dire ``Tile.data`` et autres, et non pas ``Tile.pos``.
 
 Fonction ``Tile.render``
 ------------------------
 
 Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction ``board.render``.
 
-Par défaut, chaque tile est rendue sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir plus loin).
+Par défaut, chaque tile est affichée sur un seul caractère. Même si ``Tile.render`` en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir plus loin).
 
 Lorsque la fonction ``tile.render`` est appelée, deux paramètres ``w`` et ``h`` lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de ``h`` éléments, chacun d'eux devant être une string de ``w`` caractères.
 
-Si ce n'est pas exactement cette structure de données qui est renvoyée, le renderer la remet en forme. Il coupe des éléments de la liste et des caractères, et ajoute des espaces, de façon à avoir un rectangle de rendu correct.
+Si ce n'est pas exactement cette structure de données qui est renvoyée, le renderer la remet en forme. Il coupe des éléments de la liste et des caractères, et/ou ajoute des espaces et des strings.
 
 
 Objet BoardRenderer
@@ -289,7 +289,6 @@ __ __ __ __
 
 Le renderer par défaut d'un Board peut être défini lors de l'instanciation du Board.
 
->>> my_renderer = BoardRenderer(tile_w=2, tile_h=2)
 >>> board = Board(4, 3, default_renderer=my_renderer)
 
 
@@ -298,10 +297,10 @@ Paramètres du renderer
 
 Ils sont à indiquer à l'instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
 
- - tile_w, tile_h : largeur et hauteur des tiles
- - chr_fill_tile : caractère utilisé pour compléter les rectangles des Tiles, lorsque la fonction ``Tile.render`` ne renvoie pas suffisamment de caractères.
- - tile_padding_w, tile_padding_h : nombre de caractère d'espacement entre chaque Tile, horizontal et vertical. Par défaut : 0.
- - chr_fill_tile_padding : caractère utilisé pour écrire les paddings horizontaux et verticaux. Par défaut : ' ' (espace).
+ - tile_w, tile_h : largeur et hauteur des tiles. Par défaut : 1.
+ - chr_fill_tile : caractère utilisé pour compléter les rectangles des Tiles, lorsque la fonction ``Tile.render`` ne renvoie pas suffisamment de caractères. Par défaut : ' ' (espace).
+ - tile_padding_w, tile_padding_h : nombre de caractère d'espacement (width et height) entre chaque Tile. Par défaut : 0.
+ - chr_fill_tile_padding : caractère utilisé pour écrire les paddings. Par défaut : ' ' (espace).
 
 
 Règle d'adjacence
@@ -383,7 +382,7 @@ Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est 
 Fonction de remplissage par propagation
 =======================================
 
-La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation" (paramètre ``propag_condition``). Par défaut, cette condition est vraie si la tile de destination a ``data == '.'``.
+La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation" (paramètre ``propag_condition``). Par défaut, cette condition est vraie si, pour la tile de destination : ``data == '.'``.
 
 La condition de propagation est une fonction avec deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Elle doit renvoyer un booléen indiquant si la propagation est possible ou non.
 
@@ -450,11 +449,11 @@ La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre
 
 Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile de destination vaut '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
 
-Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, la fonction en sélectionne un seul. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
+Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, c'est le premier trouvé qui est sélectionné. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
 La fonction ``pass_through_condition`` fonctionne de la même manière que ``propag_condition``. Elle possède deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se déplacer), et doit renvoyer un booléen, indiquant si le déplacement est possible ou non.
 
-Le path-finding déclenche une exception ``ValueError`` si il n'existe aucun chemin possible.
+Le path-finding déclenche une exception ``ValueError`` s'il n'existe aucun chemin possible.
 
 >>> board = Board(9, 7)
 >>> for tile in board[2:7, 2]:
@@ -475,10 +474,11 @@ Le path-finding déclenche une exception ``ValueError`` si il n'existe aucun che
 .........
 
 >>> for tile in board.get_by_pathfinding((3, 4), (0, 0)):
-...     if tile.data != '>': tile.data = '*'
+...     print(tile)
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "/path/to/git/aboard/code/propagation_iterator.py", line 121, in __iter__
+  File "/path/to/git/aboard/code/propagation_iterator.py",
+  line 121, in __iter__
     raise ValueError("Impossible de trouver un chemin")
 ValueError: Impossible de trouver un chemin
 
@@ -490,7 +490,10 @@ ValueError: Impossible de trouver un chemin
 ...         return tile_source.x <= tile_dest.x
 ...     return False
 ...
->>> for tile in board.get_by_pathfinding((3, 4), (0, 0), my_pass_through_condition):
+>>> for tile in board.get_by_pathfinding(
+...     (3, 4), (0, 0),
+...     my_pass_through_condition
+... ):
 ...     if tile.data != '>':
 ...         tile.data = '*'
 >>> print(board.render())
@@ -510,7 +513,7 @@ Le chemin aurait été un peu différent avec une règle d'adjacence autorisant 
 
 Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItems`` (voir plus loin).
 
-Cependant, comme cette fonctionnalité pourrait être utile, et que les ``MobileItem`` ne sont pas terminés, il est possible d'utiliser la fonction ``board.replace_tile``. Celle-ci met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
+Cependant, comme les ``MobileItem`` ne sont pas terminés, la fonction ``board.replace_tile`` a été ajoutée. Elle permet de remplacer la tile d'un board par une autre tile créée en-dehors du board.
 
 >>> board = Board(3, 2)
 >>> new_t = Tile()
@@ -524,11 +527,17 @@ A..
 >>> print(new_t)
 <Tile (0, 1): A>
 
-Pour déplacer plusieurs tiles en une seule opération de permutation circulaire, utiliser la fonction ``board.circular_permute_tiles``.
+Il est conseillé de ne pas remplacer manuellement les tiles, et d'utiliser systématiquement cette fonction, car elle met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
+
+La fonction ``board.circular_permute_tiles`` permet de déplacer plusieurs tiles d'un même board en une seule opération de permutation circulaire.
 
 >>> board = Board(6, 3)
 >>> for index, tile in enumerate(board[:, 1]):
 ...     tile.data = index
+>>> print(board.render())
+......
+012345
+......
 >>> positions = [ Pos(tile) for tile in board[1:5, 1] ]
 >>> board.circular_permute_tiles(positions)
 >>> print(board.render())
@@ -540,7 +549,7 @@ Pour déplacer plusieurs tiles en une seule opération de permutation circulaire
 build pour codingame
 ====================
 
-La librairie aboard est compilée en un seul fichier de code : ``code/builder/aboard_standalone.py``. Ce fichier permet une utilisation de la librairie dans des contextes spécifiques. Par exemple, il est possible de copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.
+La librairie aboard est compilée en un seul fichier de code : ``code/builder/aboard_standalone.py``. Ce fichier permet une utilisation de la librairie dans des contextes spécifiques. Par exemple : copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.
 
 Le début du fichier stand-alone indique la version et le commit git qui ont été utilisés pour le générer.
 
@@ -572,16 +581,16 @@ exemple complet
 
 Exemple inspiré du challenge codingame "Xmas Rush", lui-même inspiré du jeu de plateau "Labyrinthe".
 
-Chaque Tile possède duex attributs spécifiques :
+Chaque Tile possède deux attributs spécifiques :
 
- - ``mid_marker`` : une string (ou l'équivalent), dont seul le premier caractère est utilisé.
+ - ``mid_marker`` : une string, dont seul le premier caractère est utilisé.
  - ``roads`` : dictionnaire contenant 4 éléments, les clés étant les 4 directions. La valeur de chaque clé est un booléen, indiquant si la tile possède une ouverture dans la direction donnée.
 
 Une Tile est rendu sur un carré de 3*3 caractères, avec l'affichage des chemins, et le ``mid_marker`` écrit au milieu.
 
 La règle d'adjacence est celle par défaut : les 4 directions, mais pas de diagonale.
 
-L'initialisation du board est effectuée par un tableau de caractère, chacun d'eux permet de déduire le contenu du ``roads`` de la Tile concernée.
+L'initialisation du board est effectuée par un tableau de caractère, chacun d'eux permet de déduire le contenu du dictionnaire ``roads`` de la Tile concernée.
 
 
 .. literalinclude:: full_example.py
