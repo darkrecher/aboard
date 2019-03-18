@@ -252,7 +252,7 @@
 </div>
 <div class="section" id="heritage-de-la-classe-tile">
 <h2>Héritage de la classe Tile<a class="headerlink" href="#heritage-de-la-classe-tile" title="Lien permanent vers ce titre">¶</a></h2>
-<p>Il est possible de créer des classes héritées de la classe Tile, et de s’en servir pour créer un board.</p>
+<p>Il est possible de créer un board contenant des tiles dont la classe est héritée de la classe de base Tile.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">Tile</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyTile</span><span class="p">(</span><span class="n">Tile</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">pass</span>
@@ -262,13 +262,13 @@
 <p>Les classes héritées peuvent utiliser d’autres attributs de données, en plus de tile.data.</p>
 <p>Il est conseillé d’overrider les fonctions <code class="docutils literal notranslate"><span class="pre">__str__</span></code> et <code class="docutils literal notranslate"><span class="pre">__repr__</span></code>. Les versions de base affichent uniquement tile.data.</p>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> peut être overridée. Elle devrait l’être si on utilise la classe <code class="docutils literal notranslate"><span class="pre">IteratorGetDifferences</span></code> (qui n’est pas encore documentée ici).</p>
-<p>La fonction <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> est supposée comparer uniquement les données à l’intérieur de la Tile, et non pas sa position. C’est à dire <code class="docutils literal notranslate"><span class="pre">Tile.data</span></code> et autres, et non pas <code class="docutils literal notranslate"><span class="pre">Tile.pos</span></code>.</p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">__eq__</span></code> est supposée comparer uniquement les données de la Tile, et non pas sa position. C’est à dire <code class="docutils literal notranslate"><span class="pre">Tile.data</span></code> et les autres variables membres ajoutées, mais pas <code class="docutils literal notranslate"><span class="pre">Tile.pos</span></code>, <code class="docutils literal notranslate"><span class="pre">Tile.x</span></code>, <code class="docutils literal notranslate"><span class="pre">Tile.y</span></code>.</p>
 <div class="section" id="fonction-tile-render">
 <h3>Fonction <code class="docutils literal notranslate"><span class="pre">Tile.render</span></code><a class="headerlink" href="#fonction-tile-render" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Cette fonction peut être overridée. Elle est censée renvoyer une string ou une liste de string, qui est ensuite transmise à la fonction <code class="docutils literal notranslate"><span class="pre">board.render</span></code>.</p>
 <p>Par défaut, chaque tile est affichée sur un seul caractère. Même si <code class="docutils literal notranslate"><span class="pre">Tile.render</span></code> en renvoie plus, seul le premier sera utilisé. Ce comportement est modifiable via la configuration des renderers (voir <a class="reference internal" href="#objet-boardrenderer">Objet BoardRenderer</a>).</p>
 <p>Lorsque la fonction <code class="docutils literal notranslate"><span class="pre">tile.render</span></code> est appelée, deux paramètres <code class="docutils literal notranslate"><span class="pre">w</span></code> et <code class="docutils literal notranslate"><span class="pre">h</span></code> lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de <code class="docutils literal notranslate"><span class="pre">h</span></code> éléments, chacun d’eux devant être une string de <code class="docutils literal notranslate"><span class="pre">w</span></code> caractères.</p>
-<p>Si ce n’est pas exactement cette structure de données qui est renvoyée, le renderer la remet en forme. Il coupe des éléments de la liste et des caractères, et/ou ajoute des espaces et des strings.</p>
+<p>Si ce n’est pas exactement cette structure de donnée qui est renvoyée, elle sera remise en forme. Le renderer coupe des éléments de la liste et des caractères, et/ou ajoute des espaces et des strings.</p>
 </div>
 </div>
 <div class="section" id="objet-boardrenderer">
@@ -277,12 +277,13 @@
 <h3>Utilisation<a class="headerlink" href="#utilisation" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Il s’agit d’un objet utilisant les données d’un Board, pour générer une string de rendu.</p>
 <p>Tous les objets Board possèdent en variable membre un objet BoardRenderer par défaut, qui est utilisé lors de l’appel à <code class="docutils literal notranslate"><span class="pre">Board.render()</span></code>.</p>
-<p>Il est possible de créer un autre BoardRenderer doté d’une configuration spécifique, afin de générer des strings différentes.</p>
+<p>Il est possible de créer un autre BoardRenderer doté d’une configuration spécifique.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">BoardRenderer</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;ABZZ&quot;</span><span class="p">,</span> <span class="s2">&quot;CDZZ&quot;</span><span class="p">,</span> <span class="s2">&quot;XXZZ&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">my_renderer</span> <span class="o">=</span> <span class="n">BoardRenderer</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">tile_w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tile_h</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">chr_fill_tile</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">tile_w</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">tile_h</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">chr_fill_tile</span><span class="o">=</span><span class="s1">&#39;_&#39;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">tile_padding_w</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">tile_padding_h</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">renderer</span><span class="o">=</span><span class="n">my_renderer</span><span class="p">))</span>
 <span class="go">._ ._ ._ ._</span>
@@ -298,9 +299,9 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="parametres-du-renderer">
-<h3>Paramètres du renderer<a class="headerlink" href="#parametres-du-renderer" title="Lien permanent vers ce titre">¶</a></h3>
-<p>Ils sont à indiquer à l’instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.</p>
+<div class="section" id="parametres-du-boardrenderer">
+<h3>Paramètres du BoardRenderer<a class="headerlink" href="#parametres-du-boardrenderer" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Ils sont à indiquer à son instanciation. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.</p>
 <blockquote>
 <div><ul class="simple">
 <li>tile_w, tile_h : largeur et hauteur des tiles. Par défaut : 1.</li>
@@ -383,7 +384,8 @@
 </div>
 <div class="section" id="fonction-de-remplissage-par-propagation">
 <h2>Fonction de remplissage par propagation<a class="headerlink" href="#fonction-de-remplissage-par-propagation" title="Lien permanent vers ce titre">¶</a></h2>
-<p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.get_by_propagation</span></code> effectue une itération à partir d’une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la «&nbsp;condition de propagation&nbsp;» (paramètre <code class="docutils literal notranslate"><span class="pre">propag_condition</span></code>). Par défaut, cette condition est vraie si, pour la tile de destination : <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">==</span> <span class="pre">'.'</span></code>.</p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.get_by_propagation</span></code> effectue une itération à partir d’une tile initiale, et se propage petit à petit vers les tiles adjacentes qui remplissent la «&nbsp;condition de propagation&nbsp;» (paramètre <code class="docutils literal notranslate"><span class="pre">propag_condition</span></code>).</p>
+<p>Par défaut, cette condition est vraie si <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">==</span> <span class="pre">'.'</span></code> pour la tile de destination.</p>
 <p>La condition de propagation est une fonction avec deux paramètres : <code class="docutils literal notranslate"><span class="pre">tile_source</span></code> (la tile de départ actuelle), <code class="docutils literal notranslate"><span class="pre">tile_dest</span></code> (la tile vers laquelle on tente de se propager). Elle doit renvoyer un booléen indiquant si la propagation est possible ou non.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">go_to_rightmost_column</span><span class="p">(</span><span class="n">tile_source</span><span class="p">,</span> <span class="n">tile_dest</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">if</span> <span class="n">tile_dest</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">tile_source</span><span class="o">.</span><span class="n">x</span><span class="p">:</span><span class="k">return</span> <span class="kc">True</span>
@@ -402,7 +404,7 @@
 <span class="go">.....X</span>
 </pre></div>
 </div>
-<p>La propagation utilise la règle d’adjacence par défaut du board. L’ordre d’itération dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_positions</span></code>.</p>
+<p>La propagation utilise la règle d’adjacence du board. L’ordre d’itération dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_positions</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
 <span class="gp">... </span>   <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">go_to_rightmost_column</span><span class="p">)</span>
@@ -416,7 +418,7 @@
 <span class="go">.....8</span>
 </pre></div>
 </div>
-<p>Le changement de règle d’adjacence peut avoir des conséquences sur la propagation.</p>
+<p>La règle d’adjacence du board a des conséquences sur la propagation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">class_adjacency</span><span class="o">=</span><span class="n">AdjacencyEvaluatorCrossDiag</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="o">.</span><span class="n">get_by_propagation</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">go_to_rightmost_column</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span>
@@ -446,7 +448,8 @@
 <h2>Path-finding<a class="headerlink" href="#path-finding" title="Lien permanent vers ce titre">¶</a></h2>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.get_by_pathfinding</span></code> recherche un chemin le plus court entre deux positions, et effectue une itération dessus, à partir de la tile de départ vers la tile d’arrivée.</p>
 <p>Cette fonction utilise une «&nbsp;condition de déplacement&nbsp;», similaire à la condition de propagation. Par défaut, le déplacement est possible si la <code class="docutils literal notranslate"><span class="pre">data</span></code> de la tile de destination vaut “.”. Il est possible de la redéfinir via le paramètre <code class="docutils literal notranslate"><span class="pre">pass_through_condition</span></code>.</p>
-<p>Le path-finding utilise les règles d’adjacence par défaut du board. Lorsqu’il existe plusieurs possibilités de chemin le plus court, c’est le premier trouvé qui est sélectionné. Cette sélection dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_positions</span></code>.</p>
+<p>Le path-finding utilise la règle d’adjacence du board.</p>
+<p>Lorsqu’il existe plusieurs possibilités de chemin le plus court, c’est le premier trouvé qui est sélectionné. Cette sélection dépend de l’ordre des tiles renvoyées par la fonction <code class="docutils literal notranslate"><span class="pre">adjacent_positions</span></code>.</p>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">pass_through_condition</span></code> fonctionne de la même manière que <code class="docutils literal notranslate"><span class="pre">propag_condition</span></code>. Elle possède deux paramètres : <code class="docutils literal notranslate"><span class="pre">tile_source</span></code> (la tile de départ actuelle), <code class="docutils literal notranslate"><span class="pre">tile_dest</span></code> (la tile vers laquelle on tente de se déplacer), et doit renvoyer un booléen, indiquant si le déplacement est possible ou non.</p>
 <p>Le path-finding déclenche une exception <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> s’il n’existe aucun chemin possible.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
@@ -506,7 +509,7 @@
 </div>
 <div class="section" id="echanges-et-permutations-circulaires-de-tiles">
 <h2>Échanges et permutations circulaires de tiles<a class="headerlink" href="#echanges-et-permutations-circulaires-de-tiles" title="Lien permanent vers ce titre">¶</a></h2>
-<p>Chaque case d’un Board ne doit contenir rien d’autre qu’une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d’une case à l’autre, il faut modifier la variable <code class="docutils literal notranslate"><span class="pre">tile.data</span></code>, ou utiliser des <code class="docutils literal notranslate"><span class="pre">MobileItems</span></code> (voir <a class="reference internal" href="#mobile-items-en-construction">Mobile Items (en construction)</a>).</p>
+<p>Chaque case d’un Board ne doit contenir rien d’autre qu’une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des déplacement d’éléments, il faut modifier la variable <code class="docutils literal notranslate"><span class="pre">tile.data</span></code>, ou utiliser des <code class="docutils literal notranslate"><span class="pre">MobileItems</span></code> (voir <a class="reference internal" href="#mobile-items-en-construction">Mobile Items (en construction)</a>).</p>
 <p>Cependant, comme les <code class="docutils literal notranslate"><span class="pre">MobileItem</span></code> ne sont pas terminés, la fonction <code class="docutils literal notranslate"><span class="pre">board.replace_tile</span></code> a été ajoutée. Elle permet de remplacer la tile d’un board par une autre tile créée en-dehors du board.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_t</span> <span class="o">=</span> <span class="n">Tile</span><span class="p">()</span>
@@ -521,7 +524,7 @@
 <span class="go">&lt;Tile (0, 1): A&gt;</span>
 </pre></div>
 </div>
-<p>Il est conseillé de ne pas remplacer manuellement les tiles, et d’utiliser systématiquement cette fonction, car elle met à jour automatiquement les variables <code class="docutils literal notranslate"><span class="pre">tile.x</span></code> et <code class="docutils literal notranslate"><span class="pre">tile.y</span></code>.</p>
+<p>Il est conseillé de ne pas remplacer manuellement les tiles, mais d’utiliser cette fonction, car elle met à jour automatiquement les variables <code class="docutils literal notranslate"><span class="pre">tile.pos</span></code>, <code class="docutils literal notranslate"><span class="pre">tile.x</span></code> et <code class="docutils literal notranslate"><span class="pre">tile.y</span></code>.</p>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">board.circular_permute_tiles</span></code> permet de déplacer plusieurs tiles d’un même board en une seule opération de permutation circulaire.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">board</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]):</span>
@@ -541,8 +544,8 @@
 </div>
 <div class="section" id="build-pour-codingame">
 <h2>build pour codingame<a class="headerlink" href="#build-pour-codingame" title="Lien permanent vers ce titre">¶</a></h2>
-<p>La librairie aboard est compilée en un seul fichier de code : <code class="docutils literal notranslate"><span class="pre">code/builder/aboard_standalone.py</span></code>. Ce fichier permet une utilisation de la librairie dans des contextes spécifiques. Par exemple : copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.</p>
-<p>Le début du fichier stand-alone indique la version et le commit git qui ont été utilisés pour le générer.</p>
+<p>La librairie aboard est compilée vers un fichier de code unique : <code class="docutils literal notranslate"><span class="pre">code/builder/aboard_standalone.py</span></code>, permettant d’être utilisé des contextes spécifiques. Par exemple : copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.</p>
+<p>Le début du fichier stand-alone indique la version et le commit git utilisés pour le générer.</p>
 <p>Le script <code class="docutils literal notranslate"><span class="pre">code/builder/builder.py</span></code> permet de regénérer manuellement ce fichier à partir du code actuel.</p>
 </div>
 <div class="section" id="mobile-items-en-construction">
@@ -569,11 +572,11 @@
 <p>Chaque Tile possède deux attributs spécifiques :</p>
 <blockquote>
 <div><ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">mid_marker</span></code> : une string, dont seul le premier caractère est utilisé.</li>
-<li><code class="docutils literal notranslate"><span class="pre">roads</span></code> : dictionnaire contenant 4 éléments, les clés étant les 4&nbsp;directions. La valeur de chaque clé est un booléen, indiquant si la tile possède une ouverture dans la direction donnée.</li>
+<li><code class="docutils literal notranslate"><span class="pre">mid_marker</span></code> : string de un caractère.</li>
+<li><code class="docutils literal notranslate"><span class="pre">roads</span></code> : dictionnaire contenant 4 éléments, correspondant aux 4&nbsp;directions. La valeur de chaque clé est un booléen, indiquant si la tile possède une ouverture dans la direction donnée.</li>
 </ul>
 </div></blockquote>
-<p>Une Tile est rendu sur un carré de 3*3 caractères, avec l’affichage des chemins, et le <code class="docutils literal notranslate"><span class="pre">mid_marker</span></code> écrit au milieu.</p>
+<p>Une Tile est rendu sur un carré de 3x3 caractères, avec l’affichage des chemins ouverts et le <code class="docutils literal notranslate"><span class="pre">mid_marker</span></code> écrit au milieu.</p>
 <p>La règle d’adjacence est celle par défaut :&nbsp;les 4 directions, mais pas de diagonale.</p>
 <p>L’initialisation du board est effectuée par un tableau de caractère, chacun d’eux permet de déduire le contenu du dictionnaire <code class="docutils literal notranslate"><span class="pre">roads</span></code> de la Tile concernée.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aboard</span> <span class="kn">import</span> <span class="n">Board</span><span class="p">,</span> <span class="n">Tile</span><span class="p">,</span> <span class="n">Dir</span><span class="p">,</span> <span class="n">BoardRenderer</span><span class="p">,</span> <span class="n">compute_direction</span>
@@ -584,13 +587,13 @@
 <span class="sd">    Tile spécifique, pour l&#39;exemple inspiré de Xmas Rush.</span>
 
 <span class="sd">    Variables membres :</span>
-<span class="sd">        mid_marker : string supposée contenir un seul caractère, qui</span>
-<span class="sd">            sera affiché lors du rendu de la tile.</span>
+<span class="sd">        mid_marker : string de un seul caractère, qui sera affiché lors</span>
+<span class="sd">            du rendu de la tile.</span>
 <span class="sd">            C&#39;est l&#39;équivalent de tile.data dans la classe de base.</span>
 <span class="sd">        roads : dictionnaire avec 4 éléments. Les clés du dictionnaire</span>
 <span class="sd">            sont les 4 directions Dir.UP, Dir.RIGHT, Dir.DOWN, Dir.LEFT.</span>
-<span class="sd">            Chaque valeur de ses clés est un booléen, indiquant si le</span>
-<span class="sd">            chemin de cette tile vers la direction de la clé est ouvert.</span>
+<span class="sd">            Chaque valeur est un booléen, indiquant si le chemin de</span>
+<span class="sd">            cette tile dans la direction indiqué par la clé est ouvert.</span>
 
 <span class="sd">    Les roads de la tile peuvent être initialisées à l&#39;aide d&#39;un</span>
 <span class="sd">    caractère (voir fonction Tile.dirs_from_input).</span>
@@ -599,8 +602,8 @@
     <span class="c1"># Liste des caractères &quot;roadful&quot; permettant d&#39;initialiser les roads.</span>
     <span class="c1"># Il n&#39;y a pas toutes les combinaisons possibles,</span>
     <span class="c1"># car on n&#39;en a pas besoin.</span>
-    <span class="c1"># clé : un caractère. (Sa représentation visuelle graphique du</span>
-    <span class="c1"># caractère correspond à peu près aux roads ouvertes).</span>
+    <span class="c1"># clé : un caractère. (Sa représentation visuelle correspond</span>
+    <span class="c1"># à peu près aux roads ouvertes).</span>
     <span class="c1"># valeur : une liste de directions, indiquant les roads ouvertes</span>
     <span class="c1"># correspondantes. Celles qui ne sont pas dans la liste doivent</span>
     <span class="c1"># rester fermées.</span>
@@ -738,19 +741,19 @@
 
 <span class="n">board_map</span> <span class="o">=</span> <span class="n">BOARD_MAP</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
-<span class="c1"># Initialisation des routes du boadr, à partir de BOARD_MAP.</span>
+<span class="c1"># Initialisation des routes du board, à partir de BOARD_MAP.</span>
 <span class="k">for</span> <span class="n">tile</span><span class="p">,</span> <span class="n">char_roadful</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">board_map</span><span class="p">):</span>
     <span class="n">tile</span><span class="o">.</span><span class="n">dirs_from_input</span><span class="p">(</span><span class="n">char_roadful</span><span class="p">)</span>
 
 <span class="c1"># Recherche du chemin le plus court. Marquage de ce chemin en définissant</span>
 <span class="c1"># les mid_marker des tiles par lesquelles ont passe.</span>
-<span class="c1"># Départ = 0. Tile suivante * 1. Ainsi de suite.</span>
+<span class="c1"># Départ = 0. Tile suivante = 1. Ainsi de suite.</span>
 <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tile</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
     <span class="n">board</span><span class="o">.</span><span class="n">get_by_pathfinding</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">pass_through_xmas</span><span class="p">)</span>
 <span class="p">):</span>
     <span class="n">tile</span><span class="o">.</span><span class="n">mid_marker</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-<span class="c1"># Affichage du rendu, permettant de vérifiant le plan du board,</span>
+<span class="c1"># Affichage du rendu, permettant de vérifier le plan du board,</span>
 <span class="c1"># ainsi que le chemin trouvé.</span>
 <span class="k">print</span><span class="p">(</span><span class="n">board</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 

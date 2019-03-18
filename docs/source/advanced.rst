@@ -405,7 +405,7 @@ La condition de propagation est une fonction avec deux paramètres : ``tile_sour
 .....X
 .....X
 
-La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'itération dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
+La propagation utilise la règle d'adjacence du board. L'ordre d'itération dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
 >>> board = Board(6, 5)
 >>> for index, tile in enumerate(
@@ -419,7 +419,7 @@ La propagation utilise la règle d'adjacence par défaut du board. L'ordre d'it�
 .....6
 .....8
 
-Le changement de règle d'adjacence peut avoir des conséquences sur la propagation.
+La règle d'adjacence du board a des conséquences sur la propagation.
 
 >>> board = Board(6, 5, class_adjacency=AdjacencyEvaluatorCrossDiag)
 >>> for tile in board.get_by_propagation((1, 2), go_to_rightmost_column):
@@ -452,7 +452,9 @@ La fonction ``Board.get_by_pathfinding`` recherche un chemin le plus court entre
 
 Cette fonction utilise une "condition de déplacement", similaire à la condition de propagation. Par défaut, le déplacement est possible si la ``data`` de la tile de destination vaut '.'. Il est possible de la redéfinir via le paramètre ``pass_through_condition``.
 
-Le path-finding utilise les règles d'adjacence par défaut du board. Lorsqu'il existe plusieurs possibilités de chemin le plus court, c'est le premier trouvé qui est sélectionné. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
+Le path-finding utilise la règle d'adjacence du board.
+
+Lorsqu'il existe plusieurs possibilités de chemin le plus court, c'est le premier trouvé qui est sélectionné. Cette sélection dépend de l'ordre des tiles renvoyées par la fonction ``adjacent_positions``.
 
 La fonction ``pass_through_condition`` fonctionne de la même manière que ``propag_condition``. Elle possède deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se déplacer), et doit renvoyer un booléen, indiquant si le déplacement est possible ou non.
 
@@ -514,7 +516,7 @@ Le chemin aurait été un peu différent avec une règle d'adjacence autorisant 
 Échanges et permutations circulaires de tiles
 =============================================
 
-Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des éléments qui se déplacent d'une case à l'autre, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItems`` (voir `Mobile Items (en construction)`_).
+Chaque case d'un Board ne doit contenir rien d'autre qu'une Tile (pas de None, pas de liste de Tile, etc.). Les Tiles ne sont pas supposées se déplacer dans le Board. Pour représenter des déplacement d'éléments, il faut modifier la variable ``tile.data``, ou utiliser des ``MobileItems`` (voir `Mobile Items (en construction)`_).
 
 Cependant, comme les ``MobileItem`` ne sont pas terminés, la fonction ``board.replace_tile`` a été ajoutée. Elle permet de remplacer la tile d'un board par une autre tile créée en-dehors du board.
 
@@ -530,7 +532,7 @@ A..
 >>> print(new_t)
 <Tile (0, 1): A>
 
-Il est conseillé de ne pas remplacer manuellement les tiles, et d'utiliser systématiquement cette fonction, car elle met à jour automatiquement les variables ``tile.x`` et ``tile.y``.
+Il est conseillé de ne pas remplacer manuellement les tiles, mais d'utiliser cette fonction, car elle met à jour automatiquement les variables ``tile.pos``, ``tile.x`` et ``tile.y``.
 
 La fonction ``board.circular_permute_tiles`` permet de déplacer plusieurs tiles d'un même board en une seule opération de permutation circulaire.
 
@@ -552,9 +554,9 @@ La fonction ``board.circular_permute_tiles`` permet de déplacer plusieurs tiles
 build pour codingame
 ====================
 
-La librairie aboard est compilée en un seul fichier de code : ``code/builder/aboard_standalone.py``. Ce fichier permet une utilisation de la librairie dans des contextes spécifiques. Par exemple : copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.
+La librairie aboard est compilée vers un fichier de code unique : ``code/builder/aboard_standalone.py``, permettant d'être utilisé des contextes spécifiques. Par exemple : copier-coller son contenu dans un puzzle ou un challenge du site codingame.com.
 
-Le début du fichier stand-alone indique la version et le commit git qui ont été utilisés pour le générer.
+Le début du fichier stand-alone indique la version et le commit git utilisés pour le générer.
 
 Le script ``code/builder/builder.py`` permet de regénérer manuellement ce fichier à partir du code actuel.
 
@@ -586,10 +588,10 @@ Exemple inspiré du challenge codingame "Xmas Rush", lui-même inspiré du jeu d
 
 Chaque Tile possède deux attributs spécifiques :
 
- - ``mid_marker`` : une string, dont seul le premier caractère est utilisé.
- - ``roads`` : dictionnaire contenant 4 éléments, les clés étant les 4 directions. La valeur de chaque clé est un booléen, indiquant si la tile possède une ouverture dans la direction donnée.
+ - ``mid_marker`` : string de un caractère.
+ - ``roads`` : dictionnaire contenant 4 éléments, correspondant aux 4 directions. La valeur de chaque clé est un booléen, indiquant si la tile possède une ouverture dans la direction donnée.
 
-Une Tile est rendu sur un carré de 3*3 caractères, avec l'affichage des chemins, et le ``mid_marker`` écrit au milieu.
+Une Tile est rendu sur un carré de 3x3 caractères, avec l'affichage des chemins ouverts et le ``mid_marker`` écrit au milieu.
 
 La règle d'adjacence est celle par défaut : les 4 directions, mais pas de diagonale.
 

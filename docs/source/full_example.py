@@ -6,13 +6,13 @@ class XmasTile(Tile):
     Tile spécifique, pour l'exemple inspiré de Xmas Rush.
 
     Variables membres :
-        mid_marker : string supposée contenir un seul caractère, qui
-            sera affiché lors du rendu de la tile.
+        mid_marker : string de un seul caractère, qui sera affiché lors
+            du rendu de la tile.
             C'est l'équivalent de tile.data dans la classe de base.
         roads : dictionnaire avec 4 éléments. Les clés du dictionnaire
             sont les 4 directions Dir.UP, Dir.RIGHT, Dir.DOWN, Dir.LEFT.
-            Chaque valeur de ses clés est un booléen, indiquant si le
-            chemin de cette tile vers la direction de la clé est ouvert.
+            Chaque valeur est un booléen, indiquant si le chemin de
+            cette tile dans la direction indiqué par la clé est ouvert.
 
     Les roads de la tile peuvent être initialisées à l'aide d'un
     caractère (voir fonction Tile.dirs_from_input).
@@ -21,8 +21,8 @@ class XmasTile(Tile):
     # Liste des caractères "roadful" permettant d'initialiser les roads.
     # Il n'y a pas toutes les combinaisons possibles,
     # car on n'en a pas besoin.
-    # clé : un caractère. (Sa représentation visuelle graphique du
-    # caractère correspond à peu près aux roads ouvertes).
+    # clé : un caractère. (Sa représentation visuelle correspond
+    # à peu près aux roads ouvertes).
     # valeur : une liste de directions, indiquant les roads ouvertes
     # correspondantes. Celles qui ne sont pas dans la liste doivent
     # rester fermées.
@@ -160,19 +160,19 @@ L----J
 
 board_map = BOARD_MAP.replace("\n", "")
 
-# Initialisation des routes du boadr, à partir de BOARD_MAP.
+# Initialisation des routes du board, à partir de BOARD_MAP.
 for tile, char_roadful in zip(board, board_map):
     tile.dirs_from_input(char_roadful)
 
 # Recherche du chemin le plus court. Marquage de ce chemin en définissant
 # les mid_marker des tiles par lesquelles ont passe.
-# Départ = 0. Tile suivante * 1. Ainsi de suite.
+# Départ = 0. Tile suivante = 1. Ainsi de suite.
 for index, tile in enumerate(
     board.get_by_pathfinding((0, 3), (2, 0), pass_through_xmas)
 ):
     tile.mid_marker = str(index)
 
-# Affichage du rendu, permettant de vérifiant le plan du board,
+# Affichage du rendu, permettant de vérifier le plan du board,
 # ainsi que le chemin trouvé.
 print(board.render())
 
