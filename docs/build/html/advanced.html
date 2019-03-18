@@ -63,7 +63,7 @@
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">board_owner</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> et <code class="docutils literal notranslate"><span class="pre">pos</span></code> peuvent être lus, mais ne devraient jamais être directement modifiés.</p>
 <p><code class="docutils literal notranslate"><span class="pre">data</span></code> peut être lu et modifié.</p>
-<p>Pour accéder à une Tile dans un Board, utilisez l’opérateur «&nbsp;[]&nbsp;» (<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>), en spécifiant les coordonnées x et y.</p>
+<p>Pour accéder à une Tile dans un Board, utilisez l’opérateur «&nbsp;[ ]&nbsp;» <code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>, en spécifiant les coordonnées x et y.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tile</span> <span class="o">=</span> <span class="n">board</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">tile</span><span class="o">.</span><span class="n">x</span>
 <span class="go">3</span>
@@ -73,7 +73,7 @@
 <span class="go">&#39;.&#39;</span>
 </pre></div>
 </div>
-<p>L’opérateur «&nbsp;[]&nbsp;» accepte également les tuples <code class="docutils literal notranslate"><span class="pre">board[(3,</span> <span class="pre">2)]</span></code>, ainsi que les objets <code class="docutils literal notranslate"><span class="pre">Pos</span></code>.</p>
+<p>L’opérateur «&nbsp;[ ]&nbsp;» accepte également les tuples <code class="docutils literal notranslate"><span class="pre">board[(3,</span> <span class="pre">2)]</span></code>, ainsi que les objets <code class="docutils literal notranslate"><span class="pre">Pos</span></code>.</p>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.render()</span></code> renvoie une string multi-ligne (séparateur : «&nbsp;\n&nbsp;»), représentant le Board.</p>
 <p>Dans la configuration de rendering par défaut, chaque Tile est représentée par un seul caractère, égal au premier caractère de l’attribut data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tile</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;ABCD&quot;</span>
@@ -89,7 +89,7 @@
 <h2>Itérateurs<a class="headerlink" href="#iterateurs" title="Lien permanent vers ce titre">¶</a></h2>
 <div class="section" id="iterateurs-par-rectangle">
 <h3>Itérateurs par rectangle<a class="headerlink" href="#iterateurs-par-rectangle" title="Lien permanent vers ce titre">¶</a></h3>
-<p>Avec l’opérateur «&nbsp;[ ]&nbsp;», remplacez l’une ou les deux coordonnées par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, …</p>
+<p>Avec l’opérateur «&nbsp;[ ]&nbsp;», remplacez l’une ou les deux coordonnées par un slice pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, …</p>
 <p>Exemple :</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span> <span class="o">=</span> <span class="n">Board</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">]:</span>
@@ -120,19 +120,19 @@
 <span class="go">37....</span>
 </pre></div>
 </div>
-<p>Les slices renvoient un itérable, mais pas un indexable. Les éléments ne sont donc pas directement accessible (<code class="docutils literal notranslate"><span class="pre">board[1,</span> <span class="pre">:][2]</span></code> ne fonctionne pas). Mais l’itérable peut être déroulé dans une liste ou un tuple.</p>
+<p>Les slices renvoient un itérable, mais pas un indexable. Les éléments ne sont donc pas directement accessible. <code class="docutils literal notranslate"><span class="pre">board[1,</span> <span class="pre">:][2]</span></code> ne fonctionne pas. Mais l’itérable peut être déroulé dans une liste ou un tuple.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:]</span>
 <span class="go">&lt;positions_iterator.BoardIteratorRect object at 0x00BA6590&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">:])</span>
 <span class="go">[&lt;Tile (2, 0): 8&gt;, &lt;Tile (2, 1): 9&gt;, &lt;Tile (2, 2): .&gt;, &lt;Tile (2, 3): .&gt;]</span>
 </pre></div>
 </div>
-<p>Le second paramètre peut être omis, il sera remplacé par un slice complet : <code class="docutils literal notranslate"><span class="pre">::</span></code>. Dans l’exemple précédent, on aurait pu remplacer <code class="docutils literal notranslate"><span class="pre">board[2,</span> <span class="pre">:]</span></code> par <code class="docutils literal notranslate"><span class="pre">board[2]</span></code>. Cela permet de récupérer directement une colonne.</p>
+<p>Le second paramètre peut être omis, il sera remplacé par un slice complet. Dans l’exemple précédent, on aurait pu remplacer <code class="docutils literal notranslate"><span class="pre">board[2,</span> <span class="pre">:]</span></code> par <code class="docutils literal notranslate"><span class="pre">board[2]</span></code>. Cela permet de récupérer directement une colonne.</p>
 <p>Le board en lui-même peut-être itéré, pour parcourir toutes les tiles, de haut en bas et de gauche à droite : <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">tile</span> <span class="pre">in</span> <span class="pre">board:print(tile)</span></code>.</p>
 </div>
 <div class="section" id="iterateurs-par-liste-de-positions">
 <h3>Itérateurs par liste de positions<a class="headerlink" href="#iterateurs-par-liste-de-positions" title="Lien permanent vers ce titre">¶</a></h3>
-<p>Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d’itérer à partir d’une liste de coordonnées :</p>
+<p>Pour récupérer des Tiles à partir de positions, il suffit d’itérer à partir d’une liste de coordonnées :</p>
 <p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">coord</span> <span class="pre">in</span> <span class="pre">[(0,</span> <span class="pre">0),</span> <span class="pre">(2,</span> <span class="pre">0),</span> <span class="pre">(3,</span> <span class="pre">1)]:</span> <span class="pre">current_tile</span> <span class="pre">=</span> <span class="pre">board[coord]</span></code>.</p>
 <p>La fonction <code class="docutils literal notranslate"><span class="pre">Board.iter_positions</span></code> permet la même chose, mais en itérant directement sur les Tiles. (Voir <a class="reference internal" href="#indicateurs-d-iterations">Indicateurs d’itérations</a>).</p>
 </div>
@@ -196,7 +196,7 @@
 <div class="section" id="tell-indicators">
 <h3><code class="docutils literal notranslate"><span class="pre">tell_indicators</span></code><a class="headerlink" href="#tell-indicators" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Il permet de renvoyer directement des indicateurs, durant l’itération.</p>
-<p>Les types d’indicateurs renvoyés doivent être spécifiés via des valeurs <code class="docutils literal notranslate"><span class="pre">ItInd.*</span></code>.</p>
+<p>Les types d’indicateurs renvoyés doivent être spécifiés via des valeurs <code class="docutils literal notranslate"><span class="pre">ItInd.xxx</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">aboard</span> <span class="k">import</span> <span class="n">ItInd</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">indics</span> <span class="o">=</span> <span class="p">(</span><span class="n">ItInd</span><span class="o">.</span><span class="n">PREV_POS</span><span class="p">,</span> <span class="n">ItInd</span><span class="o">.</span><span class="n">JUMPED</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bo_iter</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">iter_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span><span class="o">.</span><span class="n">tell_indicators</span><span class="p">(</span><span class="n">indics</span><span class="p">)</span>
@@ -219,23 +219,23 @@
 <h3><code class="docutils literal notranslate"><span class="pre">group_by</span></code><a class="headerlink" href="#group-by" title="Lien permanent vers ce titre">¶</a></h3>
 <p>Il permet de renvoyer les tiles par groupe, selon une fonction de groupement à spécifier.</p>
 <p>La fonction de groupement a pour paramètre l’itérateur, elle doit renvoyer un booléen. Chaque fois qu’elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">grouping_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">iterator</span><span class="p">:</span> <span class="p">(</span><span class="n">iterator</span><span class="o">.</span><span class="n">current_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">%</span> <span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile_group</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[:]</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">grouping_function</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">every_4_of_line</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">iterator</span><span class="p">:</span> <span class="p">(</span><span class="n">iterator</span><span class="o">.</span><span class="n">current_pos</span><span class="o">.</span><span class="n">x</span> <span class="o">%</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile_group</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[:]</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">every_4_of_line</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">([(</span><span class="n">tile</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">tile</span> <span class="ow">in</span> <span class="n">tile_group</span><span class="p">])</span>
-<span class="go">[(0, 0), (1, 0), (2, 0)]</span>
-<span class="go">[(3, 0), (4, 0), (5, 0)]</span>
-<span class="go">[(0, 1), (1, 1), (2, 1)]</span>
-<span class="go">[(3, 1), (4, 1), (5, 1)]</span>
-<span class="go">[(0, 2), (1, 2), (2, 2)]</span>
-<span class="go">[(3, 2), (4, 2), (5, 2)]</span>
-<span class="go">[(0, 3), (1, 3), (2, 3)]</span>
-<span class="go">[(3, 3), (4, 3), (5, 3)]</span>
+<span class="go">[(0, 0), (1, 0), (2, 0), (3, 0)]</span>
+<span class="go">[(4, 0), (5, 0)]</span>
+<span class="go">[(0, 1), (1, 1), (2, 1), (3, 1)]</span>
+<span class="go">[(4, 1), (5, 1)]</span>
+<span class="go">[(0, 2), (1, 2), (2, 2), (3, 2)]</span>
+<span class="go">[(4, 2), (5, 2)]</span>
+<span class="go">[(0, 3), (1, 3), (2, 3), (3, 3)]</span>
+<span class="go">[(4, 3), (5, 3)]</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="group-by-subcoord">
 <h3><code class="docutils literal notranslate"><span class="pre">group_by_subcoord</span></code><a class="headerlink" href="#group-by-subcoord" title="Lien permanent vers ce titre">¶</a></h3>
-<p>Sur-itérateur de type <code class="docutils literal notranslate"><span class="pre">group_by`</span></code>, dont la fonction de groupement se base sur <code class="docutils literal notranslate"><span class="pre">both_coord_changed</span></code>. Il permet de récupérer les tiles par groupe de lignes ou de colonnes, à partir d’un itérateur par rectangle.</p>
+<p>Sur-itérateur de type <code class="docutils literal notranslate"><span class="pre">group_by</span></code>, dont la fonction de groupement se base sur <code class="docutils literal notranslate"><span class="pre">both_coord_changed</span></code>. Il permet de récupérer les tiles par groupe de lignes ou de colonnes, à partir d’un itérateur par rectangle.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tile_group_column</span> <span class="ow">in</span> <span class="n">board</span><span class="p">[:,</span> <span class="p">:,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">group_by_subcoord</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tile_group_column</span><span class="p">)</span>
 <span class="go">[&lt;Tile (0, 0): 0&gt;, &lt;Tile (0, 1): 1&gt;, &lt;Tile (0, 2): 2&gt;, &lt;Tile (0, 3): 3&gt;]</span>

@@ -28,7 +28,7 @@ Une Tile possède les attributs suivants :
 
 ``data`` peut être lu et modifié.
 
-Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem__``), en spécifiant les coordonnées x et y.
+Pour accéder à une Tile dans un Board, utilisez l'opérateur "[ ]" ``__getitem__``, en spécifiant les coordonnées x et y.
 
 >>> tile = board[3, 2]
 >>> tile.x
@@ -38,7 +38,7 @@ Pour accéder à une Tile dans un Board, utilisez l'opérateur "[]" (``__getitem
 >>> tile.data
 '.'
 
-L'opérateur "[]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``.
+L'opérateur "[ ]" accepte également les tuples ``board[(3, 2)]``, ainsi que les objets ``Pos``.
 
 La fonction ``Board.render()`` renvoie une string multi-ligne (séparateur : "\\n"), représentant le Board.
 
@@ -58,7 +58,7 @@ Itérateurs
 Itérateurs par rectangle
 ------------------------
 
-Avec l'opérateur "[ ]", remplacez l'une ou les deux coordonnées par un slice, pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
+Avec l'opérateur "[ ]", remplacez l'une ou les deux coordonnées par un slice pour faire une itération sur une ligne, une colonne, un sous-rectangle, avec une ligne sur deux, de gauche à droite, ...
 
 Exemple :
 
@@ -89,14 +89,14 @@ Pour itérer en premier sur les colonnes, puis sur les lignes, ajouter le caract
 26....
 37....
 
-Les slices renvoient un itérable, mais pas un indexable. Les éléments ne sont donc pas directement accessible (``board[1, :][2]`` ne fonctionne pas). Mais l'itérable peut être déroulé dans une liste ou un tuple.
+Les slices renvoient un itérable, mais pas un indexable. Les éléments ne sont donc pas directement accessible. ``board[1, :][2]`` ne fonctionne pas. Mais l'itérable peut être déroulé dans une liste ou un tuple.
 
 >>> board[2, :]
 <positions_iterator.BoardIteratorRect object at 0x00BA6590>
 >>> list(board[2, :])
 [<Tile (2, 0): 8>, <Tile (2, 1): 9>, <Tile (2, 2): .>, <Tile (2, 3): .>]
 
-Le second paramètre peut être omis, il sera remplacé par un slice complet : ``::``. Dans l'exemple précédent, on aurait pu remplacer ``board[2, :]`` par ``board[2]``. Cela permet de récupérer directement une colonne.
+Le second paramètre peut être omis, il sera remplacé par un slice complet. Dans l'exemple précédent, on aurait pu remplacer ``board[2, :]`` par ``board[2]``. Cela permet de récupérer directement une colonne.
 
 Le board en lui-même peut-être itéré, pour parcourir toutes les tiles, de haut en bas et de gauche à droite : ``for tile in board:print(tile)``.
 
@@ -104,7 +104,7 @@ Le board en lui-même peut-être itéré, pour parcourir toutes les tiles, de ha
 Itérateurs par liste de positions
 ---------------------------------
 
-Pour récupérer plusieurs Tiles à partir de positions arbitraires, il suffit d'itérer à partir d'une liste de coordonnées :
+Pour récupérer des Tiles à partir de positions, il suffit d'itérer à partir d'une liste de coordonnées :
 
 ``for coord in [(0, 0), (2, 0), (3, 1)]: current_tile = board[coord]``.
 
@@ -173,7 +173,7 @@ Les sur-itérateurs s'ajoutent après un itérateur de board.
 
 Il permet de renvoyer directement des indicateurs, durant l'itération.
 
-Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``ItInd.*``.
+Les types d'indicateurs renvoyés doivent être spécifiés via des valeurs ``ItInd.xxx``.
 
 >>> from aboard import ItInd
 >>> indics = (ItInd.PREV_POS, ItInd.JUMPED)
@@ -199,23 +199,23 @@ Il permet de renvoyer les tiles par groupe, selon une fonction de groupement à 
 
 La fonction de groupement a pour paramètre l'itérateur, elle doit renvoyer un booléen. Chaque fois qu'elle renvoie True, le sur-itérateur renvoie le groupe de tile accumulées.
 
->>> grouping_function = lambda iterator: (iterator.current_pos.x % 3) == 0
->>> for tile_group in board[:].group_by(grouping_function):
+>>> every_4_of_line = lambda iterator: (iterator.current_pos.x % 4) == 0
+>>> for tile_group in board[:].group_by(every_4_of_line):
 ...     print([(tile.x, tile.y) for tile in tile_group])
-[(0, 0), (1, 0), (2, 0)]
-[(3, 0), (4, 0), (5, 0)]
-[(0, 1), (1, 1), (2, 1)]
-[(3, 1), (4, 1), (5, 1)]
-[(0, 2), (1, 2), (2, 2)]
-[(3, 2), (4, 2), (5, 2)]
-[(0, 3), (1, 3), (2, 3)]
-[(3, 3), (4, 3), (5, 3)]
+[(0, 0), (1, 0), (2, 0), (3, 0)]
+[(4, 0), (5, 0)]
+[(0, 1), (1, 1), (2, 1), (3, 1)]
+[(4, 1), (5, 1)]
+[(0, 2), (1, 2), (2, 2), (3, 2)]
+[(4, 2), (5, 2)]
+[(0, 3), (1, 3), (2, 3), (3, 3)]
+[(4, 3), (5, 3)]
 
 
 ``group_by_subcoord``
 ---------------------
 
-Sur-itérateur de type ``group_by```, dont la fonction de groupement se base sur ``both_coord_changed``. Il permet de récupérer les tiles par groupe de lignes ou de colonnes, à partir d'un itérateur par rectangle.
+Sur-itérateur de type ``group_by``, dont la fonction de groupement se base sur ``both_coord_changed``. Il permet de récupérer les tiles par groupe de lignes ou de colonnes, à partir d'un itérateur par rectangle.
 
 >>> for tile_group_column in board[:, :, 'y'].group_by_subcoord():
 ...     print(tile_group_column)
@@ -234,7 +234,7 @@ Il faut explicitement convertir le board en itérateur pour pouvoir y ajouter un
 Héritage de la classe Tile
 ==========================
 
-Il est possible de créer des classes héritées de la classe Tile, et de s'en servir pour créer un board.
+Il est possible de créer un board contenant des tiles dont la classe est héritée de la classe de base Tile.
 
 >>> from aboard import Tile
 >>> class MyTile(Tile):
@@ -247,7 +247,7 @@ Il est conseillé d'overrider les fonctions ``__str__`` et ``__repr__``. Les ver
 
 La fonction ``__eq__`` peut être overridée. Elle devrait l'être si on utilise la classe ``IteratorGetDifferences`` (qui n'est pas encore documentée ici).
 
-La fonction ``__eq__`` est supposée comparer uniquement les données à l'intérieur de la Tile, et non pas sa position. C'est à dire ``Tile.data`` et autres, et non pas ``Tile.pos``.
+La fonction ``__eq__`` est supposée comparer uniquement les données de la Tile, et non pas sa position. C'est à dire ``Tile.data`` et les autres variables membres ajoutées, mais pas ``Tile.pos``, ``Tile.x``, ``Tile.y``.
 
 Fonction ``Tile.render``
 ------------------------
@@ -258,7 +258,7 @@ Par défaut, chaque tile est affichée sur un seul caractère. Même si ``Tile.r
 
 Lorsque la fonction ``tile.render`` est appelée, deux paramètres ``w`` et ``h`` lui sont indiqués, représentant la taille du rectangle de rendu. La fonction est alors censée renvoyer une liste de ``h`` éléments, chacun d'eux devant être une string de ``w`` caractères.
 
-Si ce n'est pas exactement cette structure de données qui est renvoyée, le renderer la remet en forme. Il coupe des éléments de la liste et des caractères, et/ou ajoute des espaces et des strings.
+Si ce n'est pas exactement cette structure de donnée qui est renvoyée, elle sera remise en forme. Le renderer coupe des éléments de la liste et des caractères, et/ou ajoute des espaces et des strings.
 
 
 Objet BoardRenderer
@@ -271,13 +271,14 @@ Il s'agit d'un objet utilisant les données d'un Board, pour générer une strin
 
 Tous les objets Board possèdent en variable membre un objet BoardRenderer par défaut, qui est utilisé lors de l'appel à ``Board.render()``.
 
-Il est possible de créer un autre BoardRenderer doté d'une configuration spécifique, afin de générer des strings différentes.
+Il est possible de créer un autre BoardRenderer doté d'une configuration spécifique.
 
 >>> from aboard import BoardRenderer
 >>> board = Board(4, 3)
 >>> board[1, 1].data = ("ABZZ", "CDZZ", "XXZZ")
 >>> my_renderer = BoardRenderer(
-...     tile_w=2, tile_h=2, chr_fill_tile='_',
+...     tile_w=2, tile_h=2,
+...     chr_fill_tile='_',
 ...     tile_padding_w=1, tile_padding_h=0)
 >>> print(board.render(renderer=my_renderer))
 ._ ._ ._ ._
@@ -292,10 +293,10 @@ Le renderer par défaut d'un Board peut être défini lors de l'instanciation du
 >>> board = Board(4, 3, default_renderer=my_renderer)
 
 
-Paramètres du renderer
+Paramètres du BoardRenderer
 ----------------------
 
-Ils sont à indiquer à l'instanciation du BoardRenderer. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
+Ils sont à indiquer à son instanciation. Ils ont tous une valeur par défaut, correspondant à celle du renderer par défaut inclus dans chaque Board.
 
  - tile_w, tile_h : largeur et hauteur des tiles. Par défaut : 1.
  - chr_fill_tile : caractère utilisé pour compléter les rectangles des Tiles, lorsque la fonction ``Tile.render`` ne renvoie pas suffisamment de caractères. Par défaut : ' ' (espace).
@@ -382,7 +383,9 @@ Avec cette règle, le chemin le plus court pour aller de (2, 1) à (9, 1) n'est 
 Fonction de remplissage par propagation
 =======================================
 
-La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes remplissant la "condition de propagation" (paramètre ``propag_condition``). Par défaut, cette condition est vraie si, pour la tile de destination : ``data == '.'``.
+La fonction ``Board.get_by_propagation`` effectue une itération à partir d'une tile initiale, et se propage petit à petit vers les tiles adjacentes qui remplissent la "condition de propagation" (paramètre ``propag_condition``).
+
+Par défaut, cette condition est vraie si ``data == '.'`` pour la tile de destination.
 
 La condition de propagation est une fonction avec deux paramètres : ``tile_source`` (la tile de départ actuelle), ``tile_dest`` (la tile vers laquelle on tente de se propager). Elle doit renvoyer un booléen indiquant si la propagation est possible ou non.
 
