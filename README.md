@@ -5,7 +5,7 @@
 
 Lib Python 3 de gestion de quadrillages 2D, avec des opérations de base permettant d'implémenter une game logic ou des bots pour des jeux de plateaux. Aucune dépendance, exceptée la lib standard.
 
-Le fichier [aboard_standalone.py](blob/master/code/builder/aboard_standalone.py) est généré avec tout le code de la lib. Son contenu peut être copié-collé dans n'importe quel contexte, par exemple, un puzzle ou un challenge du site codingame.
+Le fichier [aboard_standalone.py](code/builder/aboard_standalone.py) est généré avec tout le code de la lib. Son contenu peut être copié-collé dans n'importe quel contexte, par exemple, un puzzle ou un challenge du site codingame.
 
 Documentation détaillée en français sur [readthedocs.io](https://aboard.readthedocs.io/fr/latest/index.html#).
 
