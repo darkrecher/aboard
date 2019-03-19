@@ -36,7 +36,7 @@ Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
  - dans la classe Adjacency, on devrait pouvoir aussi overrider board._get_tile. Par exemple pour les adjacences toriques. b=Board(10, 10, Toric) ;assert b[14, 5] == b[4, 5]
  - doc, processus de minification et rassemblement en un seul fichier, démo avec des entraînements de coding game, ...
  - lorsque le renderer sera fini, il faudra mettre une petite image-schéma dans la doc. Indiquant où est tile_h, tile_w, tile_padding_w, ...
+ - Les zones de code, dans readthedocs.io, s'affichent avec des scrollbars horizontales sous Chrome. Il faudrait diminuer de un ou deux caractères les lignes trop longues. Stupide browsers.
 
 
-## Code en vrac
 
