@@ -161,6 +161,7 @@ class Board:
                 # Genre : (1, 2), ... ,(5, 2), (1, 3), ..., (6, 3),
 
     def replace_tile(self, new_tile, pos):
+        new_tile.pos = Pos(pos)
         new_tile.x = pos.x
         new_tile.y = pos.y
         self._tiles[pos.y][pos.x] = new_tile
@@ -176,6 +177,7 @@ class Board:
             if made_first_iteration:
                 cur_pos = pos
                 cur_tile = self._tiles[cur_pos.y][cur_pos.x]
+                cur_tile.pos = Pos(prev_pos)
                 cur_tile.x = prev_pos.x
                 cur_tile.y = prev_pos.y
                 self._tiles[prev_pos.y][prev_pos.x] = cur_tile
@@ -186,6 +188,7 @@ class Board:
                 prev_pos = first_pos
                 made_first_iteration = True
 
+        first_tile.pos = Pos(pos)
         first_tile.x = pos.x
         first_tile.y = pos.y
         self._tiles[pos.y][pos.x] = first_tile

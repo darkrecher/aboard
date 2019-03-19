@@ -1,7 +1,7 @@
 # TODO List / roadmap
 
 Pour pouvoir m'y replonger plus facilement quand ce sera le moment.
- - woups... Les fonctions `replace_tile` et `circular_permute_tiles` ne mettent pas à jour la variable `pos`. À corriger de toute urgence.
+ X woups... Les fonctions `replace_tile` et `circular_permute_tiles` ne mettent pas à jour la variable `pos`. À corriger de toute urgence.
  X pas besoin d'avoir des tell\_jumps, tell\_machin. On fait un sur-itérateur qui fait ça.
  X pareil pour les sliding\_windows et continuous\_sliding\_windows. On sur-itère. Et on pourra proposer ces sur-itérateurs dans une autre classe.
  X Par contre, itérer sur les positions, et sur-itérer sur le board, c'est stupide. Tous les itérateurs ont un board dans leur variable membre. Arrêtons d'être stupide.

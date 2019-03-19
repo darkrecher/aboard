@@ -236,3 +236,7 @@ def test_push_cols_lines():
 	"""
     assert strip_multiline(board.render()) == strip_multiline(render_result)
     print("")
+
+
+# TODO : un test vérifiant la mise à jour des variables tile.x, tile.y, tile.pos.
+# Lors d'un replace_tile et lors d'un circular_permute_tiles.
