@@ -27,7 +27,7 @@ def test_getitem_one_elem():
 
     render_result = """
 
-		\...^.../
+		\\...^.../
 		.........
 		<...+...>
 		.........

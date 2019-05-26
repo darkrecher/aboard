@@ -143,6 +143,16 @@ def test_propagation_dist():
     assert strip_multiline(board.render()) == strip_multiline(render_result)
 
 
+# BIG TODO : ce test ne fonctionne pas si on lance le fichier tout seul.
+# Mais il fonctionne si on lance tous les tests.
+# Cela provient du fichier de test précédent : test_position_operations.py,
+# contenant le code :
+# set_default_adjacency(AdjacencyEvaluatorCrossDiag)
+# Les variables globales sont conservées d'un test à l'autre.
+# Je croyais que pytest réinitialisait tout à chaque fois !
+# Ce test est facile à corriger. Par contre, il faudrait s'assurer
+# que ce problème ne réapparaisse jamais. Avec une fixture ou un truc dugenre.
+
 def test_propagation_dist_with_iter():
 
     board = Board(15, 10)
