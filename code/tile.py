@@ -4,7 +4,31 @@ from position import Pos
 
 
 class Tile:
+    """
+    Une case / tuile d'un board.
+    On peut lui ajouter les attributs que l'on veut, la faire hériter, etc.
+    Un board contient un tableau de deux dimensions. Chaque élément
+    de ce tableau est une instance de Tile.
+
+    attributs :
+
+    board_owner : Le Board dans lequel se trouve la Tile.
+    x, y : deux entiers. Coordonnées de cette Tile, dans son board_owner.
+    pos : Position. La position (x, y) de cette Tile dans son board_owner.
+    data : Objet quelconque, string-isable avec la fonction str().
+           C'est cette attribut qui sera utilisé lorsqu'on fera
+           un rendu du board_owner (fonction render()).
+    mobile_items : inutilisé pour l'instant.
+    """
+
     def __init__(self, x=None, y=None, board_owner=None):
+        """
+        Les paramètres x, y et board_owner sont fournis par l'objet Board,
+        qui crée ses propres Tiles lors de son init.
+        En théorie, rien n'empêche d'avoir des Tiles non associées à un Board,
+        mais ça n'a pas été testé, et il est possible que certaines fonctions
+        ne marchent pas (par exemple, toutes les règles d'adjacence).
+        """
         # TODO : il faut accepter le même bazar de param que pour l'objet Pos. Ou pas.
         self.x = x
         self.y = y
